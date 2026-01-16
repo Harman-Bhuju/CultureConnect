@@ -58,8 +58,8 @@ export default function Checkout({
                   role="button"
                   tabIndex={0}
                   onClick={() => openLocationModal()}
-                  onKeyDown={(e) => { 
-                    if (e.key === 'Enter' || e.key === ' ') openLocationModal(); 
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') openLocationModal();
                   }}
                   className="w-full bg-gray-100 hover:bg-gray-200 transition-colors rounded-lg p-6 flex items-center justify-between border-2 border-dashed border-gray-300 cursor-pointer"
                 >
@@ -74,8 +74,8 @@ export default function Checkout({
                   role="button"
                   tabIndex={0}
                   onClick={() => openLocationModal()}
-                  onKeyDown={(e) => { 
-                    if (e.key === 'Enter' || e.key === ' ') openLocationModal(); 
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') openLocationModal();
                   }}
                   className="bg-gray-50 rounded-lg p-6 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors"
                 >
@@ -91,9 +91,9 @@ export default function Checkout({
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        openLocationModal(); 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openLocationModal();
                       }}
                       className="text-black underline text-sm hover:text-gray-700"
                     >
@@ -116,7 +116,7 @@ export default function Checkout({
                   <div className="w-20 h-20 bg-white rounded-lg flex items-center justify-center border border-gray-200 overflow-hidden">
                     {orderItem.image ? (
                       <img
-                        src={`${BASE_URL}/product_images/${orderItem.image}`}
+                        src={`${BASE_URL}/uploads/product_images/${orderItem.image}`}
                         alt={orderItem.name}
                         className="w-full h-full object-cover"
                       />
@@ -130,7 +130,7 @@ export default function Checkout({
                       <div className="flex items-center gap-2 mt-1">
                         {orderItem.storeLogo ? (
                           <img
-                            src={`${API.BASE_URL}/seller_img_datas/seller_logos/${orderItem.storeLogo}`}
+                            src={`${API.BASE_URL}/uploads/seller_img_datas/seller_logos/${orderItem.storeLogo}`}
                             alt={orderItem.storeName}
                             className="w-5 h-5 rounded-full object-cover"
                           />
@@ -145,30 +145,28 @@ export default function Checkout({
                       <div className="flex items-center gap-2 bg-white border rounded px-1">
                         <button
                           type="button"
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
-                            decrementQuantity(); 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            decrementQuantity();
                           }}
                           disabled={orderItem.quantity <= 1}
-                          className={`px-2 py-1 text-sm font-semibold ${
-                            orderItem.quantity <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-black hover:text-gray-700'
-                          }`}
+                          className={`px-2 py-1 text-sm font-semibold ${orderItem.quantity <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-black hover:text-gray-700'
+                            }`}
                         >
                           -
                         </button>
                         <span className="text-sm font-medium px-2">{orderItem.quantity}</span>
                         <button
                           type="button"
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
-                            incrementQuantity(); 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            incrementQuantity();
                           }}
                           disabled={orderItem.quantity >= orderItem.stock}
-                          className={`px-2 py-1 text-sm font-semibold ${
-                            orderItem.quantity >= orderItem.stock 
-                              ? 'text-gray-300 cursor-not-allowed' 
-                              : 'text-black hover:text-gray-700'
-                          }`}
+                          className={`px-2 py-1 text-sm font-semibold ${orderItem.quantity >= orderItem.stock
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-black hover:text-gray-700'
+                            }`}
                         >
                           +
                         </button>
@@ -189,7 +187,7 @@ export default function Checkout({
             {/* Important Info */}
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <p className="text-sm text-yellow-800">
-                <span className="font-semibold">Note:</span> Delivery charges and estimated delivery time 
+                <span className="font-semibold">Note:</span> Delivery charges and estimated delivery time
                 will be calculated and shown in the next step based on your selected location.
               </p>
             </div>
@@ -229,11 +227,10 @@ export default function Checkout({
             <button
               onClick={handleProceedToPayment}
               disabled={!selectedLocation}
-              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${
-                selectedLocation
-                  ? 'bg-black hover:bg-gray-800 text-white'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
+              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${selectedLocation
+                ? 'bg-black hover:bg-gray-800 text-white'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
             >
               {selectedLocation ? 'Proceed to Payment' : 'Select Location First'}
             </button>

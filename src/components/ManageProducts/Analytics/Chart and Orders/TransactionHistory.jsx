@@ -19,28 +19,28 @@ const TransactionHistory = ({ selectedPeriod }) => {
 
     return orders;
   }, [allCompletedOrders, sortOrder]);
-const formatDateLabel = (dateString, selectedPeriod) => {
-  const date = new Date(dateString);
-  
-  if (selectedPeriod === 'This month') {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  } else {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long'
-    });
-  }
-};
+  const formatDateLabel = (dateString, selectedPeriod) => {
+    const date = new Date(dateString);
+
+    if (selectedPeriod === 'This month') {
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } else {
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long'
+      });
+    }
+  };
   const groupedOrders = useMemo(() => {
     const groups = {};
 
     completedOrders.forEach(order => {
       const date = new Date(order.updatedAt);
-       const dateKey = formatDateLabel(date, selectedPeriod);
+      const dateKey = formatDateLabel(date, selectedPeriod);
 
 
       if (!groups[dateKey]) {
@@ -139,11 +139,11 @@ const formatDateLabel = (dateString, selectedPeriod) => {
             </div>
             <p className="text-gray-500 font-medium">No completed orders yet</p>
             <p className="text-sm text-gray-400 mt-1">
-              {selectedPeriod === 'This month' 
+              {selectedPeriod === 'This month'
                 ? 'No completed orders this month'
                 : selectedPeriod === 'This year'
-                ? 'No completed orders this year'
-                : 'Completed orders will appear here'}
+                  ? 'No completed orders this year'
+                  : 'Completed orders will appear here'}
             </p>
           </div>
         ) : (
@@ -169,9 +169,9 @@ const formatDateLabel = (dateString, selectedPeriod) => {
                       <div className="flex-1">
                         <div className="flex items-start gap-4">
                           <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center">
-                             <img
-                           src={`${BASE_URL}/product_images/${order.productImage}`}
-                           alt={order.productName} />
+                            <img
+                              src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
+                              alt={order.productName} />
                           </div>
 
                           <div className="flex-1">

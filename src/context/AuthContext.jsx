@@ -76,7 +76,6 @@ export const AuthProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : null;
   });
   const [loading, setLoading] = useState(true);
-  const [savedAccounts, setSavedAccounts] = useState([]);
 
   // Persist user to localStorage
   useEffect(() => {
@@ -95,12 +94,6 @@ export const AuthProvider = ({ children }) => {
     };
     initializeAuth();
   }, []);
-
-  // Load saved accounts when user changes
-  useEffect(() => {
-    if (user?.email) loadSavedAccounts();
-    else setSavedAccounts([]);
-  }, [user?.email]);
 
   const checkSession = async () => {
     try {
@@ -123,47 +116,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loadSavedAccounts = async () => {
-    try {
-      const res = await fetch(API.GET_SAVED_ACCOUNTS, {
-        method: "GET",
-        credentials: "include",
-      });
-      const result = await res.json();
-      if (result.status === "success") {
-        const normalized = (result.accounts || [])
-          .map(normalizeUserData)
-          .filter((acc) => acc && acc.email);
-        setSavedAccounts(normalized);
-      }
-    } catch (err) {
-      console.error("Load saved accounts error:", err);
-      setSavedAccounts([]);
-    }
-  };
-
-  const login = async (userData, skipAutoSave = false) => {
+  const login = async (userData) => {
     console.log("Login called with userData:", userData);
     const normalized = normalizeUserData(userData);
     console.log("Setting user to:", normalized);
     setUser(normalized);
-
-    // Only auto-save if this is a normal login (not part of add account flow)
-    if (!skipAutoSave && normalized?.email && normalized?.role !== "admin") {
-      try {
-        const formData = new URLSearchParams();
-        formData.append("account_email", normalized.email);
-
-        await fetch(API.SAVE_ACCOUNT, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formData.toString(),
-        });
-      } catch (err) {
-        console.error("Error saving account:", err);
-      }
-    }
   };
 
   const logout = async () => {
@@ -173,63 +130,8 @@ export const AuthProvider = ({ children }) => {
         credentials: "include",
       });
       setUser(null);
-      setSavedAccounts([]);
     } catch (err) {
       console.error("Logout error:", err);
-    }
-  };
-
-  const switchAccount = async (accountEmail) => {
-    try {
-      const formData = new URLSearchParams();
-      formData.append("account_email", accountEmail);
-
-      const res = await fetch(API.SWITCH_ACCOUNT, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: formData.toString(),
-      });
-      const result = await res.json();
-
-      if (result.status === "success") {
-        const normalized = normalizeUserData(result.user);
-        setUser(normalized);
-
-        setTimeout(async () => {
-          await loadSavedAccounts();
-        }, 50);
-
-        return { success: true, user: normalized };
-      }
-
-      return { success: false, message: result.message };
-    } catch (err) {
-      console.error("Switch account error:", err);
-      return { success: false, message: "Network error" };
-    }
-  };
-
-  const removeAccount = async (accountEmail) => {
-    try {
-      const formData = new URLSearchParams();
-      formData.append("account_email", accountEmail);
-
-      const res = await fetch(API.REMOVE_SAVED_ACCOUNT, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: formData.toString(),
-      });
-      const result = await res.json();
-      if (result.status === "success") {
-        await loadSavedAccounts();
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error("Remove account error:", err);
-      return false;
     }
   };
 
@@ -238,13 +140,9 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         loading,
-        savedAccounts,
         login,
         logout,
         checkSession,
-        switchAccount,
-        removeAccount,
-        loadSavedAccounts,
       }}>
       {children}
     </AuthContext.Provider>

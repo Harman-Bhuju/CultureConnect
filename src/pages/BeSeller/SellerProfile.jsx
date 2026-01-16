@@ -138,7 +138,7 @@ const SellerProfile = () => {
   };
 
   if (isLoading) {
-    return (<Loading message='Loading Profile...'  />);
+    return (<Loading message='Loading Profile...' />);
   }
 
   if (!sellerData) {
@@ -171,14 +171,14 @@ const SellerProfile = () => {
           {/* Banner */}
           <div className="relative w-full h-64 bg-gray-200">
             <img
-              src={`${BASE_URL}/seller_img_datas/seller_banners/${sellerData.store_banner}`}
+              src={`${BASE_URL}/uploads/seller_img_datas/seller_banners/${sellerData.store_banner}`}
               alt="Store Banner"
               className="w-full h-full object-cover"
             />
             {/* Profile Picture */}
             <div className="absolute -bottom-16 left-6 w-32 h-32 border-4 border-white rounded-full overflow-hidden shadow-lg bg-white">
               <img
-                src={`${BASE_URL}/seller_img_datas/seller_logos/${sellerData.store_logo}`}
+                src={`${BASE_URL}/uploads/seller_img_datas/seller_logos/${sellerData.store_logo}`}
                 alt="Store Logo"
                 className="w-full h-full object-cover"
               />
@@ -215,14 +215,13 @@ const SellerProfile = () => {
               {/* Action Buttons */}
               {!isOwnProfile ? (
                 <div className="flex gap-3 mt-4 md:mt-0">
-                  <button 
+                  <button
                     onClick={handleFollowToggle}
                     disabled={followLoading}
-                    className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${
-                      isFollowing 
-                        ? "bg-gray-200 text-gray-800 hover:bg-gray-300" 
+                    className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${isFollowing
+                        ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
                         : "bg-gray-800 text-white hover:bg-gray-700"
-                    } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                      } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     {followLoading ? (
                       <>
@@ -231,8 +230,8 @@ const SellerProfile = () => {
                       </>
                     ) : (
                       <>
-                        <Heart 
-                          className={`w-4 h-4 ${isFollowing ? "fill-current" : ""}`} 
+                        <Heart
+                          className={`w-4 h-4 ${isFollowing ? "fill-current" : ""}`}
                         />
                         <span>{isFollowing ? "Following" : "Follow"}</span>
                       </>
@@ -260,21 +259,19 @@ const SellerProfile = () => {
               <nav className="flex gap-4 text-gray-600">
                 <button
                   onClick={() => setActiveTab("products")}
-                  className={`py-3 px-2 font-medium transition-colors ${
-                    activeTab === "products"
+                  className={`py-3 px-2 font-medium transition-colors ${activeTab === "products"
                       ? "border-b-2 border-blue-600 text-blue-600"
                       : "hover:text-gray-800"
-                  }`}
+                    }`}
                 >
                   Products
                 </button>
                 <button
                   onClick={() => setActiveTab("about")}
-                  className={`py-3 px-2 font-medium transition-colors ${
-                    activeTab === "about"
+                  className={`py-3 px-2 font-medium transition-colors ${activeTab === "about"
                       ? "border-b-2 border-blue-600 text-blue-600"
                       : "hover:text-gray-800"
-                  }`}
+                    }`}
                 >
                   About
                 </button>

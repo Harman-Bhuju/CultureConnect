@@ -38,7 +38,7 @@ export default function FollowingPage() {
           name: seller.store_name,
           bio: seller.store_description || 'Seller at CultureConnect',
           category: seller.category || 'Products',
-          avatar: `${BASE_URL}/seller_img_datas/seller_logos/${seller.store_logo}`,
+          avatar: `${BASE_URL}/uploads/seller_img_datas/seller_logos/${seller.store_logo}`,
           followers: seller.followers || 0,
           isFollowing: seller.is_following
         }));
@@ -227,8 +227,8 @@ export default function FollowingPage() {
           <button
             onClick={() => setActiveTab('sellers')}
             className={`flex-1 py-3 text-center font-semibold transition ${activeTab === 'sellers'
-                ? 'text-black border-b-2 border-black'
-                : 'text-gray-500 hover:text-black'
+              ? 'text-black border-b-2 border-black'
+              : 'text-gray-500 hover:text-black'
               }`}
           >
             Sellers ({sellerFollowing.length})
@@ -236,8 +236,8 @@ export default function FollowingPage() {
           <button
             onClick={() => setActiveTab('teachers')}
             className={`flex-1 py-3 text-center font-semibold transition ${activeTab === 'teachers'
-                ? 'text-black border-b-2 border-black'
-                : 'text-gray-500 hover:text-black'
+              ? 'text-black border-b-2 border-black'
+              : 'text-gray-500 hover:text-black'
               }`}
           >
             Teachers ({teacherFollowing.length})

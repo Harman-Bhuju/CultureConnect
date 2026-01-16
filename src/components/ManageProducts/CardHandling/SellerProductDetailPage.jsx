@@ -391,7 +391,7 @@ const SellerProductDetailPage = () => {
           <div className="space-y-4">
             <div className="relative aspect-square bg-white rounded-lg overflow-hidden border shadow-sm">
               <img
-                src={`${BASE_URL}/product_images/${product.images?.[selectedImage]}`}
+                src={`${BASE_URL}/uploads/product_images/${product.images?.[selectedImage]}`}
                 alt={product.productName}
                 className="w-full h-full object-cover"
               />
@@ -424,7 +424,7 @@ const SellerProductDetailPage = () => {
                       }`}
                   >
                     <img
-                      src={`${BASE_URL}/product_images/${img}`}
+                      src={`${BASE_URL}/uploads/product_images/${img}`}
                       alt={`Thumbnail ${idx + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -645,7 +645,7 @@ const SellerProductDetailPage = () => {
                 sellerId={sellerId}
               />
             )}
-             {activeTab === "performance" && (
+            {activeTab === "performance" && (
               <div className="space-y-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Metrics</h3>
 

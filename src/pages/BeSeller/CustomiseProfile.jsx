@@ -93,15 +93,15 @@ function CustomiseProfile() {
           esewaPhone: profile.esewa_phone || "",
           primaryCategory: profile.category || "",
         };
-        
+
         setUserData(loadedData);
         setInitialData(loadedData); // Store initial data for comparison
 
         if (profile.store_logo) {
-          setProfilePreview(`${BASE_URL}/seller_img_datas/seller_logos/${profile.store_logo}`);
+          setProfilePreview(`${BASE_URL}/uploads/seller_img_datas/seller_logos/${profile.store_logo}`);
         }
         if (profile.store_banner) {
-          setBannerPreview(`${BASE_URL}/seller_img_datas/seller_banners/${profile.store_banner}`);
+          setBannerPreview(`${BASE_URL}/uploads/seller_img_datas/seller_banners/${profile.store_banner}`);
         }
       }
     } catch (err) {
@@ -134,11 +134,11 @@ function CustomiseProfile() {
     municipals: [],
     wards: [],
     selectedProvince: "",
-    setSelectedProvince: () => {},
+    setSelectedProvince: () => { },
     selectedDistrict: "",
-    setSelectedDistrict: () => {},
+    setSelectedDistrict: () => { },
     selectedMunicipal: "",
-    setSelectedMunicipal: () => {},
+    setSelectedMunicipal: () => { },
   };
   const [selectedWard, setSelectedWard] = useState(userData.ward);
 
@@ -405,10 +405,10 @@ function CustomiseProfile() {
     const dataChanged = Object.keys(userData).some(
       key => userData[key] !== initialData[key]
     );
-    
+
     // Check if new images have been uploaded (File objects indicate new uploads)
     const imagesChanged = (profileFile instanceof File) || (bannerFile instanceof File);
-    
+
     return dataChanged || imagesChanged;
   };
 
@@ -456,7 +456,7 @@ function CustomiseProfile() {
 
       if (result.status === "success") {
         const sellerId = result.data?.seller_id;
-        
+
         if (!sellerId) {
           console.error("No seller_id in response:", result);
           toast.error("Profile updated but couldn't redirect");
@@ -464,7 +464,7 @@ function CustomiseProfile() {
         }
 
         toast.success("Profile updated successfully!");
-        
+
         // Wait a moment for toast to show, then navigate
         setTimeout(() => {
           navigate(`/sellerprofile/${sellerId}`);
@@ -804,7 +804,7 @@ function CustomiseProfile() {
               onDistrictChange={(v) => { setSelectedDistrict(v); setSelectedMunicipal(""); setSelectedWard(""); }}
               onMunicipalChange={(v) => { setSelectedMunicipal(v); setSelectedWard(""); }}
               onWardChange={(v) => setSelectedWard(v)}
-              initialLocation={`${userData.province}, ${userData.district}, ${userData.municipality}, ${userData.ward}`}  
+              initialLocation={`${userData.province}, ${userData.district}, ${userData.municipality}, ${userData.ward}`}
             />
           ) : (
             <div />

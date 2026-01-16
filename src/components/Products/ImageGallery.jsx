@@ -18,7 +18,7 @@ const ImageGallery = ({ product, selectedImage, setSelectedImage }) => {
     <div className="space-y-4">
       <div className="relative aspect-square bg-white rounded-lg overflow-hidden border shadow-sm">
         <img
-          src={`${BASE_URL}/product_images/${product.images?.[selectedImage]}`}
+          src={`${BASE_URL}/uploads/product_images/${product.images?.[selectedImage]}`}
           alt={product.productName}
           className="w-full h-full object-cover"
         />
@@ -39,7 +39,7 @@ const ImageGallery = ({ product, selectedImage, setSelectedImage }) => {
           </>
         )}
       </div>
-      
+
       {/* Thumbnails */}
       {product.images?.length > 1 && (
         <div className="flex gap-2 overflow-x-auto">
@@ -47,14 +47,13 @@ const ImageGallery = ({ product, selectedImage, setSelectedImage }) => {
             <button
               key={idx}
               onClick={() => setSelectedImage(idx)}
-              className={`border-2 rounded-lg overflow-hidden w-20 h-20 flex-shrink-0 transition ${
-                selectedImage === idx ? "border-blue-600 shadow-md" : "border-gray-300 hover:border-gray-400"
-              }`}
+              className={`border-2 rounded-lg overflow-hidden w-20 h-20 flex-shrink-0 transition ${selectedImage === idx ? "border-blue-600 shadow-md" : "border-gray-300 hover:border-gray-400"
+                }`}
             >
-              <img 
-                src={`${BASE_URL}/product_images/${img}`} 
-                alt={`Thumbnail ${idx + 1}`} 
-                className="w-full h-full object-cover" 
+              <img
+                src={`${BASE_URL}/uploads/product_images/${img}`}
+                alt={`Thumbnail ${idx + 1}`}
+                className="w-full h-full object-cover"
               />
             </button>
           ))}

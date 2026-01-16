@@ -35,7 +35,7 @@ const ProductListRow = ({ product, onView, onEdit, onDelete }) => {
   // Image
   const productImage = product.images?.[0];
   const imageUrl = productImage
-    ? `${BASE_URL}/product_images/${productImage}`
+    ? `${BASE_URL}/uploads/product_images/${productImage}`
     : '/placeholder-image.png';
 
   const productName = product.productName || product.name || 'Unnamed Product';
@@ -113,13 +113,12 @@ const ProductListRow = ({ product, onView, onEdit, onDelete }) => {
       {/* Status */}
       <div className="col-span-1">
         <span
-          className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
-            product.status === 'Active'
+          className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${product.status === 'Active'
               ? 'bg-green-100 text-green-700'
               : product.status === 'Draft'
-              ? 'bg-gray-100 text-gray-700'
-              : 'bg-yellow-100 text-yellow-700'
-          }`}
+                ? 'bg-gray-100 text-gray-700'
+                : 'bg-yellow-100 text-yellow-700'
+            }`}
         >
           {product.status}
         </span>

@@ -1,5 +1,5 @@
 // ProductDetailPage.jsx - Connected to Database
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
 import toast from "react-hot-toast";
@@ -72,47 +72,52 @@ const ProductDetailPage = () => {
     }
   };
 
-const checkWishlistStatus = async () => {
-  try {
-    const response = await fetch(API.GET_WISHLIST_ITEMS, {
-      method: 'GET',
-      credentials: 'include',
-    });
+  const checkWishlistStatus = async () => {
+    try {
+      const response = await fetch(API.GET_WISHLIST_ITEMS, {
+        method: 'GET',
+        credentials: 'include',
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    const items = Array.isArray(data.items) ? data.items : [];
+      const items = Array.isArray(data.items) ? data.items : [];
 
-    const inWishlist = items.some(
-      item => Number(item.product_id) === Number(id)
-    );
+      const inWishlist = items.some(
+        item => Number(item.product_id) === Number(id)
+      );
 
-    setIsWishlisted(inWishlist);
-  } catch (err) {
-    console.error('Error checking wishlist status:', err);
-    setIsWishlisted(false);
-  }
-};
+      setIsWishlisted(inWishlist);
+    } catch (err) {
+      console.error('Error checking wishlist status:', err);
+      setIsWishlisted(false);
+    }
+  };
 
-useEffect(() => {
-  fetchProductDetails();
-}, [id]);
+  useEffect(() => {
+    fetchProductDetails();
+  }, [id]);
 
-useEffect(() => {
-  if (user) {
-    checkWishlistStatus();
-  }
-}, [user, id]);
+  useEffect(() => {
+    if (user) {
+      checkWishlistStatus();
+    }
+  }, [user, id]);
 
+
+  const toastShown = useRef(false);
 
   // SINGLE error handler - only handle errors ONCE
   useEffect(() => {
+    if (toastShown.current) return;
+
     const params = new URLSearchParams(location.search);
     const paymentStatus = params.get('payment');
     const error = params.get('error');
 
     // Only show toast if we have BOTH error and failed status
     if (paymentStatus === 'failed' && error) {
+      toastShown.current = true;
       toast.error(decodeURIComponent(error), { duration: 5000 });
 
       // Clean up URL immediately to prevent double toast
@@ -229,53 +234,53 @@ useEffect(() => {
     });
   };
 
-const handleWishlist = async () => {
+  const handleWishlist = async () => {
 
 
-  const nextState = !isWishlisted;
-  setIsWishlisted(nextState); // optimistic UI update
+    const nextState = !isWishlisted;
+    setIsWishlisted(nextState); // optimistic UI update
 
-  const loadingToast = toast.loading(
-    nextState ? "Adding to wishlist..." : "Removing from wishlist..."
-  );
-
-  try {
-    let data;
-    if (nextState) {
-      // ADD
-      const formData = new FormData();
-      formData.append('productId', product.id);
-      const res = await fetch(API.ADD_TO_WISHLIST, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
-      data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Failed to add');
-    } else {
-      // REMOVE - NOW SEND productId
-      const formData = new FormData();
-      formData.append('productId', product.id);  // ← THIS IS KEY
-
-      const res = await fetch(API.REMOVE_FROM_WISHLIST, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
-      data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Failed to remove');
-    }
-
-    toast.dismiss(loadingToast);
-    toast.success(
-      nextState ? "Added to wishlist ❤️" : "Removed from wishlist 💔"
+    const loadingToast = toast.loading(
+      nextState ? "Adding to wishlist..." : "Removing from wishlist..."
     );
-  } catch (err) {
-    setIsWishlisted(!nextState); // rollback
-    toast.dismiss(loadingToast);
-    toast.error(err.message || "Wishlist update failed");
-  }
-};
+
+    try {
+      let data;
+      if (nextState) {
+        // ADD
+        const formData = new FormData();
+        formData.append('productId', product.id);
+        const res = await fetch(API.ADD_TO_WISHLIST, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData,
+        });
+        data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Failed to add');
+      } else {
+        // REMOVE - NOW SEND productId
+        const formData = new FormData();
+        formData.append('productId', product.id);  // ← THIS IS KEY
+
+        const res = await fetch(API.REMOVE_FROM_WISHLIST, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData,
+        });
+        data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Failed to remove');
+      }
+
+      toast.dismiss(loadingToast);
+      toast.success(
+        nextState ? "Added to wishlist ❤️" : "Removed from wishlist 💔"
+      );
+    } catch (err) {
+      setIsWishlisted(!nextState); // rollback
+      toast.dismiss(loadingToast);
+      toast.error(err.message || "Wishlist update failed");
+    }
+  };
 
 
   const handleBack = () => {

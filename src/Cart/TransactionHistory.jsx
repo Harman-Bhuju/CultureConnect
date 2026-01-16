@@ -137,11 +137,11 @@ const TransactionHistory = ({ selectedPeriod }) => {
             </div>
             <p className="text-gray-500 font-medium">No completed orders yet</p>
             <p className="text-sm text-gray-400 mt-1">
-              {selectedPeriod === 'This month' 
+              {selectedPeriod === 'This month'
                 ? 'No completed orders this month'
                 : selectedPeriod === 'This year'
-                ? 'No completed orders this year'
-                : 'Completed orders will appear here'}
+                  ? 'No completed orders this year'
+                  : 'Completed orders will appear here'}
             </p>
           </div>
         ) : (
@@ -168,7 +168,7 @@ const TransactionHistory = ({ selectedPeriod }) => {
                         <div className="flex items-start gap-4">
                           <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
                             <img
-                              src={`${BASE_URL}/product_images/${order.productImage}`}
+                              src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
                               alt={order.productName}
                               className="w-full h-full object-cover"
                             />
@@ -244,7 +244,7 @@ const TransactionHistory = ({ selectedPeriod }) => {
                                 {order.payment_method}
                               </div>
                               <div className="text-xs text-gray-500">
-                              Ordered at {order.orderDate}
+                                Ordered at {order.orderDate}
                               </div>
                             </div>
                           </div>

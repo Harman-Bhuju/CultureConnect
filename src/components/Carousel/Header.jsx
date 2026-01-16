@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import API,{BASE_URL} from "../../Configs/ApiEndpoints";
+import API, { BASE_URL } from "../../Configs/ApiEndpoints";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -39,17 +39,17 @@ export default function Header() {
     {
       title: "Learn Folk Dance.",
       image:
-       images_culture,
+        images_culture,
     },
     {
       title: "Learn Sarangi",
       image:
-       download_1,
+        download_1,
     },
     {
       title: "Learn Dance from Experts",
       image:
-       download_2,
+        download_2,
     },
   ];
 
@@ -61,7 +61,7 @@ export default function Header() {
         setError(null);
 
         const response = await fetch(
-         API.GET_POPULAR_WEEKLY_PRODUCTS
+          API.GET_POPULAR_WEEKLY_PRODUCTS
         );
 
         if (!response.ok) {
@@ -124,63 +124,63 @@ export default function Header() {
 
             {/* Products Carousel */}
             {/* Products Carousel */}
-{!isLoading && !error && frequentSearches.length > 0 && (
-  <Swiper
-    modules={[Navigation, Autoplay]}
-    autoplay={{ delay: 3000, disableOnInteraction: false }}
-    navigation={{
-      prevEl: ".prev-btn",
-      nextEl: ".next-btn",
-    }}
-    loop
-    spaceBetween={12}
-    breakpoints={{
-      1280: { slidesPerView: 3 },
-      500: { slidesPerView: 2 },
-      0: { slidesPerView: 2 },
-    }}
-    className="pb-10"
-  >
-    {frequentSearches.map((item, index) => {
-      // Compute correct image URL for this specific item
-      const getFirstImage = () => {
-        if (item.image && item.image.length > 0) {
-          return Array.isArray(item.image) ? item.image[0] : item.image;
-        }
-        return item.image || item.image_url || item.imageUrl || null;
-      };
+            {!isLoading && !error && frequentSearches.length > 0 && (
+              <Swiper
+                modules={[Navigation, Autoplay]}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                navigation={{
+                  prevEl: ".prev-btn",
+                  nextEl: ".next-btn",
+                }}
+                loop
+                spaceBetween={12}
+                breakpoints={{
+                  1280: { slidesPerView: 3 },
+                  500: { slidesPerView: 2 },
+                  0: { slidesPerView: 2 },
+                }}
+                className="pb-10"
+              >
+                {frequentSearches.map((item, index) => {
+                  // Compute correct image URL for this specific item
+                  const getFirstImage = () => {
+                    if (item.image && item.image.length > 0) {
+                      return Array.isArray(item.image) ? item.image[0] : item.image;
+                    }
+                    return item.image || item.image_url || item.imageUrl || null;
+                  };
 
-      const rawImage = getFirstImage();
-      const imageUrl = rawImage
-        ? rawImage.startsWith("http")
-          ? rawImage
-          : `${BASE_URL}/product_images/${rawImage}`
-        : "/placeholder-image.png";
+                  const rawImage = getFirstImage();
+                  const imageUrl = rawImage
+                    ? rawImage.startsWith("http")
+                      ? rawImage
+                      : `${BASE_URL}/uploads/product_images/${rawImage}`
+                    : "/placeholder-image.png";
 
-      return (
-        <SwiperSlide key={item.id || index}>
-          <div className="bg-gray-50 rounded-lg p-1 sm:p-3 hover:shadow-md transition cursor-pointer">
-            <div className="aspect-square bg-white rounded overflow-hidden">
-              <img
-                src={imageUrl}
-                alt={item.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
+                  return (
+                    <SwiperSlide key={item.id || index}>
+                      <div className="bg-gray-50 rounded-lg p-1 sm:p-3 hover:shadow-md transition cursor-pointer">
+                        <div className="aspect-square bg-white rounded overflow-hidden">
+                          <img
+                            src={imageUrl}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
 
-            <h3
-              className={`mt-2 text-[9px] sm:text-xs md:text-sm font-medium text-gray-700 line-clamp-1 
+                        <h3
+                          className={`mt-2 text-[9px] sm:text-xs md:text-sm font-medium text-gray-700 line-clamp-1 
               ${isCollapsed ? "lg:text-sm" : "lg:text-xs"}`}
-            >
-              {item.title}
-            </h3>
-          </div>
-        </SwiperSlide>
-      );
-    })}
-  </Swiper>
-)}
+                        >
+                          {item.title}
+                        </h3>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
+            )}
 
             {/* Empty State */}
             {!isLoading && !error && frequentSearches.length === 0 && (
@@ -204,50 +204,50 @@ export default function Header() {
           </div>
         </div>
 
-       <div className="h-full">
-  <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-blue-500 rounded-lg shadow overflow-hidden h-full">
-    <Swiper
-      modules={[Pagination, Autoplay]}
-      autoplay={{ delay: 3500, disableOnInteraction: false }}
-      loop
-      slidesPerView={1}
-      pagination={{
-        clickable: true,
-        bulletClass: "swiper-pagination-bullet",
-        bulletActiveClass: "swiper-pagination-bullet-active",
-      }}
-      className="h-full"
-    >
-      {manufacturers.map((item, index) => (
-        <SwiperSlide key={index}>
-          <div className="relative h-full w-full group">
-            {/* Image */}
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full h-full object-cover"
-            />
+        <div className="h-full">
+          <div className="bg-gradient-to-br from-blue-300 via-blue-400 to-blue-500 rounded-lg shadow overflow-hidden h-full">
+            <Swiper
+              modules={[Pagination, Autoplay]}
+              autoplay={{ delay: 3500, disableOnInteraction: false }}
+              loop
+              slidesPerView={1}
+              pagination={{
+                clickable: true,
+                bulletClass: "swiper-pagination-bullet",
+                bulletActiveClass: "swiper-pagination-bullet-active",
+              }}
+              className="h-full"
+            >
+              {manufacturers.map((item, index) => (
+                <SwiperSlide key={index}>
+                  <div className="relative h-full w-full group">
+                    {/* Image */}
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
 
-            {/* Content Overlay (Bottom-aligned) */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end items-center pb-12 px-4 text-center">
-              
-              {/* Title positioned nicely above the button */}
-              <h3 className="text-white text-sm sm:text-base md:text-lg font-bold mb-3 leading-tight drop-shadow-lg max-w-[90%]">
-                {item.title}
-              </h3>
+                    {/* Content Overlay (Bottom-aligned) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end items-center pb-12 px-4 text-center">
 
-              {/* Action Button */}
-              <button className="bg-red-500 hover:bg-red-600 text-white text-[10px] sm:text-xs md:text-sm font-semibold px-6 py-2 sm:py-2.5 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-lg">
-                View Courses
-              </button>
-              
-            </div>
+                      {/* Title positioned nicely above the button */}
+                      <h3 className="text-white text-sm sm:text-base md:text-lg font-bold mb-3 leading-tight drop-shadow-lg max-w-[90%]">
+                        {item.title}
+                      </h3>
+
+                      {/* Action Button */}
+                      <button className="bg-red-500 hover:bg-red-600 text-white text-[10px] sm:text-xs md:text-sm font-semibold px-6 py-2 sm:py-2.5 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-lg">
+                        View Courses
+                      </button>
+
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  </div>
-</div>
+        </div>
       </div>
     </div>
   );

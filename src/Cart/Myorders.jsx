@@ -58,7 +58,7 @@ const MyOrders = ({ selectedPeriod }) => {
   const getDateGroupKey = (orderDateString) => {
     // Parse the formatted date string (e.g., "16 December 2024 3:45 PM")
     const parts = orderDateString.split(' ');
-    
+
     if (selectedPeriod === 'This month') {
       // For "This month", group by full date: "16 December 2024"
       return `${parts[0]} ${parts[1]} ${parts[2]}`;
@@ -71,22 +71,22 @@ const MyOrders = ({ selectedPeriod }) => {
   // Filter and sort recent orders
   const filteredOrders = useMemo(() => {
     let filtered = [...recentOrders];
-    
+
     if (paymentStatusFilter !== 'all') {
       filtered = filtered.filter(order => order.payment_status === paymentStatusFilter);
     }
-    
+
     if (orderStatusFilter !== 'all') {
       filtered = filtered.filter(order => order.status === orderStatusFilter);
     }
-    
+
     // Sort by parsing the date string back to Date object
     filtered.sort((a, b) => {
       const dateA = new Date(a.orderDate);
       const dateB = new Date(b.orderDate);
       return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
     });
-    
+
     return filtered;
   }, [recentOrders, paymentStatusFilter, orderStatusFilter, sortOrder]);
 
@@ -176,7 +176,7 @@ const MyOrders = ({ selectedPeriod }) => {
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               </div>
-              
+
               <div className="relative">
                 <select
                   value={orderStatusFilter}
@@ -189,7 +189,7 @@ const MyOrders = ({ selectedPeriod }) => {
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               </div>
-              
+
               <div className="relative">
                 <select
                   value={sortOrder}
@@ -261,12 +261,12 @@ const MyOrders = ({ selectedPeriod }) => {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
                           <img
-                            src={`${BASE_URL}/product_images/${order.productImage}`}
+                            src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
                             alt={order.productName}
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        
+
                         <div className="flex-1">
                           <div className="flex items-start justify-between">
                             <div>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Filter, ChevronDown, Package, MapPin, Clock, Hash, CreditCard ,CheckCircle2} from 'lucide-react';
+import { Filter, ChevronDown, Package, MapPin, Clock, Hash, CreditCard, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useOrders from '../../../../hooks/useOrders';
 import { BASE_URL } from '../../../../Configs/ApiEndpoints';
@@ -35,28 +35,28 @@ const RecentOrders = ({ selectedPeriod }) => {
 
     return orders;
   }, [allRecentOrders, statusFilter, sortOrder]);
-const formatDateLabel = (dateString, selectedPeriod) => {
-  const date = new Date(dateString);
-  
-  if (selectedPeriod === 'This month') {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  } else {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long'
-    });
-  }
-};
+  const formatDateLabel = (dateString, selectedPeriod) => {
+    const date = new Date(dateString);
+
+    if (selectedPeriod === 'This month') {
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } else {
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long'
+      });
+    }
+  };
   const groupedOrders = useMemo(() => {
     const groups = {};
 
     filteredOrders.forEach(order => {
       const date = new Date(order.orderDate);
-          const dateKey = formatDateLabel(date, selectedPeriod);
+      const dateKey = formatDateLabel(date, selectedPeriod);
 
 
       if (!groups[dateKey]) {
@@ -189,11 +189,11 @@ const formatDateLabel = (dateString, selectedPeriod) => {
             </div>
             <p className="text-gray-500 font-medium">No orders found</p>
             <p className="text-sm text-gray-400 mt-1">
-              {selectedPeriod === 'This month' 
+              {selectedPeriod === 'This month'
                 ? 'No active orders this month'
                 : selectedPeriod === 'This year'
-                ? 'No active orders this year'
-                : 'Try adjusting your filters'}
+                  ? 'No active orders this year'
+                  : 'Try adjusting your filters'}
             </p>
           </div>
         ) : (
@@ -217,10 +217,10 @@ const formatDateLabel = (dateString, selectedPeriod) => {
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-shrink-0 w-12 h-12  rounded-lg flex items-center justify-center">
-                          <img
-                           src={`${BASE_URL}/product_images/${order.productImage}`}
-                           alt={order.productName} />
-                          </div>
+                        <img
+                          src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
+                          alt={order.productName} />
+                      </div>
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
                           <div>

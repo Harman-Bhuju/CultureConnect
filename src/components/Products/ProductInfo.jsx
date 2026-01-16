@@ -16,7 +16,7 @@ const ProductInfo = ({
   sellerId,
 }) => {
   const navigate = useNavigate();
-  
+
   const renderStars = (rating = 0) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -57,7 +57,7 @@ const ProductInfo = ({
 
   // Check if product requires size selection
   const hasSizes = product.adultSizes?.length > 0 || product.childAgeGroups?.length > 0;
-  
+
   // Validation function
   const validateBeforeAction = () => {
     if (hasSizes && !selectedSize) {
@@ -84,13 +84,13 @@ const ProductInfo = ({
   return (
     <div className="space-y-6 mt-5">
       <div>
-        <div 
-          className="flex items-center gap-3 mb-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors" 
+        <div
+          className="flex items-center gap-3 mb-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
           onClick={() => navigate(`/sellerprofile/${sellerId}`)}
         >
           <div className="flex-shrink-0">
             <img
-              src={`${BASE_URL}/seller_img_datas/seller_logos/${product.storeLogo}`}
+              src={`${BASE_URL}/uploads/seller_img_datas/seller_logos/${product.storeLogo}`}
               alt={product.storeName}
               className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
             />
@@ -105,7 +105,7 @@ const ProductInfo = ({
             </span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2 mb-2">
           <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
             {getCategoryDisplay(product.category)}
@@ -116,9 +116,9 @@ const ProductInfo = ({
             </span>
           )}
         </div>
-        
+
         <h1 className="text-3xl font-bold text-gray-900">{product.productName}</h1>
-        
+
         {product.culture && (
           <p className="text-sm text-gray-600 mt-2">
             Culture: <span className="font-semibold">{product.culture}</span>
@@ -140,13 +140,12 @@ const ProductInfo = ({
       </div>
 
       <div
-        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
-          product.stock > 20
+        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${product.stock > 20
             ? "bg-green-50 text-green-700"
             : product.stock > 0
-            ? "bg-yellow-50 text-yellow-700"
-            : "bg-red-50 text-red-700"
-        }`}
+              ? "bg-yellow-50 text-yellow-700"
+              : "bg-red-50 text-red-700"
+          }`}
       >
         <Package className="w-4 h-4" />
         <span className="font-semibold">
@@ -159,24 +158,23 @@ const ProductInfo = ({
         <div className="space-y-3">
           <div>
             <label className="font-semibold text-gray-900 mb-2 block">
-              {product.audience 
-                ? `Select Size (${getAudienceDisplay(product.audience)}):` 
+              {product.audience
+                ? `Select Size (${getAudienceDisplay(product.audience)}):`
                 : "Select Size:"}
               <span className="text-red-500 ml-1">*</span>
             </label>
             <div className="flex flex-wrap gap-2">
-              {(product.adultSizes?.length > 0 
-                ? product.adultSizes 
+              {(product.adultSizes?.length > 0
+                ? product.adultSizes
                 : product.childAgeGroups
               )?.map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
-                  className={`px-4 py-2 border-2 rounded-lg font-medium transition ${
-                    selectedSize === size
+                  className={`px-4 py-2 border-2 rounded-lg font-medium transition ${selectedSize === size
                       ? "border-blue-600 bg-blue-50 text-blue-700"
                       : "border-gray-300 hover:border-gray-400 text-gray-700"
-                  }`}
+                    }`}
                 >
                   {size}
                 </button>
@@ -247,8 +245,8 @@ const ProductInfo = ({
           <p className="text-sm font-semibold text-gray-700 mb-2">Tags:</p>
           <div className="flex flex-wrap gap-2">
             {product.tags.map((tag, idx) => (
-              <span 
-                key={idx} 
+              <span
+                key={idx}
                 className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors"
               >
                 #{tag}

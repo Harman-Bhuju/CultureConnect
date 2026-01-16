@@ -384,6 +384,7 @@ export default function CheckOutPage() {
       const formData = new FormData();
       formData.append('order_id', orderId);
       formData.append('payment_method', selectedPayment);
+      formData.append('frontend_url', window.location.origin);
 
       const response = await fetch(API.CONFIRM_PAYMENT, {
         method: 'POST',

@@ -4,9 +4,9 @@ import { Star, StarHalf, MessageCircle, Edit, Trash2, Store } from "lucide-react
 import { useAuth } from "../../context/AuthContext";
 import API, { BASE_URL } from "../../Configs/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
-const Reviews = ({ product, openReviewForm, openDeleteModal,sellerId }) => {
+const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
   const { user } = useAuth();
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const renderStars = (rating = 0) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -159,7 +159,7 @@ const navigate = useNavigate();
 
                               {reply.storeLogo ? (
                                 <img
-                                  src={`${BASE_URL}/seller_img_datas/seller_logos/${reply.storeLogo}`}
+                                  src={`${BASE_URL}/uploads/seller_img_datas/seller_logos/${reply.storeLogo}`}
                                   alt={reply.storeName}
                                   className="w-8 h-8 rounded-full object-cover"
                                 />
@@ -172,7 +172,7 @@ const navigate = useNavigate();
 
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <p className="font-semibold text-gray-900 cursor-pointer"  onClick={() => navigate(`/sellerprofile/${sellerId}`)}>
+                                <p className="font-semibold text-gray-900 cursor-pointer" onClick={() => navigate(`/sellerprofile/${sellerId}`)}>
                                   {reply.storeName || 'Seller'}
                                 </p>
                                 <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">

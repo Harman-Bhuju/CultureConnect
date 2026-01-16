@@ -22,7 +22,7 @@ export default function ProductCard({ product, onEdit, onDelete, onView }) {
     onDelete(product);
   };
 
- 
+
 
 
   // Check if stock is low (matches ProductManagement threshold of 10)
@@ -31,12 +31,12 @@ export default function ProductCard({ product, onEdit, onDelete, onView }) {
 
   // Get the first image from the images array, or use a placeholder
   const productImage = product.images?.[0];
-  
+
   // Construct full image URL
-  const imageUrl = productImage 
-    ? `${BASE_URL}/product_images/${productImage}` 
-    : '/placeholder-image.png'; 
-  
+  const imageUrl = productImage
+    ? `${BASE_URL}/uploads/product_images/${productImage}`
+    : '/placeholder-image.png';
+
   // Get product name (handle both 'name' and 'productName' properties)
   const productName = product.productName || product.name || 'Unnamed Product';
 
@@ -44,20 +44,19 @@ export default function ProductCard({ product, onEdit, onDelete, onView }) {
     <div
       onClick={handleCardClick}
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group relative">
-      
+
       {/* Status and Low Stock Badges */}
       <div className="absolute top-3 left-3 z-10 flex gap-2">
         {/* Status Badge */}
-        <span className={`px-2 py-1 text-xs font-medium rounded ${
-          product.status === 'Active' 
-            ? 'bg-green-100 text-green-700' 
+        <span className={`px-2 py-1 text-xs font-medium rounded ${product.status === 'Active'
+            ? 'bg-green-100 text-green-700'
             : product.status === 'Draft'
-            ? 'bg-gray-100 text-gray-700'
-            : 'bg-yellow-100 text-yellow-700'
-        }`}>
+              ? 'bg-gray-100 text-gray-700'
+              : 'bg-yellow-100 text-yellow-700'
+          }`}>
           {product.status}
         </span>
-        
+
         {/* Low Stock Badge */}
         {isLowStock && (
           <span className="px-2 py-1 text-xs font-medium rounded bg-orange-100 text-orange-700 flex items-center gap-1">
@@ -119,20 +118,19 @@ export default function ProductCard({ product, onEdit, onDelete, onView }) {
         </p>
 
         {/* Rating - Only show if reviews exist */}
-          <div className="mb-3">
-            <Rating rating={product.averageRating} reviews={product.totalReviews} />
-          </div>
+        <div className="mb-3">
+          <Rating rating={product.averageRating} reviews={product.totalReviews} />
+        </div>
 
         {/* Price and Stock */}
         <div className="flex items-center justify-between mt-auto">
           <span className="text-xl font-bold text-orange-600">
             Rs. {typeof product.price === 'number' ? product.price.toLocaleString() : parseFloat(product.price).toLocaleString()}
           </span>
-          <span className={`text-sm font-medium ${
-            isLowStock 
-              ? 'text-orange-600' 
+          <span className={`text-sm font-medium ${isLowStock
+              ? 'text-orange-600'
               : 'text-gray-500'
-          } ${isOutOfStock ? 'text-red-600' : ''}`}>
+            } ${isOutOfStock ? 'text-red-600' : ''}`}>
             {product.stock} in stock
           </span>
         </div>

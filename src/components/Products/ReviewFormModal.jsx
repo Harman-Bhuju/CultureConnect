@@ -77,7 +77,7 @@ const ReviewFormModal = ({
           {/* Product Info */}
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
             <img
-              src={`${BASE_URL}/product_images/${product.images?.[0]}`}
+              src={`${BASE_URL}/uploads/product_images/${product.images?.[0]}`}
               alt={product.productName}
               className="w-20 h-20 object-cover rounded-lg"
             />
@@ -95,7 +95,7 @@ const ReviewFormModal = ({
               {renderStars(reviewRating, true, setReviewRating)}
             </div>
           </div>
-          
+
           {/* Review Text */}
           <div className="space-y-2">
             <label className="block font-semibold text-gray-900">

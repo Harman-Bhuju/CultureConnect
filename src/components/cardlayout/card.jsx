@@ -40,7 +40,7 @@ export default function Card({ product }) {
   const imageUrl = rawImage
     ? rawImage.startsWith("http")
       ? rawImage
-      : `${BASE_URL}/product_images/${rawImage}`
+      : `${BASE_URL}/uploads/product_images/${rawImage}`
     : "/placeholder-image.png";
 
   // Product name fallback

@@ -135,7 +135,7 @@ export default function PaymentPage({
                       <div className="flex items-center gap-1 mt-1">
                         {order.store_logo ? (
                           <img
-                            src={`${BASE_URL}/seller_img_datas/seller_logos/${order.store_logo}`}
+                            src={`${BASE_URL}/uploads/seller_img_datas/seller_logos/${order.store_logo}`}
                             alt={order.store_name}
                             className="w-4 h-4 rounded-full object-cover"
                           />

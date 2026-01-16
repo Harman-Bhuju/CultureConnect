@@ -20,7 +20,7 @@ import GoogleLoginButton from "./GoogleLoginButton";
 import API from "../../Configs/ApiEndpoints";
 
 export default function LoginForm({ className, mode = "login", ...props }) {
-  const { login, user, loadSavedAccounts, savedAccounts } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,15 +36,10 @@ export default function LoginForm({ className, mode = "login", ...props }) {
   });
   const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [isAddingAccount, setIsAddingAccount] = useState(false);
 
   useEffect(() => {
     setSignState(mode === "login" ? "Login" : "Create Account");
-
-    const searchParams = new URLSearchParams(location.search);
-    const addingAccount = searchParams.get("action") === "add";
-    setIsAddingAccount(addingAccount);
-  }, [mode, location.search]);
+  }, [mode]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -100,7 +95,6 @@ export default function LoginForm({ className, mode = "login", ...props }) {
             state: {
               otpEmail: form.email,
               source: "signup",
-              isAddingAccount: isAddingAccount,
               originalUserEmail: user?.email,
             },
             replace: true,
@@ -129,103 +123,13 @@ export default function LoginForm({ className, mode = "login", ...props }) {
         const result = await response.json();
 
         if (result.status === "success") {
-       if (isAddingAccount) {
-  const loginEmail = form.email.toLowerCase();
-  const currentUserEmail = user?.email?.toLowerCase();
-
-  if (result.user.role === "admin") {
-    toast.error("Admin accounts cannot be added!");
-    setLoading(false);
-    navigate("/", { replace: true });
-    return;
-  }
-
-  // Check if adding own account
-  if (loginEmail === currentUserEmail) {
-    toast.error("You cannot add your own account!");
-    setLoading(false);
-    navigate("/", { replace: true });
-    return;
-  }
-
-  // Check if already saved
-  const isAlreadySaved = savedAccounts.some(
-    (acc) => acc.email.toLowerCase() === loginEmail
-  );
-  if (isAlreadySaved) {
-    toast.error("This account has already been added!");
-    setLoading(false);
-    navigate("/", { replace: true });
-    return;
-  }
-
-  try {
-    // Save account with ORIGINAL user context
-    const saveFormData = new URLSearchParams();
-    saveFormData.append("original_user_email", currentUserEmail);
-    saveFormData.append("account_email", loginEmail);
-
-    const saveResponse = await fetch(
-      API.SAVE_ACCOUNT,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: saveFormData.toString(),
-      }
-    );
-    const saveResult = await saveResponse.json();
-
-    if (saveResult.status === "success" || saveResult.status === "exists") {
-      // ✅ Backend session is already on NEW account from login.php
-      // Refresh session to ensure frontend syncs with backend
-      
-      try {
-        const checkRes = await fetch(
-          API.CHECK_SESSION,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        const checkResult = await checkRes.json();
-        
-        if (checkResult.status === "success" && checkResult.logged_in) {
-          // Use session data to ensure sync
-          await login(checkResult.user, true);
-          
-          // Load saved accounts after small delay
-          setTimeout(async () => {
-            await loadSavedAccounts();
-          }, 100);
-          
-          toast.success("Account added and logged in successfully!");
-          navigate("/", { replace: true });
-        } else {
-          toast.error("Session sync failed");
-        }
-      } catch (sessionErr) {
-        console.error("Session check error:", sessionErr);
-        toast.error("Failed to sync session");
-      }
-    } else {
-      toast.error(saveResult.message || "Failed to save account");
-    }
-  } catch (err) {
-    console.error("Save account error:", err);
-    toast.error("Failed to save account");
-  }
-} else {
-            // Normal login flow
-            await login(result.user);
-            toast.success("Logged in successfully!");
-            if (result.user.role === "admin") {
-    navigate("/admin", { replace: true }); // admin panel
-  } else {
-    navigate("/", { replace: true }); // normal user
-  }
+          // Normal login flow
+          await login(result.user);
+          toast.success("Logged in successfully!");
+          if (result.user.role === "admin") {
+            navigate("/admin", { replace: true }); // admin panel
+          } else {
+            navigate("/", { replace: true }); // normal user
           }
         } else {
           setFieldErrors({ password: result.message || "Login failed" });
@@ -241,17 +145,9 @@ export default function LoginForm({ className, mode = "login", ...props }) {
 
   const switchToOther = () => {
     if (signState === "Login") {
-      if (isAddingAccount) {
-        navigate("/signup?action=add");
-      } else {
-        navigate("/signup");
-      }
+      navigate("/signup");
     } else {
-      if (isAddingAccount) {
-        navigate("/login?action=add");
-      } else {
-        navigate("/login");
-      }
+      navigate("/login");
     }
   };
 
@@ -264,18 +160,12 @@ export default function LoginForm({ className, mode = "login", ...props }) {
               className={cn(signState === "Login" ? "gap-6" : "gap-4")}>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">
-                  {isAddingAccount
-                    ? "Add Another Account"
-                    : signState === "Login"
+                  {signState === "Login"
                     ? "Welcome back"
                     : "Create your account"}
                 </h1>
                 <p className="text-muted-foreground text-balance">
-                  {isAddingAccount
-                    ? `${
-                        signState === "Login" ? "Log in" : "Sign up"
-                      } to add this account to your device`
-                    : signState === "Login"
+                  {signState === "Login"
                     ? "Login to your CultureConnect account"
                     : "Enter your email below to create your account"}
                 </p>
@@ -312,17 +202,15 @@ export default function LoginForm({ className, mode = "login", ...props }) {
                       <FieldLabel htmlFor="password" className="mx-1.5">
                         Password
                       </FieldLabel>
-                      {!isAddingAccount && (
-                        <a
-                          href=""
-                          className="text-sm underline-offset-2 hover:underline"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            navigate("/forgotpassword");
-                          }}>
-                          Forgot your password?
-                        </a>
-                      )}
+                      <a
+                        href=""
+                        className="text-sm underline-offset-2 hover:underline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate("/forgotpassword");
+                        }}>
+                        Forgot your password?
+                      </a>
                     </div>
                     <Input
                       id="password"
@@ -405,14 +293,8 @@ export default function LoginForm({ className, mode = "login", ...props }) {
                   {loading ? (
                     <div className="flex items-center gap-2">
                       <Spinner className="w-4 h-4" />
-                      {isAddingAccount
-                        ? "Adding..."
-                        : signState === "Login"
-                        ? "Logging..."
-                        : "Creating..."}
+                      {signState === "Login" ? "Logging..." : "Creating..."}
                     </div>
-                  ) : isAddingAccount ? (
-                    "Add Account"
                   ) : (
                     signState
                   )}
@@ -425,57 +307,31 @@ export default function LoginForm({ className, mode = "login", ...props }) {
 
               <Field className="grid grid-cols-3 gap-4">
                 <div className="col-span-3 flex justify-center">
-                  <GoogleLoginButton isAddingAccount={isAddingAccount} />
+                  <GoogleLoginButton />
                 </div>
               </Field>
 
-              {!isAddingAccount && (
-                <FieldDescription className="text-center">
-                  {signState === "Login" ? (
-                    <>
-                      Don&apos;t have an account?{" "}
-                      <span
-                        className="cursor-pointer underline"
-                        onClick={switchToOther}>
-                        Sign Up
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      Already have an account?{" "}
-                      <span
-                        className="cursor-pointer underline"
-                        onClick={switchToOther}>
-                        Sign In
-                      </span>
-                    </>
-                  )}
-                </FieldDescription>
-              )}
-
-              {isAddingAccount && (
-                <FieldDescription className="text-center">
-                  {signState === "Login" ? (
-                    <>
-                      Don&apos;t have an account?{" "}
-                      <span
-                        className="cursor-pointer underline"
-                        onClick={switchToOther}>
-                        Create Account
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      Already have an account?{" "}
-                      <span
-                        className="cursor-pointer underline"
-                        onClick={switchToOther}>
-                        Login
-                      </span>
-                    </>
-                  )}
-                </FieldDescription>
-              )}
+              <FieldDescription className="text-center">
+                {signState === "Login" ? (
+                  <>
+                    Don&apos;t have an account?{" "}
+                    <span
+                      className="cursor-pointer underline"
+                      onClick={switchToOther}>
+                      Sign Up
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    Already have an account?{" "}
+                    <span
+                      className="cursor-pointer underline"
+                      onClick={switchToOther}>
+                      Sign In
+                    </span>
+                  </>
+                )}
+              </FieldDescription>
             </FieldGroup>
           </form>
 

@@ -73,20 +73,20 @@ const SellerReviewsView = ({ product, onSubmitReply, onDeleteReply, sellerId }) 
     setIsSubmitting(true);
     try {
       const replyId = isEdit ? editingReply?.id : null;
-      
+
       // Call parent handler but DON'T await it
       onSubmitReply(reviewId, replyText.trim(), replyId);
-      
+
       // Optimistically update local state immediately
-      setLocalReviews(prevReviews => 
+      setLocalReviews(prevReviews =>
         prevReviews.map(review => {
           if (review.id === reviewId) {
             if (isEdit) {
               // Update existing reply
               return {
                 ...review,
-                replies: review.replies.map(r => 
-                  r.id === editingReply.id 
+                replies: review.replies.map(r =>
+                  r.id === editingReply.id
                     ? { ...r, replyText: replyText.trim(), updatedAt: new Date().toISOString() }
                     : r
                 )
@@ -142,15 +142,15 @@ const SellerReviewsView = ({ product, onSubmitReply, onDeleteReply, sellerId }) 
 
   const handleConfirmDelete = async () => {
     if (!reviewToDelete) return;
-    
+
     const { replyId, reviewId } = reviewToDelete;
-    
+
     try {
       // Call parent handler but DON'T await it
       onDeleteReply(replyId);
-      
+
       // Optimistically update local state immediately
-      setLocalReviews(prevReviews => 
+      setLocalReviews(prevReviews =>
         prevReviews.map(review => {
           if (review.id === reviewId) {
             return {
@@ -257,7 +257,7 @@ const SellerReviewsView = ({ product, onSubmitReply, onDeleteReply, sellerId }) 
                         <div className="flex items-center gap-2 mb-2">
                           {sellerReply.storeLogo ? (
                             <img
-                              src={`${BASE_URL}/seller_img_datas/seller_logos/${sellerReply.storeLogo}`}
+                              src={`${BASE_URL}/uploads/seller_img_datas/seller_logos/${sellerReply.storeLogo}`}
                               alt={sellerReply.storeName}
                               className="w-7 h-7 rounded-full object-cover"
                             />

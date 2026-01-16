@@ -32,10 +32,10 @@ export default function DraftProductCard({ product, onEdit, onDelete, onView, on
     if (!product.reviews || product.reviews.length === 0) {
       return 0;
     }
-    
+
     const totalRating = product.reviews.reduce((sum, review) => sum + review.rating, 0);
     const average = totalRating / product.reviews.length;
-    
+
     // Round to 1 decimal place for display (e.g., 4.7, 3.5)
     return Math.round(average * 10) / 10;
   };
@@ -45,16 +45,16 @@ export default function DraftProductCard({ product, onEdit, onDelete, onView, on
 
   // Check if stock is low (matches ProductManagement threshold of 10)
   const isLowStock = product.stock <= 10;
-const isOutOfStock = product.stock === 0;
+  const isOutOfStock = product.stock === 0;
   // Get the first image from the images array, or use a placeholder
- const productImage = product.images?.[0];
-  
+  const productImage = product.images?.[0];
+
   // Construct full image URL
-  const imageUrl = productImage 
-    ? `${BASE_URL}/product_images/${productImage}` 
+  const imageUrl = productImage
+    ? `${BASE_URL}/uploads/product_images/${productImage}`
     : '/placeholder-image.png'; // fallback placeholder
-  
-  
+
+
   // Get product name (handle both 'name' and 'productName' properties)
   const productName = product.productName || product.name || 'Unnamed Product';
 
@@ -62,14 +62,14 @@ const isOutOfStock = product.stock === 0;
     <div
       onClick={handleCardClick}
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group relative">
-      
+
       {/* Status and Low Stock Badges */}
       <div className="absolute top-3 left-3 z-10 flex gap-2">
         {/* Draft Badge */}
         <span className="px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">
           Draft
         </span>
-        
+
         {/* Low Stock Badge */}
         {isLowStock && (
           <span className="px-2 py-1 text-xs font-medium rounded bg-orange-100 text-orange-700 flex items-center gap-1">
@@ -77,7 +77,7 @@ const isOutOfStock = product.stock === 0;
             Low Stock
           </span>
         )}
-           {isOutOfStock && (
+        {isOutOfStock && (
           <span className="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-700 flex items-center gap-1">
             <AlertTriangle className="w-3 h-3" />
             Out of Stock
@@ -145,11 +145,10 @@ const isOutOfStock = product.stock === 0;
           <span className="text-xl font-bold text-orange-600">
             Rs. {typeof product.price === 'number' ? product.price.toLocaleString() : parseFloat(product.price).toLocaleString()}
           </span>
-          <span className={`text-sm font-medium ${
-            isLowStock 
-              ? 'text-orange-600' 
+          <span className={`text-sm font-medium ${isLowStock
+              ? 'text-orange-600'
               : 'text-gray-500'
-          }${isOutOfStock ? 'text-red-600' : ''}`}>
+            }${isOutOfStock ? 'text-red-600' : ''}`}>
             {product.stock} in stock
           </span>
         </div>

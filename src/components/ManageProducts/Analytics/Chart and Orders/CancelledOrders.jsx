@@ -218,7 +218,7 @@ const CancelledOrders = ({ selectedPeriod }) => {
                         <div className="flex items-start gap-4">
                           <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
                             <img
-                              src={`${BASE_URL}/product_images/${order.productImage}`}
+                              src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
                               alt={order.productName}
                               className="w-full h-full object-cover"
                             />

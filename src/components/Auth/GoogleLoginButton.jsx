@@ -6,9 +6,9 @@ import { useAuth } from "../../context/AuthContext";
 import { Spinner } from "../ui/spinner";
 import API from "../../Configs/ApiEndpoints";
 
-export default function GoogleLoginButton({ isAddingAccount = false }) {
+export default function GoogleLoginButton() {
   const [loading, setLoading] = useState(false);
-  const { login, user, savedAccounts, loadSavedAccounts } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
 
   const handleGoogleLogin = async (tokenResponse) => {
@@ -22,7 +22,6 @@ export default function GoogleLoginButton({ isAddingAccount = false }) {
       const userInfo = await userInfoResponse.json();
       const { email, picture } = userInfo;
       const loginEmail = email.toLowerCase();
-      const currentUserEmail = user?.email?.toLowerCase();
 
       const formData = new URLSearchParams();
       formData.append("email", email);
@@ -41,80 +40,18 @@ export default function GoogleLoginButton({ isAddingAccount = false }) {
         // User needs to set password (first time Google login)
         toast.success("Please set your password.");
         navigate("/setpassword", {
-          state: { 
+          state: {
             email: loginEmail,
-            isAddingAccount,
-            originalUserEmail: currentUserEmail,
+            originalUserEmail: user?.email,
           },
           replace: true,
         });
       }
       else if (result.status === "not_null") {
-        if (isAddingAccount) {
-          // Check if adding own account
-          if (loginEmail === currentUserEmail) {
-            toast.error("You cannot add your own account!");
-            setLoading(false);
-            navigate("/", { replace: true });
-            return;
-          }
-
-          // Check if already saved
-          const isAlreadySaved = savedAccounts.some(
-            (acc) => acc.email.toLowerCase() === loginEmail
-          );
-          if (isAlreadySaved) {
-            toast.error("This account has already been added!");
-            setLoading(false);
-            navigate("/", { replace: true });
-            return;
-          }
-
-          // Save account to device with original user context
-          const saveFormData = new URLSearchParams();
-          saveFormData.append("original_user_email", currentUserEmail);
-          saveFormData.append("account_email", loginEmail);
-
-          const saveResponse = await fetch(API.SAVE_ACCOUNT, {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: saveFormData.toString(),
-          });
-
-          const saveResult = await saveResponse.json();
-          if (saveResult.status !== "success" && saveResult.status !== "exists") {
-            toast.error(saveResult.message || "Failed to save account");
-            setLoading(false);
-            return;
-          }
-
-          // Stay logged in as the NEW account
-          // Check session to ensure sync
-          const checkRes = await fetch(API.CHECK_SESSION, {
-            method: "GET",
-            credentials: "include",
-          });
-          const checkResult = await checkRes.json();
-
-          if (checkResult.status === "success" && checkResult.logged_in) {
-            await login(checkResult.user, true);
-            
-            setTimeout(async () => {
-              await loadSavedAccounts();
-            }, 100);
-            
-            toast.success("Account added and logged in successfully!");
-            navigate("/", { replace: true });
-          } else {
-            toast.error("Session sync failed");
-          }
-        } else {
-          // Normal login - PHP already set session
-          await login(result.user);
-          toast.success("Logged in successfully!");
-          navigate("/", { replace: true });
-        }
+        // Normal login - PHP already set session
+        await login(result.user);
+        toast.success("Logged in successfully!");
+        navigate("/", { replace: true });
       } else {
         toast.error(result.message || "Login failed");
       }
@@ -124,6 +61,8 @@ export default function GoogleLoginButton({ isAddingAccount = false }) {
     } finally {
       setLoading(false);
     }
+
+
   };
 
   const googleLogin = useGoogleLogin({
@@ -146,7 +85,7 @@ export default function GoogleLoginButton({ isAddingAccount = false }) {
           <>
             <Spinner className="w-5 h-5" />
             <span className="text-sm font-medium text-gray-700">
-              {isAddingAccount ? "Adding..." : "Logging in..."}
+              Logging in...
             </span>
           </>
         ) : (

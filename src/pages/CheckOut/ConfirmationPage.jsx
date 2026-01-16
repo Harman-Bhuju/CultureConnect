@@ -216,7 +216,7 @@ export default function ConfirmationPage({
                 <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex items-center justify-center border border-gray-200">
                   {order.product_image ? (
                     <img
-                      src={`${BASE_URL}/product_images/${order.product_image}`}
+                      src={`${BASE_URL}/uploads/product_images/${order.product_image}`}
                       alt={order.product_name}
                       className="w-full h-full object-cover"
                     />
@@ -231,7 +231,7 @@ export default function ConfirmationPage({
                     <div className="flex items-center gap-2 mt-1">
                       {order.store_logo ? (
                         <img
-                          src={`${BASE_URL}/seller_img_datas/seller_logos/${order.store_logo}`}
+                          src={`${BASE_URL}/uploads/seller_img_datas/seller_logos/${order.store_logo}`}
                           alt={order.store_name}
                           className="w-5 h-5 rounded-full object-cover"
                         />
