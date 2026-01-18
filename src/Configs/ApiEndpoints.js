@@ -3,7 +3,7 @@ const getBaseUrl = () => {
   if (hostname === "localhost" || hostname === "127.0.0.1") {
     return "http://localhost/CultureConnect/backend";
   } else {
-    return `https://earned-supervisor-alloy-gently.trycloudflare.com/CultureConnect/backend`;
+    return `https://scanned-aluminium-decrease-sugar.trycloudflare.com/cultureconnect/backend`;
     // return `http://${hostname}/CultureConnect/backend`;
   }
 };
@@ -22,7 +22,6 @@ const API = {
   SIGNUP_VERIFY: `${BASE_URL}/auth/signup_verify.php`,
   FORGOT_PASSWORD_VERIFY: `${BASE_URL}/auth/forgotpassword_verify.php`,
   LOGOUT: `${BASE_URL}/auth/logout.php`,
-
 
   // User Profile
   UPLOADS: `${BASE_URL}/uploads`,
@@ -53,7 +52,7 @@ const API = {
   GET_USER_LOCATION: `${BASE_URL}/user/get_user_location.php`,
   CONFIRM_PAYMENT: `${BASE_URL}/order/confirm_payment.php`,
 
-  // Cart & Wishlist 
+  // Cart & Wishlist
   GET_CART_ITEMS: `${BASE_URL}/user/user_cart/get_cart_items.php`,
   ADD_TO_CART: `${BASE_URL}/user/user_cart/add_to_cart.php`,
   UPDATE_CART_QUANTITY: `${BASE_URL}/user/user_cart/update_cart_quantity.php`,
@@ -62,7 +61,7 @@ const API = {
   ADD_TO_WISHLIST: `${BASE_URL}/user/user_cart/add_to_wishlist.php`,
   REMOVE_FROM_WISHLIST: `${BASE_URL}/user/user_cart/remove_from_wishlist.php`,
 
-  // Order History 
+  // Order History
   GET_RECENT_ORDERS: `${BASE_URL}/user/user_cart/get_recent_orders.php`,
   GET_CANCELLED_ORDERS: `${BASE_URL}/user/user_cart/get_cancelled_orders.php`,
   GET_COMPLETED_ORDERS: `${BASE_URL}/user/user_cart/get_completed_orders.php`,
