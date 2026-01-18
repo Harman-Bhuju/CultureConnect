@@ -1,10 +1,10 @@
-import { ChevronRight } from "lucide-react"
-import { NavLink, useLocation, useNavigate } from "react-router-dom"
+import { ChevronRight } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../ui/collapsible"
+} from "../ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,38 +15,35 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from "../ui/sidebar"
+} from "../ui/sidebar";
 
 export function NavMain({ items }) {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const currentPath = location.pathname
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentPath = location.pathname;
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   const handleTopLevelClick = (url, hasSubItems) => {
     // If clicking on an item with subitems, navigate to its URL
     if (hasSubItems && url) {
-      navigate(url)
+      navigate(url);
     }
-  }
+  };
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          const hasSubItems = item.items && item.items.length > 0
-          const isTopLevelActive =
-            currentPath === item.url ||
-            (hasSubItems && item.items.some(sub => sub.url === currentPath))
+          const hasSubItems = item.items && item.items.length > 0;
+          // Active state strictly checks if current path matches the item URL
+          // User request: "show active if i have clicked on it no need for sub item"
+          const isTopLevelActive = currentPath === item.url;
 
           return (
             <SidebarMenuItem key={item.title}>
-              <Collapsible
-                open={true}
-                className="group/collapsible"
-              >
+              <Collapsible open={true} className="group/collapsible">
                 {/* Top-level button */}
                 <div className="flex items-center w-full">
                   {hasSubItems ? (
@@ -54,9 +51,10 @@ export function NavMain({ items }) {
                     <SidebarMenuButton
                       tooltip={item.title}
                       className="flex items-center w-full"
-                      data-active={isTopLevelActive && isCollapsed}
-                      onClick={() => handleTopLevelClick(item.url, hasSubItems)}
-                    >
+                      data-active={isTopLevelActive}
+                      onClick={() =>
+                        handleTopLevelClick(item.url, hasSubItems)
+                      }>
                       {item.icon && <item.icon />}
                       <span className="ml-2">{item.title}</span>
                     </SidebarMenuButton>
@@ -66,9 +64,10 @@ export function NavMain({ items }) {
                       asChild
                       tooltip={item.title}
                       className="flex items-center w-full"
-                      data-active={isTopLevelActive}
-                    >
-                      <NavLink to={item.url} className="flex items-center w-full">
+                      data-active={isTopLevelActive}>
+                      <NavLink
+                        to={item.url}
+                        className="flex items-center w-full">
                         {item.icon && <item.icon />}
                         <span className="ml-2">{item.title}</span>
                       </NavLink>
@@ -81,35 +80,33 @@ export function NavMain({ items }) {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {item.items.map((subItem) => {
-                        const isSubActive = currentPath === subItem.url
+                        const isSubActive = currentPath === subItem.url;
                         return (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               asChild
-                              data-active={isSubActive}
-                            >
+                              data-active={isSubActive}>
                               <NavLink
                                 to={subItem.url}
                                 className={`flex items-center w-full ml-3 transition-colors ${
                                   isSubActive
                                     ? "font-semibold text-primary"
                                     : "text-muted-foreground hover:text-foreground"
-                                }`}
-                              >
+                                }`}>
                                 <span>{subItem.title}</span>
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
-                        )
+                        );
                       })}
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 )}
               </Collapsible>
             </SidebarMenuItem>
-          )
+          );
         })}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
