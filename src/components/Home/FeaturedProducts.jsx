@@ -1,26 +1,14 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import {
-  Autoplay,
-  Pagination,
-  Navigation,
-  EffectCoverflow,
-} from "swiper/modules";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { motion } from "framer-motion";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import "swiper/css/effect-coverflow";
 
-import {
-  ShoppingBag,
-  Eye,
-  Heart,
-  ArrowRight,
-  Sparkles,
-  Star,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { products } from "../../data/homeData";
+import Rating from "../Rating/Rating";
 
 const ProductCard = ({ product }) => {
   return (
@@ -31,7 +19,7 @@ const ProductCard = ({ product }) => {
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}>
       <motion.div
-        className="group relative bg-white overflow-hidden border border-gray-200 h-[240px] flex"
+        className="group relative bg-white overflow-hidden border border-gray-200 h-[280px] flex shadow-sm hover:shadow-xl"
         whileHover={{ y: -8 }}
         transition={{ duration: 0.3 }}>
         {/* Image - Wider, Less Height */}
@@ -51,35 +39,31 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Content - Takes remaining space */}
-        <div className="w-3/5 p-4 flex flex-col justify-between">
+        <div className="w-3/5 p-5 flex flex-col justify-between">
           <div>
-            <h3 className="font-bold text-base text-gray-900 group-hover:text-red-600 transition-colors duration-300 line-clamp-2 mb-2">
+            <h3 className="font-bold text-lg text-gray-900 group-hover:text-red-600 transition-colors duration-300 line-clamp-2 mb-2">
               {product.name}
             </h3>
-            <p className="text-xs text-gray-600 mb-2">by {product.artisan}</p>
-            <span className="font-bold text-base text-gray-900">
+            <p className="text-sm text-gray-600 mb-3">by {product.artisan}</p>
+            <span className="font-bold text-lg text-gray-900">
               {product.price}
             </span>
           </div>
 
           <div className="space-y-2">
-            {/* Region & Stock */}
-            <div className="flex justify-between items-center text-xs border-t border-gray-200 pt-2">
-              <span className="text-gray-600">{product.region}</span>
-              <span
-                className={`font-bold ${
-                  product.inStock ? "text-green-600" : "text-red-600"
-                }`}>
-                {product.inStock ? "In Stock" : "Sold Out"}
-              </span>
+            {/* Rating & Stock */}
+            <div className="flex justify-between items-center text-sm border-t border-gray-200 pt-3">
+              <Rating
+                rating={product.rating || 0}
+                reviews={product.reviews || 0}
+              />
             </div>
 
-            {/* Add to Cart Button */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-red-600 text-white py-2 text-xs font-bold hover:bg-red-700 transition-colors duration-300">
-              Add to Cart
+              className="w-full bg-red-600 text-white py-2.5 text-sm font-bold hover:bg-red-700 transition-colors duration-300">
+              Buy Now
             </motion.button>
           </div>
         </div>
@@ -97,7 +81,7 @@ const ProductCard = ({ product }) => {
 
 const FeaturedProducts = () => {
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
+    <section className="py-8 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 mb-12 relative z-10">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
           <motion.div
@@ -154,12 +138,13 @@ const FeaturedProducts = () => {
             1024: { slidesPerView: 2 },
             1280: { slidesPerView: 3 },
           }}
-          className="w-full pb-12"
+          className="w-full pb-10"
           style={{
             "--swiper-pagination-color": "#DC2626",
             "--swiper-pagination-bullet-inactive-color": "#D1D5DB",
             "--swiper-navigation-color": "#DC2626",
             "--swiper-navigation-size": "28px",
+            paddingBottom: "80px",
           }}>
           {products.map((product) => (
             <SwiperSlide key={product.id}>
