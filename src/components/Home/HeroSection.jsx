@@ -6,6 +6,7 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const heroSlides = [
   {
@@ -15,6 +16,7 @@ const heroSlides = [
       "Connect with authentic traditions through our curated marketplace.",
     accent: "#D4AF37",
     gradient: "from-amber-500/20 via-orange-500/10 to-transparent",
+    redirect: "/marketplace",
   },
   {
     image: "/Home-Images/Hero_images/clothing-hero.png",
@@ -22,6 +24,7 @@ const heroSlides = [
     subtitle: "Handcrafted ethnic wear that tells a story of generations.",
     accent: "#DC2626",
     gradient: "from-red-500/20 via-rose-500/10 to-transparent",
+    redirect: "/marketplace/traditional",
   },
   {
     image: "/Home-Images/Hero_images/arts-hero.png",
@@ -29,6 +32,7 @@ const heroSlides = [
     subtitle: "Adorn your space with timeless art from master artisans.",
     accent: "#3B82F6",
     gradient: "from-blue-500/20 via-indigo-500/10 to-transparent",
+    redirect: "/marketplace/arts_decor",
   },
   {
     image: "/Home-Images/Hero_images/instruments-hero.png",
@@ -36,6 +40,7 @@ const heroSlides = [
     subtitle: "Authentic musical instruments handcrafted for perfect sound.",
     accent: "#F59E0B",
     gradient: "from-amber-600/20 via-yellow-500/10 to-transparent",
+    redirect: "/learnculture",
   },
 ];
 
@@ -210,25 +215,28 @@ const HeroSection = ({ containerRef }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1, duration: 0.8 }}
                   className="flex flex-wrap gap-4 pt-4">
-                  <motion.button
-                    whileHover={{ scale: 1.05, x: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="group px-8 py-4 text-black font-semibold text-base rounded-none flex items-center gap-3 transition-all duration-300"
-                    style={{
-                      backgroundColor: heroSlides[currentSlide].accent,
-                      boxShadow: `0 10px 40px ${heroSlides[currentSlide].accent}40`,
-                    }}>
-                    Explore Collection
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-4 border-2 text-white font-semibold text-base backdrop-blur-md hover:bg-white/10 transition-all duration-300"
-                    style={{ borderColor: heroSlides[currentSlide].accent }}>
-                    Learn More
-                  </motion.button>
+                  <Link to={heroSlides[currentSlide].redirect}>
+                    <motion.button
+                      whileHover={{ scale: 1.05, x: 5 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="group px-8 py-4 text-black font-semibold text-base rounded-none flex items-center gap-3 transition-all duration-300"
+                      style={{
+                        backgroundColor: heroSlides[currentSlide].accent,
+                        boxShadow: `0 10px 40px ${heroSlides[currentSlide].accent}40`,
+                      }}>
+                      Explore Collection
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </motion.button>
+                  </Link>
+                  <Link to={heroSlides[currentSlide].redirect}>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-8 py-4 border-2 text-white font-semibold text-base backdrop-blur-md hover:bg-white/10 transition-all duration-300"
+                      style={{ borderColor: heroSlides[currentSlide].accent }}>
+                      Learn More
+                    </motion.button>
+                  </Link>
                 </motion.div>
               </div>
 
