@@ -87,7 +87,7 @@ const API = {
   // Home/Products
   GET_POPULAR_PRODUCTS: `${BASE_URL}/product/seller_product/marketplace/get_popular_products.php`,
   GET_TRENDING_PRODUCTS: `${BASE_URL}/product/seller_product/marketplace/get_trending_products.php`,
-  GET_POPULAR_WEEKLY_PRODUCTS: `${BASE_URL}/product/seller_product/marketplace/get_popular_week.php`,
+  GET_MAY_LIKE_PRODUCTS: `${BASE_URL}/product/seller_product/marketplace/get_may_like.php`,
 
   // Teacher
   TEACHER_REGISTRATION: `${BASE_URL}/teacher/teacher_registration.php`,
