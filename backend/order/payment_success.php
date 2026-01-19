@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config/session_config.php';
 include("../config/dbconnect.php");
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '../../vendor/autoload.php';
 
 use Xentixar\EsewaSdk\Esewa;
 
@@ -10,11 +10,12 @@ try {
     $esewa = new Esewa();
     $response = $esewa->decode();
 
-    $frontend_url = $_GET['fe_url'] ?? 'http://localhost:5173';
+    // Use session-based frontend URL or fallback
+    $frontend_base = $_SESSION['frontend_url'] ?? "http://localhost:5173";
 
     // 1. Decode must succeed
     if (!$response || ($response['status'] ?? '') !== 'COMPLETE') {
-        header("Location: {$frontend_url}/?error=" . urlencode("Invalid payment response") . "&payment=failed");
+        header("Location: {$frontend_base}/?error=" . urlencode("Invalid payment response") . "&payment=failed");
         exit;
     }
 
@@ -22,7 +23,7 @@ try {
     $paid_amount      = $response['total_amount'] ?? null;
 
     if (!$transaction_uuid || !$paid_amount) {
-        header("Location: {$frontend_url}/?error=" . urlencode("Missing payment data") . "&payment=failed");
+        header("Location: {$frontend_base}/?error=" . urlencode("Missing payment data") . "&payment=failed");
         exit;
     }
 
@@ -40,19 +41,19 @@ try {
     $stmt->close();
 
     if (!$transaction) {
-        header("Location: {$frontend_url}/?error=" . urlencode("Transaction not found") . "&payment=failed");
+        header("Location: {$frontend_base}/?error=" . urlencode("Transaction not found") . "&payment=failed");
         exit;
     }
 
     // 3. If already successful → just redirect (idempotent)
     if ($transaction['payment_status'] === 'success') {
-        header("Location: {$frontend_url}/checkout/confirmation/{$transaction['seller_id']}/{$transaction['product_id']}?payment=success");
+        header("Location: {$frontend_base}/checkout/confirmation/{$transaction['seller_id']}/{$transaction['product_id']}?payment=success");
         exit;
     }
 
     // 4. Amount safety check
     if ((float)$paid_amount !== (float)$transaction['amount']) {
-        header("Location: {$frontend_url}/products/{$transaction['seller_id']}/{$transaction['product_id']}?error=" . urlencode("Amount mismatch") . "&payment=failed");
+        header("Location: {$frontend_base}/products/{$transaction['seller_id']}/{$transaction['product_id']}?error=" . urlencode("Amount mismatch") . "&payment=failed");
         exit;
     }
 
@@ -83,17 +84,14 @@ try {
 
     $conn->commit();
 
-    // Get dynamic frontend URL
-    $frontend_url = $_GET['fe_url'] ?? 'http://localhost:5173';
-
     // 6. Success redirect
-    header("Location: {$frontend_url}/checkout/confirmation/{$transaction['seller_id']}/{$transaction['product_id']}?payment=success");
+    header("Location: {$frontend_base}/checkout/confirmation/{$transaction['seller_id']}/{$transaction['product_id']}?payment=success");
     exit;
 } catch (Exception $e) {
     $conn->rollback();
 
-    $frontend_url = $_GET['fe_url'] ?? 'http://localhost:5173';
-    header("Location: {$frontend_url}/?error=" . urlencode("Payment processing error") . "&payment=failed");
+
+    header("Location: {$frontend_base}/?error=" . urlencode("Payment processing error") . "&payment=failed");
     exit;
 }
 

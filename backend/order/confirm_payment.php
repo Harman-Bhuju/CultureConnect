@@ -2,9 +2,10 @@
 require_once __DIR__ . '/../config/session_config.php';
 include("../config/header.php");
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '../../vendor/autoload.php';
 
 use Xentixar\EsewaSdk\Esewa;
+
 
 try {
     $user_email = $_SESSION['user_email'];
@@ -20,6 +21,11 @@ try {
     if (!$order_id) {
         echo json_encode(["success" => false, "error" => "Order ID is required"]);
         exit;
+    }
+
+    // Capture and sessionize the frontend URL for subsequent redirects
+    if (isset($_POST['frontend_url'])) {
+        $_SESSION['frontend_url'] = $_POST['frontend_url'];
     }
 
     $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
@@ -113,23 +119,13 @@ try {
 
             $esewa = new Esewa();
 
-            // Dynamic Base URL for Backend
+            // Dynamically build the backend base URL for callbacks
             $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
             $host = $_SERVER['HTTP_HOST'];
-            // Assuming this script is at /backend/order/confirm_payment.php, we want /backend/order
-            // But verify your directory structure. If CultureConnect/backend is the root, then $_SERVER['REQUEST_URI'] might help
-            // Safest is to rebuild based on known path "CultureConnect/backend/order" or purely relative if eSewa supports it (rarely).
-            // Let's use the HTTP_HOST which gives us localhost or the cloudflare domain.
+            $base_url = "{$protocol}://{$host}/CultureConnect/backend/order";
 
-            // Adjust path if your server root is different
-            $path_prefix = "/CultureConnect/backend/order";
-            $backend_base_url = $protocol . "://" . $host . $path_prefix;
-
-            $frontend_url = $_POST['frontend_url'] ?? 'http://localhost:5173';
-
-            // Pass frontend_url to success/failure scripts via query params
-            $success_url = $backend_base_url . "/payment_success.php?fe_url=" . urlencode($frontend_url);
-            $failure_url = $backend_base_url . "/payment_failure.php?seller_id=" . $order['seller_id'] . "&product_id=" . $order['product_id'] . "&transaction_uuid=" . urlencode($transaction_uuid) . "&fe_url=" . urlencode($frontend_url);
+            $success_url = $base_url . "/payment_success.php";
+            $failure_url = $base_url . "/payment_failure.php?seller_id=" . $order['seller_id'] . "&product_id=" . $order['product_id'] . "&transaction_uuid=" . urlencode($transaction_uuid);
 
             $esewa->config(
                 $success_url,
@@ -143,10 +139,9 @@ try {
                 (float)$delivery_charge
             );
 
-            $payment_form = $esewa->init(false);
-
+            // Set header BEFORE init() outputs the form
             header("Content-Type: text/html; charset=UTF-8");
-            echo $payment_form;
+            $esewa->init(false);  // This echoes the form directly
             exit;
         }
 

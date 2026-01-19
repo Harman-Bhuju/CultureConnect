@@ -2,13 +2,12 @@
 require_once __DIR__ . '/../config/session_config.php';
 include("../config/dbconnect.php");
 
+$frontend_base = $_SESSION['frontend_url'] ?? "http://localhost:5173";
+
 try {
     $transaction_uuid = $_GET['transaction_uuid'] ?? null;
     $seller_id = $_GET['seller_id'] ?? null;
     $product_id = $_GET['product_id'] ?? null;
-
-
-    $frontend_url = $_GET['fe_url'] ?? 'http://localhost:5173';
 
     if ($transaction_uuid) {
         $stmt = $conn->prepare("
@@ -48,25 +47,23 @@ try {
             $redirect_seller_id = $seller_id ?? $transaction['seller_id'];
             $redirect_product_id = $product_id ?? $transaction['product_id'];
 
-            header("Location: {$frontend_url}/products/{$redirect_seller_id}/{$redirect_product_id}?error=" . urlencode("Payment failed or cancelled. Please try again.") . "&payment=failed");
+            header("Location: {$frontend_base}/products/{$redirect_seller_id}/{$redirect_product_id}?error=" . urlencode("Payment failed or cancelled. Please try again.") . "&payment=failed");
             exit;
         }
     }
 
     if ($seller_id && $product_id) {
-        header("Location: {$frontend_url}/products/{$seller_id}/{$product_id}?error=" . urlencode("Payment was cancelled. Please try again.") . "&payment=failed");
+        header("Location: {$frontend_base}/products/{$seller_id}/{$product_id}?error=" . urlencode("Payment was cancelled. Please try again.") . "&payment=failed");
         exit;
     }
 
-    header("Location: {$frontend_url}/?error=" . urlencode("Payment failed. Please try again.") . "&payment=failed");
+    header("Location: {$frontend_base}/?error=" . urlencode("Payment failed. Please try again.") . "&payment=failed");
     exit;
 } catch (Exception $e) {
     if (isset($_GET['seller_id']) && isset($_GET['product_id'])) {
-        $frontend_url = $_GET['fe_url'] ?? 'http://localhost:5173';
-        header("Location: {$frontend_url}/products/{$_GET['seller_id']}/{$_GET['product_id']}?error=" . urlencode("Payment error occurred") . "&payment=failed");
+        header("Location: {$frontend_base}/products/{$_GET['seller_id']}/{$_GET['product_id']}?error=" . urlencode("Payment error occurred") . "&payment=failed");
     } else {
-        $frontend_url = $_GET['fe_url'] ?? 'http://localhost:5173';
-        header("Location: {$frontend_url}/?error=" . urlencode("Payment error") . "&payment=failed");
+        header("Location: {$frontend_base}/?error=" . urlencode("Payment error") . "&payment=failed");
     }
     exit;
 }
