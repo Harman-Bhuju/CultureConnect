@@ -73,17 +73,15 @@ const Marketplace = () => {
                 <CategoryNav />
               </div>
 
+              <div className="space-y-8">
+                {/* Trending Products */}
+                <TrendingCarousel />
 
-              {/* Trending Products */}
+                {/* Seller Spotlight */}
+                <SellerSpotlight />
 
-              <TrendingCarousel />
-
-
-              {/* Seller Spotlight */}
-              <SellerSpotlight />
-
-              <MayLike />
-
+                <MayLike />
+              </div>
             </div>
           ) : (
             /* Sub-page Content */
