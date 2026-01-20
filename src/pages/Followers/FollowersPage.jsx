@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Users } from "lucide-react";
 import API, { BASE_URL } from "../../Configs/ApiEndpoints";
+import default_logo from "../../assets/default-image.jpg";
 
 const FollowersPage = () => {
   const { sellerId, teacherId } = useParams();
@@ -9,6 +10,15 @@ const FollowersPage = () => {
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [profileName, setProfileName] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
+
+  const getAvatarUrl = (filename) => {
+    if (!filename || filename === "null" || filename === "undefined") return default_logo;
+    if (filename.startsWith("http") || filename.startsWith("blob:") || filename.startsWith("data:")) {
+      return filename;
+    }
+    return `${BASE_URL}/uploads/profile_pics/${filename}`;
+  };
 
   // Determine if this is a seller or teacher followers page
   const isSeller = !!sellerId;
@@ -18,21 +28,32 @@ const FollowersPage = () => {
     const fetchFollowers = async () => {
       try {
         setLoading(true);
+        console.log("🔍 FollowersPage Params:", { sellerId, teacherId, isSeller, id });
+
         const endpoint = isSeller
           ? `${API.GET_SELLER_FOLLOWERS}?seller_id=${id}`
           : `${API.GET_TEACHER_FOLLOWERS}?teacher_id=${id}`;
 
+        console.log("🚀 Fetching from endpoint:", endpoint);
+
         const response = await fetch(endpoint, {
           credentials: "include",
         });
-        const data = await response.json();
 
-        if (data.success) {
+        console.log("📡 Response Status:", response.status);
+
+        const data = await response.json();
+        console.log("✅ API Response:", data);
+
+        if (data.status === "success" || data.success) {
           setFollowers(data.followers || []);
           setProfileName(data.name || (isSeller ? "Seller" : "Teacher"));
+          setProfileImage(data.profile_pic);
+        } else {
+          console.error("❌ API returned error:", data);
         }
       } catch (error) {
-        console.error("Error fetching followers:", error);
+        console.error("❌ Error fetching followers:", error);
       } finally {
         setLoading(false);
       }
@@ -57,8 +78,21 @@ const FollowersPage = () => {
             </button>
             <div className="h-6 w-px bg-gray-300"></div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center shadow">
-                <Users className="w-4 h-4 text-white" />
+              <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 shadow-sm bg-gray-100 flex items-center justify-center">
+                {profileImage ? (
+                  <img
+                    src={getAvatarUrl(profileImage)}
+                    alt={profileName}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = default_logo;
+                    }}
+                  />
+                ) : (
+                  <div className="bg-gradient-to-br from-blue-500 to-indigo-500 w-full h-full flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                )}
               </div>
               <div>
                 <h1 className="text-lg font-bold text-gray-900">Followers</h1>
@@ -109,23 +143,14 @@ const FollowersPage = () => {
                   className="flex items-center px-4 py-4 hover:bg-gray-50 transition-colors gap-4">
                   {/* Avatar */}
                   <div className="flex-shrink-0">
-                    {follower.profile_pic ? (
-                      <img
-                        src={`${BASE_URL}/uploads/profile_pics/${follower.profile_pic}`}
-                        alt={follower.username}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-100 shadow-sm"
-                        onError={(e) => {
-                          e.target.src =
-                            "https://ui-avatars.com/api/?name=" +
-                            follower.username +
-                            "&background=random";
-                        }}
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg border-2 border-gray-100 shadow-sm">
-                        {follower.username?.charAt(0).toUpperCase()}
-                      </div>
-                    )}
+                    <img
+                      src={getAvatarUrl(follower.profile_pic)}
+                      alt={follower.username}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-100 shadow-sm"
+                      onError={(e) => {
+                        e.target.src = default_logo;
+                      }}
+                    />
                   </div>
 
                   {/* Info */}
