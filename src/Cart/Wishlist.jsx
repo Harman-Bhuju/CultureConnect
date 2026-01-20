@@ -83,38 +83,48 @@ const Wishlist = ({
       </div>
 
       {sortedWishlist.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-3 relative">
-            <Heart className="w-8 h-8 text-pink-500" />
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center animate-pulse">
-              <Sparkles className="w-2.5 h-2.5 text-white" />
+        <div className="text-center py-16">
+          <div className="w-20 h-20 bg-gradient-to-br from-pink-100 to-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-4 relative shadow-lg shadow-pink-200/50">
+            <Heart className="w-10 h-10 text-pink-500" />
+            <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center animate-pulse shadow-md">
+              <Sparkles className="w-3 h-3 text-white" />
             </div>
           </div>
-          <p className="text-gray-900 font-semibold mb-1">Nothing saved yet</p>
-          <p className="text-xs text-gray-500 mb-4">
-            Start adding your favorites
+          <p className="text-gray-900 font-bold text-lg mb-2">
+            Nothing saved yet
           </p>
-          <button className="px-5 py-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all">
+          <p className="text-sm text-gray-500 mb-6 max-w-xs mx-auto">
+            Discover beautiful cultural products and save your favorites here
+          </p>
+          <button className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-sm font-semibold rounded-full hover:shadow-xl hover:shadow-pink-500/30 transition-all duration-300 hover:-translate-y-0.5">
             Browse Products
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
           {sortedWishlist.map((item) => (
             <div
               key={item.id}
-              className="group relative bg-gradient-to-b from-gray-50 to-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-pink-200 transition-all duration-300">
+              className="group relative cursor-pointer bg-white shadow-sm hover:shadow-md transition rounded-lg overflow-hidden">
               {/* Remove Button */}
               <button
-                onClick={() => removeFromWishlist(item.id)}
-                className="absolute top-2 right-2 z-10 w-7 h-7 bg-white/90 backdrop-blur-sm text-rose-500 hover:bg-rose-500 hover:text-white rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100 flex items-center justify-center">
-                <Trash2 className="w-3.5 h-3.5" />
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeFromWishlist(item.id);
+                }}
+                className="absolute top-1.5 right-1.5 z-20 w-6 h-6 bg-white/90 backdrop-blur-sm text-rose-500 hover:bg-rose-500 hover:text-white rounded-full shadow transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <Trash2 className="w-3 h-3" />
               </button>
 
-              {/* Status Badge */}
+              {/* Heart Badge */}
+              <div className="absolute top-1.5 left-1.5 z-10 w-5 h-5 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center shadow">
+                <Heart className="w-2.5 h-2.5 text-white fill-white" />
+              </div>
+
+              {/* Out of Stock Badge */}
               {!item.inStock && (
-                <div className="absolute top-2 left-2 z-10 bg-red-500/90 backdrop-blur-sm text-white text-xs font-medium px-2 py-0.5 rounded-full">
-                  Unavailable
+                <div className="absolute top-7 left-1.5 z-10 bg-gray-900/80 text-white text-[8px] font-semibold px-1.5 py-0.5 rounded-full">
+                  Sold Out
                 </div>
               )}
 
@@ -123,49 +133,50 @@ const Wishlist = ({
                 onClick={() =>
                   navigate(`/products/${item.sellerId}/${item.productId}`)
                 }
-                className={`relative w-full h-40 bg-gray-50 flex items-center justify-center cursor-pointer border-b border-gray-100 overflow-hidden ${!item.inStock ? "opacity-50" : ""}`}>
+                className={`relative bg-gray-200 overflow-hidden aspect-[4/4] ${!item.inStock ? "opacity-50" : ""}`}>
                 {item.productImage ? (
                   <img
                     src={`${BASE_URL}/uploads/product_images/${item.productImage}`}
                     alt={item.productName}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <Package className="w-10 h-10 text-gray-400 group-hover:scale-110 transition-transform duration-300" />
-                )}
-                {item.inStock && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Package className="w-8 h-8 text-gray-400" />
+                  </div>
                 )}
               </div>
 
               {/* Product Info */}
-              <div className="p-3">
+              <div className="p-1.5 sm:p-2">
                 <h3
                   onClick={() =>
                     navigate(`/products/${item.sellerId}/${item.productId}`)
                   }
-                  className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1 min-h-[2.5rem] leading-tight cursor-pointer hover:text-pink-600 transition-colors">
+                  className="text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-700 mb-1 line-clamp-1 cursor-pointer hover:text-pink-600 transition-colors">
                   {item.productName}
                 </h3>
-
-                <div className="flex items-baseline gap-1.5 mb-3">
-                  <span className="text-base font-bold text-pink-600">
+                <div className="flex items-center gap-1 mb-1.5">
+                  <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-pink-600">
                     Rs. {item.price.toLocaleString()}
                   </span>
                 </div>
 
-                {/* Action Button */}
+                {/* Add to Cart Button */}
                 {item.inStock ? (
                   <button
-                    onClick={() => addToCart(item)}
-                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-xs font-semibold py-2 rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5">
-                    <ShoppingCart className="w-3.5 h-3.5" />
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(item);
+                    }}
+                    className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-[8px] sm:text-[9px] font-semibold py-1.5 rounded transition-all flex items-center justify-center gap-1">
+                    <ShoppingCart className="w-3 h-3" />
                     Add to Cart
                   </button>
                 ) : (
-                  <button className="w-full bg-gray-100 text-gray-400 text-xs font-semibold py-2 rounded-lg cursor-not-allowed flex items-center justify-center gap-1.5">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    Out of Stock
+                  <button className="w-full bg-gray-100 text-gray-400 text-[8px] sm:text-[9px] font-semibold py-1.5 rounded cursor-not-allowed flex items-center justify-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Unavailable
                   </button>
                 )}
               </div>

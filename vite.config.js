@@ -1,46 +1,40 @@
-import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
-import path from 'path';
+import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    react()
-  ],
+  plugins: [tailwindcss(), react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ["react", "react-dom"],
   },
   server: {
     allowedHosts: true,
     watch: {
-      ignored: [
-        '**/node_modules/**',
-        '**/dist/**',
-        '**/build/**'
-      ]
-    }
+      ignored: ["**/node_modules/**", "**/dist/**", "**/build/**"],
+    },
   },
   optimizeDeps: {
     include: [
-      'react', 
-      'react-dom', 
-      'react-router-dom',
-      'tailwind-merge',
-      'class-variance-authority',
-      '@radix-ui/react-slot'
+      "react",
+      "react-dom",
+      "react-router-dom",
+      "tailwind-merge",
+      "class-variance-authority",
+      "@radix-ui/react-slot",
     ],
-    force: true
+    force: true,
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-        }
-      }
-    }
-  }
-})
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+        },
+      },
+    },
+  },
+});
