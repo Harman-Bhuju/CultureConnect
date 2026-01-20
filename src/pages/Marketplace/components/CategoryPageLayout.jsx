@@ -17,11 +17,9 @@ const CategoryPageLayout = ({ title, description, products }) => {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [selectedRating, setSelectedRating] = useState(null);
   const [selectedConditions, setSelectedConditions] = useState([]);
-  const [selectedAvailability, setSelectedAvailability] = useState([]);
 
   // Filter Options
   const conditions = ["New", "Like New", "Used - Good", "Vintage"];
-  const availability = ["In Stock", "Made to Order"];
 
   // 1. Filter Logic - NOW FULLY FUNCTIONAL
   const filteredProducts = useMemo(() => {
@@ -43,26 +41,9 @@ const CategoryPageLayout = ({ title, description, products }) => {
           return false;
         }
       }
-
-      // Availability Filter - Now properly implemented
-      if (selectedAvailability.length > 0) {
-        if (
-          !product.availability ||
-          !selectedAvailability.includes(product.availability)
-        ) {
-          return false;
-        }
-      }
-
       return true;
     });
-  }, [
-    products,
-    priceRange,
-    selectedRating,
-    selectedConditions,
-    selectedAvailability,
-  ]);
+  }, [products, priceRange, selectedRating, selectedConditions]);
 
   // 2. Sort Logic
   const sortedProducts = useMemo(() => {
@@ -97,18 +78,10 @@ const CategoryPageLayout = ({ title, description, products }) => {
     setCurrentPage(1); // Reset to first page when filter changes
   };
 
-  const toggleAvailability = (item) => {
-    setSelectedAvailability((prev) =>
-      prev.includes(item) ? prev.filter((a) => a !== item) : [...prev, item],
-    );
-    setCurrentPage(1); // Reset to first page when filter changes
-  };
-
   const clearAllFilters = () => {
     setPriceRange({ min: "", max: "" });
     setSelectedRating(null);
     setSelectedConditions([]);
-    setSelectedAvailability([]);
     setCurrentPage(1);
   };
 
@@ -127,22 +100,32 @@ const CategoryPageLayout = ({ title, description, products }) => {
                 <input
                   type="number"
                   placeholder="Min"
+                  step="100"
+                  min="0"
                   className="w-full p-3 bg-gray-50 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none transition-all placeholder-gray-400"
                   value={priceRange.min}
                   onChange={(e) => {
-                    setPriceRange({ ...priceRange, min: e.target.value });
-                    setCurrentPage(1);
+                    const val = e.target.value;
+                    if (val === "" || parseFloat(val) >= 0) {
+                      setPriceRange({ ...priceRange, min: val });
+                      setCurrentPage(1);
+                    }
                   }}
                 />
                 <span className="text-gray-300 font-light">to</span>
                 <input
                   type="number"
                   placeholder="Max"
+                  step="100"
+                  min="0"
                   className="w-full p-3 bg-gray-50 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none transition-all placeholder-gray-400"
                   value={priceRange.max}
                   onChange={(e) => {
-                    setPriceRange({ ...priceRange, max: e.target.value });
-                    setCurrentPage(1);
+                    const val = e.target.value;
+                    if (val === "" || parseFloat(val) >= 0) {
+                      setPriceRange({ ...priceRange, max: val });
+                      setCurrentPage(1);
+                    }
                   }}
                 />
               </div>
@@ -219,40 +202,6 @@ const CategoryPageLayout = ({ title, description, products }) => {
                         onChange={() => toggleCondition(item)}
                       />
                       {selectedConditions.includes(item) && (
-                        <Check size={12} className="text-white" />
-                      )}
-                    </div>
-                    <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
-                      {item}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Availability Filter - NOW ADDED */}
-            <div>
-              <h3 className="font-bold text-gray-900 mb-5 text-sm uppercase tracking-wider border-l-4 border-red-600 pl-3">
-                Availability
-              </h3>
-              <div className="space-y-3">
-                {availability.map((item) => (
-                  <label
-                    key={item}
-                    className="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                        selectedAvailability.includes(item)
-                          ? "bg-red-600 border-red-600"
-                          : "border-gray-300 group-hover:border-red-400"
-                      }`}>
-                      <input
-                        type="checkbox"
-                        className="hidden"
-                        checked={selectedAvailability.includes(item)}
-                        onChange={() => toggleAvailability(item)}
-                      />
-                      {selectedAvailability.includes(item) && (
                         <Check size={12} className="text-white" />
                       )}
                     </div>

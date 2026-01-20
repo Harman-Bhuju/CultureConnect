@@ -146,22 +146,32 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
                 <input
                   type="number"
                   placeholder="Min"
+                  step="100"
+                  min="0"
                   className="w-full p-3 bg-gray-50 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all placeholder-gray-400"
                   value={priceRange.min}
                   onChange={(e) => {
-                    setPriceRange({ ...priceRange, min: e.target.value });
-                    setCurrentPage(1);
+                    const val = e.target.value;
+                    if (val === "" || parseFloat(val) >= 0) {
+                      setPriceRange({ ...priceRange, min: val });
+                      setCurrentPage(1);
+                    }
                   }}
                 />
                 <span className="text-gray-300 font-light">to</span>
                 <input
                   type="number"
                   placeholder="Max"
+                  step="100"
+                  min="0"
                   className="w-full p-3 bg-gray-50 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all placeholder-gray-400"
                   value={priceRange.max}
                   onChange={(e) => {
-                    setPriceRange({ ...priceRange, max: e.target.value });
-                    setCurrentPage(1);
+                    const val = e.target.value;
+                    if (val === "" || parseFloat(val) >= 0) {
+                      setPriceRange({ ...priceRange, max: val });
+                      setCurrentPage(1);
+                    }
                   }}
                 />
               </div>
