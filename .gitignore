@@ -12,4 +12,8 @@ backend/vendor/
 
 # Server config
 backend/.htaccess
+
+backend/composer.json
+backend/composer.lock   
+
 ``

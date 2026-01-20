@@ -60,9 +60,7 @@ export default function Header() {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch(
-          API.GET_POPULAR_WEEKLY_PRODUCTS
-        );
+        const response = await fetch(API.GET_MAY_LIKE_PRODUCTS);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

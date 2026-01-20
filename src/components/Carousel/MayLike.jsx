@@ -35,8 +35,7 @@ export default function MayLike() {
         setIsLoadingData(true);
         setError(null);
 
-        const response = await fetch(API.GET_POPULAR_WEEKLY_PRODUCTS
-        );
+        const response = await fetch(API.GET_MAY_LIKE_PRODUCTS);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -175,9 +174,8 @@ export default function MayLike() {
   return (
     <div className="w-full py-6 px-3 sm:px-6 md:px-10 bg-gray-100">
       <div
-        className={`max-w-6xl mx-auto ${
-          isCollapsed ? "lg:max-w-7xl" : "lg:max-w-6xl"
-        }`}
+        className={`max-w-6xl mx-auto ${isCollapsed ? "lg:max-w-7xl" : "lg:max-w-6xl"
+          }`}
       >
         {/* Title */}
         <div className="mb-8">
@@ -188,9 +186,8 @@ export default function MayLike() {
 
         {/* Product Grid */}
         <div
-          className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-4 ${
-            isCollapsed ? "lg:grid-cols-7" : "lg:grid-cols-6"
-          }`}
+          className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-4 ${isCollapsed ? "lg:grid-cols-7" : "lg:grid-cols-6"
+            }`}
         >
           {products.slice(0, visibleCount).map((product) => (
             <Card key={product.id} product={product} />
