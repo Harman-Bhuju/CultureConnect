@@ -39,7 +39,9 @@ const SellerSpotlight = () => {
       <div className="py-8 bg-gray-50 px-3 sm:px-6 md:px-10">
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="flex-shrink-0 w-[280px] md:w-[320px] bg-white rounded-xl p-4 animate-pulse flex items-center gap-4">
+            <div
+              key={i}
+              className="flex-shrink-0 w-[280px] md:w-[320px] bg-white rounded-xl p-4 animate-pulse flex items-center gap-4">
               <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-200 shrink-0" />
               <div className="flex-1 space-y-2">
                 <div className="h-4 bg-gray-200 rounded w-3/4" />
@@ -59,7 +61,7 @@ const SellerSpotlight = () => {
   return (
     <div className="py-8px-3 sm:px-6 md:px-10">
       <div className="mb-4">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           Suggested Sellers
         </h2>
         <p className="text-sm text-gray-500">Meet top artisans</p>
@@ -78,7 +80,8 @@ const SellerSpotlight = () => {
                 alt={seller.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  e.target.src = "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=400&q=80"; // Fallback image
+                  e.target.src =
+                    "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=400&q=80"; // Fallback image
                 }}
               />
             </div>
@@ -106,4 +109,3 @@ const SellerSpotlight = () => {
 };
 
 export default SellerSpotlight;
-
