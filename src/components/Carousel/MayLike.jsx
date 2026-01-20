@@ -172,9 +172,9 @@ export default function MayLike() {
   }
 
   return (
-    <div className="w-full py-6 px-3 sm:px-6 md:px-10 bg-gray-100">
+    <div className="w-full py-6 px-3 sm:px-6 md:px-10 ">
       <div
-        className={`max-w-6xl mx-auto ${isCollapsed ? "lg:max-w-7xl" : "lg:max-w-6xl"
+        className={`max-w-6xl ${isCollapsed ? "lg:max-w-7xl" : "lg:max-w-6xl"
           }`}
       >
         {/* Title */}

@@ -45,8 +45,21 @@ if (!$seller_id) {
     exit;
 }
 
-//  Fetch seller by ID
-$stmt = $conn->prepare("SELECT * FROM sellers WHERE id = ? LIMIT 1");
+//  Fetch seller by ID and calculate avg rating
+$stmt = $conn->prepare("
+    SELECT 
+        s.*,
+        COALESCE((
+            SELECT AVG(p.average_rating) 
+            FROM products p 
+            WHERE p.seller_id = s.id 
+              AND p.status = 'published' 
+              AND p.total_reviews > 0
+        ), 0) AS seller_avg_rating
+    FROM sellers s 
+    WHERE s.id = ? 
+    LIMIT 1
+");
 $stmt->bind_param("i", $seller_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -72,6 +85,7 @@ if ($seller_profile) {
             "store_logo" => $seller_profile["store_logo"],
             "store_banner" => $seller_profile["store_banner"],
             "followers_count" => $seller_profile["followers"] ?? 0,
+            "average_rating" => round((float)$seller_profile["seller_avg_rating"], 1),
             "created_at" => $formatted_created_at
         ]
     ]);

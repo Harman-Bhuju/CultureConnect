@@ -22,10 +22,24 @@ try {
         exit;
     }
 
-    // Current month for prioritizing recent sales
+    // 1. DATA PREPARATION
+    // Generate the first day of the current month (e.g., "2026-01-01").
+    // This is used to query 'product_sales_stats' for sales happening only in the current month.
     $current_month = date('Y-m-01');
 
-    // Build the query
+    // 2. QUERY DEFINITION
+    /**
+     * LOGIC SUMMARY:
+     * - Tiers: 
+     *    1. Group 1: Products with sales this month (TOP PRIORITY)
+     *    2. Group 2: Products with 0 sales this month (Placed at the end)
+     * - Group 2 internal sorting (Priority order):
+     *    - is_new_3m: Freshly Created (< 3 months)
+     *    - is_updated_3m: Recently Updated (< 3 months)
+     *    - is_recent_1y: Creations in the last year
+     *    - total_sales: Lifetime Bestsellers
+     *    - created_at: Absolute newest as final tie-breaker
+     */
     $query = "
         SELECT 
             p.id,
@@ -37,14 +51,15 @@ try {
             pi.image_url AS image,
             p.average_rating AS rating,
             p.total_reviews AS reviews,
+            p.total_sales,
             COALESCE(current_ps.sales_count, 0) AS recent_sales,
-            COALESCE(SUM(all_ps.sales_count), 0) AS total_sales
+            (p.created_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)) AS is_new_3m,
+            (p.updated_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)) AS is_updated_3m,
+            (p.created_at >= DATE_SUB(NOW(), INTERVAL 1 YEAR)) AS is_recent_1y
         FROM products p
         LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.`order` = 1
         LEFT JOIN product_sales_stats current_ps 
             ON p.id = current_ps.product_id AND current_ps.month = ?
-        LEFT JOIN product_sales_stats all_ps 
-            ON p.id = all_ps.product_id
         WHERE p.status = 'published'
           AND p.category = ?
           AND pi.image_url IS NOT NULL
@@ -64,10 +79,13 @@ try {
     }
 
     $query .= "
-        GROUP BY p.id, p.product_name, p.price, p.category, p.audience, pi.image_url, p.average_rating, p.total_reviews
         ORDER BY 
+            (COALESCE(current_ps.sales_count, 0) > 0) DESC,
             recent_sales DESC,
-            total_sales DESC,
+            is_new_3m DESC,
+            is_updated_3m DESC,
+            is_recent_1y DESC,
+            p.total_sales DESC,
             p.created_at DESC
         LIMIT 12
     ";
@@ -79,7 +97,6 @@ try {
 
     while ($row = $result->fetch_assoc()) {
         $products[] = [
-
             'id'             => (int)$row['id'],
             'seller_id'      => (int)$row['seller_id'],
             'title'          => $row['title'],
@@ -90,7 +107,9 @@ try {
             'rating'         => (float)$row['rating'],
             'reviews'        => (int)$row['reviews'],
             'recent_sales'   => (int)$row['recent_sales'],
-            'total_sales'    => (int)$row['total_sales']
+            'total_sales'    => (int)$row['total_sales'],
+            'is_new'         => (bool)$row['is_new_3m'],
+            'is_updated'     => (bool)$row['is_updated_3m']
         ];
     }
 

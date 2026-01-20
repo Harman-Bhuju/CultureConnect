@@ -58,8 +58,7 @@ export default function TrendingCarousel() {
 
         if (validProducts.length === 0) {
           setErrorMsg(
-            `No products found for ${activeTab}${
-              activeAudience !== "All" ? ` (${activeAudience})` : ""
+            `No products found for ${activeTab}${activeAudience !== "All" ? ` (${activeAudience})` : ""
             }`
           );
         }
@@ -83,15 +82,14 @@ export default function TrendingCarousel() {
   };
 
   return (
-    <div className="w-full py-6 px-3 sm:px-6 md:px-10 bg-gray-100">
-      <div className="max-w-6xl mx-auto min-h-[340px]">
+    <div className="w-full px-3 sm:px-6 md:px-10">
+      <div className="max-w-6xl min-h-[340px]">
         {/* Header */}
         <div
-          className={`flex justify-between mb-4 md:mb-6 gap-4 ${
-            isCollapsed
-              ? "flex-col md:flex-row items-start md:items-center"
-              : "flex-col lg:flex-row items-start lg:items-center"
-          }`}>
+          className={`flex justify-between mb-4 md:mb-6 gap-4 ${isCollapsed
+            ? "flex-col md:flex-row items-start md:items-center"
+            : "flex-col lg:flex-row items-start lg:items-center"
+            }`}>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 md:text-3xl">
             Trending Products
           </h1>
@@ -100,11 +98,10 @@ export default function TrendingCarousel() {
               <button
                 key={tab.value}
                 onClick={() => handleTabChange(tab.value)}
-                className={`text-xs sm:text-base font-medium pb-2 px-2 sm:px-3 md:px-0 relative transition-colors ${
-                  activeTab === tab.value
-                    ? "text-red-500"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}>
+                className={`text-xs sm:text-base font-medium pb-2 px-2 sm:px-3 md:px-0 relative transition-colors ${activeTab === tab.value
+                  ? "text-red-500"
+                  : "text-gray-600 hover:text-gray-900"
+                  }`}>
                 {tab.label}
                 {activeTab === tab.value && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500" />
@@ -121,11 +118,10 @@ export default function TrendingCarousel() {
               <button
                 key={audience}
                 onClick={() => setActiveAudience(audience)}
-                className={`text-[10px] sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full border transition-colors whitespace-nowrap ${
-                  activeAudience === audience
-                    ? "bg-red-500 text-white border-red-500"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                }`}>
+                className={`text-[10px] sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full border transition-colors whitespace-nowrap ${activeAudience === audience
+                  ? "bg-red-500 text-white border-red-500"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  }`}>
                 {audience}
               </button>
             ))}
@@ -133,7 +129,7 @@ export default function TrendingCarousel() {
         )}
 
         {/* Content Area - Stable Height */}
-        <div className="min-h-[340px] relative">
+        <div className=" relative">
           {/* Loading Overlay Removed per user request */}
 
           {/* Error State */}
@@ -153,9 +149,8 @@ export default function TrendingCarousel() {
               {/* Product Slider */}
               {products.length > 0 ? (
                 <div
-                  className={`transition-opacity duration-300 ${
-                    isLoading ? "opacity-50" : "opacity-100"
-                  }`}>
+                  className={`transition-opacity duration-300 ${isLoading ? "opacity-50" : "opacity-100"
+                    }`}>
                   <Swiper
                     onSwiper={(swiper) => (swiperRef.current = swiper)}
                     modules={[Mousewheel]}

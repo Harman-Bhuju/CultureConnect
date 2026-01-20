@@ -26,7 +26,7 @@ const Marketplace = () => {
         <div className="md:p-0 max-w-7xl mx-auto w-full">
           {/* Landing Page Content */}
           {isLandingPage ? (
-            <div className="pb-20 space-y-16">
+            <div>
               {/* Hero Section */}
               <div className="relative overflow-hidden text-center pt-20 pb-12 px-4">
                 {/* Subtle Decorative Background Elements */}
@@ -73,30 +73,17 @@ const Marketplace = () => {
                 <CategoryNav />
               </div>
 
+
               {/* Trending Products */}
-              <div className="space-y-6">
-                <div className="px-4 md:px-8">
-                  <h2 className="text-3xl font-bold text-gray-900">
-                    Trending Now
-                  </h2>
-                </div>
-                <TrendingCarousel />
-              </div>
+
+              <TrendingCarousel />
+
 
               {/* Seller Spotlight */}
-              <div className="px-4 md:px-8">
-                <SellerSpotlight />
-              </div>
+              <SellerSpotlight />
 
-              {/* May Like */}
-              <div className="space-y-6">
-                <div className="px-4 md:px-8 text-center sm:text-left">
-                  <h2 className="text-3xl font-bold text-gray-900">
-                    You Might Also Like
-                  </h2>
-                </div>
-                <MayLike />
-              </div>
+              <MayLike />
+
             </div>
           ) : (
             /* Sub-page Content */

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
+import { Heart, Star } from "lucide-react";
 import { SidebarProvider, SidebarInset } from "../../components/ui/sidebar";
 import AppSidebar from "../../components/Layout/app-sidebar";
 import Navbar from "../../components/Layout/NavBar";
@@ -197,6 +197,10 @@ const SellerProfile = () => {
                       <Heart className="w-4 h-4" />
                       <span>{followersCount} Followers</span>
                     </div>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                      <span>{sellerData.average_rating} Average Rating</span>
+                    </div>
                     <div>
                       <span>Products ({products.length})</span>
                     </div>
@@ -219,8 +223,8 @@ const SellerProfile = () => {
                     onClick={handleFollowToggle}
                     disabled={followLoading}
                     className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${isFollowing
-                        ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                        : "bg-gray-800 text-white hover:bg-gray-700"
+                      ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                      : "bg-gray-800 text-white hover:bg-gray-700"
                       } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     {followLoading ? (
@@ -260,8 +264,8 @@ const SellerProfile = () => {
                 <button
                   onClick={() => setActiveTab("products")}
                   className={`py-3 px-2 font-medium transition-colors ${activeTab === "products"
-                      ? "border-b-2 border-blue-600 text-blue-600"
-                      : "hover:text-gray-800"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "hover:text-gray-800"
                     }`}
                 >
                   Products
@@ -269,8 +273,8 @@ const SellerProfile = () => {
                 <button
                   onClick={() => setActiveTab("about")}
                   className={`py-3 px-2 font-medium transition-colors ${activeTab === "about"
-                      ? "border-b-2 border-blue-600 text-blue-600"
-                      : "hover:text-gray-800"
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "hover:text-gray-800"
                     }`}
                 >
                   About

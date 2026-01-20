@@ -1,58 +1,63 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Star, ChevronRight } from "lucide-react";
-
-const sellers = [
-  {
-    id: 1,
-    name: "Himalayan Handcrafts",
-    image:
-      "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=400&q=80",
-    rating: 4.8,
-    products: 124,
-    specialty: "Traditional Woolens",
-  },
-  {
-    id: 2,
-    name: "Kathmandu Arts",
-    image:
-      "https://images.unsplash.com/photo-1460661631160-a5a07cf1317d?w=400&q=80",
-    rating: 4.9,
-    products: 85,
-    specialty: "Thangka Paintings",
-  },
-  {
-    id: 3,
-    name: "Nepal Instruments",
-    image:
-      "https://images.unsplash.com/photo-1516280440614-6697288d5d38?w=400&q=80",
-    rating: 4.7,
-    products: 56,
-    specialty: "Musical Instruments",
-  },
-  {
-    id: 4,
-    name: "Pashmina House",
-    image:
-      "https://images.unsplash.com/photo-1574634534894-89d7576c8259?w=400&q=80",
-    rating: 4.6,
-    products: 210,
-    specialty: "Authentic Pashmina",
-  },
-  {
-    id: 5,
-    name: "Cultural Crafts",
-    image:
-      "https://images.unsplash.com/photo-1493106358005-46e5ca8f5119?w=400&q=80",
-    rating: 4.5,
-    products: 120,
-    specialty: "Decorations",
-  },
-];
+import { Star } from "lucide-react";
+import API from "../../Configs/ApiEndpoints";
 
 const SellerSpotlight = () => {
+  const [sellers, setSellers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchSuggestedSellers();
+  }, []);
+
+  const fetchSuggestedSellers = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(API.GET_SUGGESTED_SELLERS, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setSellers(data.sellers || []);
+      } else {
+        setError(data.error || "Failed to load sellers");
+      }
+    } catch (err) {
+      console.error("Fetch suggested sellers error:", err);
+      setError("Network error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="py-8 bg-gray-50 px-3 sm:px-6 md:px-10">
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex-shrink-0 w-[280px] md:w-[320px] bg-white rounded-xl p-4 animate-pulse flex items-center gap-4">
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gray-200 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (sellers.length === 0) {
+    return null; // Or show a small message if needed
+  }
+
   return (
-    <div className="py-8 bg-gray-50 -mx-4 px-4 md:-mx-8 md:px-8">
+    <div className="py-8px-3 sm:px-6 md:px-10">
       <div className="mb-4">
         <h2 className="text-xl md:text-2xl font-bold text-gray-900">
           Suggested Sellers
@@ -69,9 +74,12 @@ const SellerSpotlight = () => {
             className="flex-shrink-0 w-[280px] md:w-[320px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 p-4 transition-shadow hover:shadow-md flex items-center gap-4">
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden bg-gray-200 shrink-0">
               <img
-                src={seller.image}
+                src={`${API.SELLER_LOGOS}/${seller.image}`}
                 alt={seller.name}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=400&q=80"; // Fallback image
+                }}
               />
             </div>
 
@@ -98,3 +106,4 @@ const SellerSpotlight = () => {
 };
 
 export default SellerSpotlight;
+
