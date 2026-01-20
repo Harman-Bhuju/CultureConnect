@@ -4,15 +4,15 @@ import { SidebarProvider, SidebarInset } from "../../components/ui/sidebar";
 import AppSidebar from "../../components/Layout/app-sidebar";
 import Navbar from "../../components/Layout/NavBar";
 import Card from "../../components/cardLayout/Card";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import API, { BASE_URL } from "../../Configs/ApiEndpoints";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import Loading from "../../components/common/Loading";
-import FollowersModal from "../../components/Common/FollowersModal";
 
 const SellerProfile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth?.() || {};
   const [activeTab, setActiveTab] = useState("products");
   const [isOwnProfile, setIsOwnProfile] = useState(false);
@@ -23,11 +23,6 @@ const SellerProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
-
-  // Followers Modal State
-  const [showFollowersModal, setShowFollowersModal] = useState(false);
-  const [followersList, setFollowersList] = useState([]);
-  const [followersLoading, setFollowersLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -40,10 +35,13 @@ const SellerProfile = () => {
   const fetchSellerProfile = async (sellerId) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API.GET_SELLER_PROFILE}?seller_id=${sellerId}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${API.GET_SELLER_PROFILE}?seller_id=${sellerId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
 
       const result = await response.json();
 
@@ -66,16 +64,19 @@ const SellerProfile = () => {
   const fetchSellerProducts = async (sellerId) => {
     setProductsLoading(true);
     try {
-      const response = await fetch(`${API.GET_SELLER_PRODUCTS}?seller_id=${sellerId}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${API.GET_SELLER_PRODUCTS}?seller_id=${sellerId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
 
       const result = await response.json();
 
       if (result.success) {
         const activeProducts = result.products.filter(
-          product => product.status === 'Active'
+          (product) => product.status === "Active",
         );
         setProducts(activeProducts);
       } else {
@@ -92,10 +93,13 @@ const SellerProfile = () => {
 
   const checkFollowStatus = async (sellerId) => {
     try {
-      const response = await fetch(`${API.CHECK_FOLLOW_STATUS}?seller_id=${sellerId}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${API.CHECK_FOLLOW_STATUS}?seller_id=${sellerId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
 
       const result = await response.json();
 
@@ -143,30 +147,12 @@ const SellerProfile = () => {
     }
   };
 
-  const handleShowFollowers = async () => {
-    setShowFollowersModal(true);
-    setFollowersLoading(true);
-    try {
-      const response = await fetch(`${API.GET_SELLER_FOLLOWERS}?seller_id=${id}`, {
-        method: "GET",
-        credentials: "include",
-      });
-      const result = await response.json();
-      if (result.status === "success") {
-        setFollowersList(result.followers);
-      } else {
-        toast.error("Failed to load followers");
-      }
-    } catch (err) {
-      console.error("Fetch followers error:", err);
-      toast.error("Error loading followers");
-    } finally {
-      setFollowersLoading(false);
-    }
+  const handleShowFollowers = () => {
+    navigate(`/sellerprofile/${id}/followers`);
   };
 
   if (isLoading) {
-    return (<Loading message='Loading Profile...' />);
+    return <Loading message="Loading Profile..." />;
   }
 
   if (!sellerData) {
@@ -217,14 +203,15 @@ const SellerProfile = () => {
           <div className="mt-20 px-6 md:px-12">
             <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center">
               <div>
-                <h1 className="text-3xl font-bold text-gray-800">{sellerData.name}</h1>
+                <h1 className="text-3xl font-bold text-gray-800">
+                  {sellerData.name}
+                </h1>
 
                 <div className="mt-3 space-y-2">
                   <div className="flex items-center gap-6 text-gray-500">
                     <button
                       onClick={handleShowFollowers}
-                      className="group flex items-center gap-1.5 hover:text-gray-900 transition-colors cursor-pointer"
-                    >
+                      className="group flex items-center gap-1.5 hover:text-gray-900 transition-colors cursor-pointer">
                       <span className="font-bold text-gray-900 group-hover:underline decoration-1 underline-offset-2">
                         {followersCount}
                       </span>
@@ -255,11 +242,11 @@ const SellerProfile = () => {
                   <button
                     onClick={handleFollowToggle}
                     disabled={followLoading}
-                    className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${isFollowing
-                      ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                      : "bg-gray-800 text-white hover:bg-gray-700"
-                      } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
+                    className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${
+                      isFollowing
+                        ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                        : "bg-gray-800 text-white hover:bg-gray-700"
+                    } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}>
                     {followLoading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -296,20 +283,20 @@ const SellerProfile = () => {
               <nav className="flex gap-4 text-gray-600">
                 <button
                   onClick={() => setActiveTab("products")}
-                  className={`py-3 px-2 font-medium transition-colors ${activeTab === "products"
-                    ? "border-b-2 border-blue-600 text-blue-600"
-                    : "hover:text-gray-800"
-                    }`}
-                >
+                  className={`py-3 px-2 font-medium transition-colors ${
+                    activeTab === "products"
+                      ? "border-b-2 border-blue-600 text-blue-600"
+                      : "hover:text-gray-800"
+                  }`}>
                   Products
                 </button>
                 <button
                   onClick={() => setActiveTab("about")}
-                  className={`py-3 px-2 font-medium transition-colors ${activeTab === "about"
-                    ? "border-b-2 border-blue-600 text-blue-600"
-                    : "hover:text-gray-800"
-                    }`}
-                >
+                  className={`py-3 px-2 font-medium transition-colors ${
+                    activeTab === "about"
+                      ? "border-b-2 border-blue-600 text-blue-600"
+                      : "hover:text-gray-800"
+                  }`}>
                   About
                 </button>
               </nav>
@@ -332,7 +319,9 @@ const SellerProfile = () => {
                         ))
                       ) : (
                         <div className="col-span-full text-center py-12">
-                          <p className="text-gray-500 mb-2">No products available</p>
+                          <p className="text-gray-500 mb-2">
+                            No products available
+                          </p>
                         </div>
                       )}
                     </div>
@@ -354,13 +343,6 @@ const SellerProfile = () => {
           </div>
         </div>
       </SidebarInset>
-      <FollowersModal
-        isOpen={showFollowersModal}
-        onClose={() => setShowFollowersModal(false)}
-        title="Followers"
-        followers={followersList}
-        loading={followersLoading}
-      />
     </SidebarProvider>
   );
 };

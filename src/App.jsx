@@ -119,6 +119,7 @@ const ProductManagement = lazy(
 const CheckOutPage = lazy(() => import("./pages/CheckOut/CheckOutPage"));
 const CartPage = lazy(() => import("./pages/Cart/CartPage"));
 const FollowingPage = lazy(() => import("./pages/Following/FollowingPage"));
+const FollowersPage = lazy(() => import("./pages/Followers/FollowersPage"));
 
 // Home Route Wrapper
 function HomeRoute() {
@@ -372,6 +373,25 @@ function App() {
             element={
               <ProtectedRoute>
                 <FollowingPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Followers Pages */}
+          <Route
+            path="/sellerprofile/:sellerId/followers"
+            element={
+              <ProtectedRoute>
+                <FollowersPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/teacherprofile/:teacherId/followers"
+            element={
+              <ProtectedRoute>
+                <FollowersPage />
               </ProtectedRoute>
             }
           />
