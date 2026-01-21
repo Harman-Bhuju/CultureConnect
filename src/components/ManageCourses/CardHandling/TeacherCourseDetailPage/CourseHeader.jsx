@@ -8,7 +8,24 @@ import {
   CheckCircle,
 } from "lucide-react";
 
+import { BASE_URL } from "../../../../Configs/ApiEndpoints";
+
 export default function CourseHeader({ course }) {
+  // Flexible image handling
+  const getFirstImage = () => {
+    if (course.images?.length > 0) {
+      return Array.isArray(course.images) ? course.images[0] : course.images;
+    }
+    return course.image;
+  };
+
+  const rawImage = getFirstImage();
+  const imageUrl = rawImage
+    ? rawImage.startsWith("http")
+      ? rawImage
+      : `${BASE_URL}/uploads/teacher_datas/course_thumbnails/${rawImage}`
+    : "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800";
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -16,9 +33,13 @@ export default function CourseHeader({ course }) {
         <div className="md:col-span-1">
           <div className="aspect-video md:aspect-square w-full overflow-hidden">
             <img
-              src={course.image}
+              src={imageUrl}
               alt={course.title}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.src =
+                  "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800";
+              }}
             />
           </div>
         </div>

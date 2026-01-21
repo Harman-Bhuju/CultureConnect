@@ -50,7 +50,7 @@ const DraftCourseCard = ({ course, onEdit, onDelete, onView, onPublish }) => {
   const imageUrl = rawImage
     ? rawImage.startsWith("http")
       ? rawImage
-      : `${BASE_URL}/uploads/course_images/${rawImage}`
+      : `${BASE_URL}/uploads/teacher_datas/course_thumbnails/${rawImage}`
     : "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800";
 
   // Price formatting

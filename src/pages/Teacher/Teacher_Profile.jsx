@@ -130,10 +130,7 @@ const TeacherProfile = () => {
     navigate(`/teacherprofile/${id}/followers`);
   };
 
-  const handleAddCourses = () => {
-    navigate(`/teacher/classes/new/${user?.teacher_id}`);
-  };
-
+ 
   if (isLoading) {
     return <Loading message="Loading Profile..." />;
   }

@@ -45,7 +45,7 @@ const CourseCard = ({ course, onEdit, onDelete, onView }) => {
   const imageUrl = rawImage
     ? rawImage.startsWith("http")
       ? rawImage
-      : `${BASE_URL}/uploads/course_images/${rawImage}` // Adjusted path for courses if needed, or check where images are stored
+      : `${BASE_URL}/uploads/teacher_datas/course_thumbnails/${rawImage}`
     : "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800";
 
   // Price formatting

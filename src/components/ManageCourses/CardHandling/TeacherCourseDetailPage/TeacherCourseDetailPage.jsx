@@ -58,9 +58,7 @@ const TeacherCourseDetailPage = () => {
           id: data.course.id,
           title: data.course.course_title,
           description: data.course.description,
-          image: data.course.thumbnail
-            ? `${API.COURSE_THUMBNAILS}`
-            : "https://i.ytimg.com/vi/EcvPBRM405k/maxresdefault.jpg",
+          image: data.course.thumbnail,
           price: parseFloat(data.course.price) || 0,
           numVideos: parseInt(data.course.total_videos) || 0,
           duration: `${data.course.duration_weeks} weeks`,

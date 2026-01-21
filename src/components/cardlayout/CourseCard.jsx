@@ -31,7 +31,11 @@ const CourseCard = ({ course, teacherId, teacherName }) => {
         : courseData.images;
     }
     return (
-      courseData.image || courseData.image_url || courseData.imageUrl || null
+      courseData.image ||
+      courseData.image_url ||
+      courseData.imageUrl ||
+      courseData.thumbnail ||
+      null
     );
   };
 
