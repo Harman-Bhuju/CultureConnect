@@ -535,7 +535,6 @@ export default function CheckOutPage() {
           updateSize={updateSize}
           handleProceedToPayment={() => handleProceedToPayment(false)}
           orderDetails={orderDetails}
-          onBack={() => navigate(-1)}
         />
       )}
 

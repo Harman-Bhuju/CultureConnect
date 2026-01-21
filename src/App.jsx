@@ -126,6 +126,9 @@ const ProductManagement = lazy(
 
 // Checkout & Cart
 const CheckOutPage = lazy(() => import("./pages/CheckOut/CheckOutPage"));
+const CourseCheckOutPage = lazy(
+  () => import("./pages/CheckOut/CourseCheckOutPage"),
+);
 const CartPage = lazy(() => import("./pages/Cart/CartPage"));
 const FollowingPage = lazy(() => import("./pages/Following/FollowingPage"));
 const FollowersPage = lazy(() => import("./pages/Followers/FollowersPage"));
@@ -382,6 +385,32 @@ function App() {
             element={
               <ProtectedRoute>
                 <CheckOutPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ==================== Course Checkout & Learning ==================== */}
+          <Route
+            path="/course/checkout/:teacherId/:courseId"
+            element={
+              <ProtectedRoute>
+                <CourseCheckOutPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/course/checkout/payment/:teacherId/:courseId"
+            element={
+              <ProtectedRoute>
+                <CourseCheckOutPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/course/checkout/confirmation/:teacherId/:courseId"
+            element={
+              <ProtectedRoute>
+                <CourseCheckOutPage />
               </ProtectedRoute>
             }
           />

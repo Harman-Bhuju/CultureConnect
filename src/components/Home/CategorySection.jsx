@@ -65,9 +65,9 @@ const CategoryCard = ({ category, index }) => {
 
           {/* CTA - Appears on Hover */}
           <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            whileInView={{ opacity: 0, x: -10 }}
-            whileHover={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 1, x: -10 }}
+            whileInView={{ opacity: 1, x: -10 }}
+            whileHover={{ opacity: 1, x: 0.5 }}
             className="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-wider">
             Explore Collection
             <ArrowRight className="w-4 h-4" />

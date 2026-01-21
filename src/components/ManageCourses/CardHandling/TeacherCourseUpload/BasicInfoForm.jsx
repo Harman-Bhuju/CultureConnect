@@ -55,12 +55,11 @@ export default function BasicInfoForm({
             className={`w-full px-4 py-3 border rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${
               errors.category ? "border-red-300 bg-red-50" : "border-gray-300"
             }`}>
-            <option value="">Select category</option>
-            <option value="dance">Dance</option>
-            <option value="music">Music</option>
-            <option value="yoga">Yoga</option>
-            <option value="art">Art & Craft</option>
-            <option value="language">Language</option>
+            <option value="">Select Category</option>
+            <option>Cultural Dances</option>
+            <option>Cultural Singing</option>
+            <option>Musical Instruments</option>
+            <option>Cultural Art & Crafts</option>
           </select>
           {errors.category && (
             <p className="text-xs text-red-600 font-medium flex items-center gap-1">

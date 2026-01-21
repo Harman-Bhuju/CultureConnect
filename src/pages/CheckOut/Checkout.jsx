@@ -42,11 +42,6 @@ export default function Checkout({
         <div className="grid grid-cols-3 gap-0">
           {/* Left Section - Items */}
           <div className="col-span-2 p-8 border-r border-gray-200">
-            <ArrowLeft
-              className="text-black mb-6 cursor-pointer hover:text-gray-700"
-              size={24}
-              onClick={() => navigate(`/products/${sellerId}/${productId}`)}
-            />
             <h1 className="text-3xl font-bold text-black mb-8">Checkout</h1>
 
             {/* Delivery Location */}
@@ -136,7 +131,8 @@ export default function Checkout({
                     </h3>
                     {orderItem.size && (
                       <p className="text-sm text-gray-600">
-                        Size: <span className="font-medium">{orderItem.size}</span>
+                        Size:{" "}
+                        <span className="font-medium">{orderItem.size}</span>
                       </p>
                     )}
                     {orderItem.storeName && (
@@ -165,10 +161,11 @@ export default function Checkout({
                             decrementQuantity();
                           }}
                           disabled={orderItem.quantity <= 1}
-                          className={`px-2 py-1 text-sm font-semibold ${orderItem.quantity <= 1
-                            ? "text-gray-300 cursor-not-allowed"
-                            : "text-black hover:text-gray-700"
-                            }`}>
+                          className={`px-2 py-1 text-sm font-semibold ${
+                            orderItem.quantity <= 1
+                              ? "text-gray-300 cursor-not-allowed"
+                              : "text-black hover:text-gray-700"
+                          }`}>
                           -
                         </button>
                         <span className="text-sm font-medium px-2">
@@ -181,10 +178,11 @@ export default function Checkout({
                             incrementQuantity();
                           }}
                           disabled={orderItem.quantity >= orderItem.stock}
-                          className={`px-2 py-1 text-sm font-semibold ${orderItem.quantity >= orderItem.stock
-                            ? "text-gray-300 cursor-not-allowed"
-                            : "text-black hover:text-gray-700"
-                            }`}>
+                          className={`px-2 py-1 text-sm font-semibold ${
+                            orderItem.quantity >= orderItem.stock
+                              ? "text-gray-300 cursor-not-allowed"
+                              : "text-black hover:text-gray-700"
+                          }`}>
                           +
                         </button>
                       </div>
@@ -208,10 +206,11 @@ export default function Checkout({
                                 e.stopPropagation();
                                 updateSize(size);
                               }}
-                              className={`px-3 py-1.5 border-2 rounded-lg text-sm font-medium transition ${orderItem.size === size
-                                ? "border-black bg-black text-white"
-                                : "border-gray-300 hover:border-gray-400 text-gray-700"
-                                }`}>
+                              className={`px-3 py-1.5 border-2 rounded-lg text-sm font-medium transition ${
+                                orderItem.size === size
+                                  ? "border-black bg-black text-white"
+                                  : "border-gray-300 hover:border-gray-400 text-gray-700"
+                              }`}>
                               {size}
                             </button>
                           ))}
@@ -230,8 +229,6 @@ export default function Checkout({
                 </div>
               </div>
             </div>
-
-
           </div>
 
           {/* Right Section - Summary */}
@@ -244,10 +241,10 @@ export default function Checkout({
               <div className="flex items-center justify-between text-black">
                 <span className="text-gray-700">Delivery Fee</span>
                 <span
-                  className={`font-medium ${!selectedLocation ? "text-gray-400" : (deliveryCharge === 0 && !orderDetails) ? "text-orange-500" : "text-green-600"}`}>
+                  className={`font-medium ${!selectedLocation ? "text-gray-400" : deliveryCharge === 0 && !orderDetails ? "text-orange-500" : "text-green-600"}`}>
                   {!selectedLocation
                     ? "Select address"
-                    : (deliveryCharge === 0 && !orderDetails)
+                    : deliveryCharge === 0 && !orderDetails
                       ? "..."
                       : `Rs. ${deliveryCharge}`}
                 </span>
@@ -273,10 +270,11 @@ export default function Checkout({
             <button
               onClick={handleProceedToPayment}
               disabled={!selectedLocation}
-              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${selectedLocation
-                ? "bg-black hover:bg-gray-800 text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}>
+              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${
+                selectedLocation
+                  ? "bg-black hover:bg-gray-800 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}>
               {selectedLocation
                 ? "Proceed to Payment"
                 : "Select Location First"}

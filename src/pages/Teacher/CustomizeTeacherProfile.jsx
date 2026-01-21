@@ -15,7 +15,7 @@ const SuccessModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-opacity-50 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-fadeIn">
         <div className="text-center">
           <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
@@ -25,12 +25,12 @@ const SuccessModal = ({ isOpen, onClose }) => {
             Profile Updated!
           </h2>
           <p className="text-gray-600 mb-6 leading-relaxed">
-            Your teacher profile has been successfully updated on <span className="font-semibold text-red-500">CultureConnect</span>!
+            Your teacher profile has been successfully updated on{" "}
+            <span className="font-semibold">CultureConnect</span>!
           </p>
           <button
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white font-semibold py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all"
-          >
+            className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white font-semibold py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all">
             Got It!
           </button>
         </div>
@@ -82,7 +82,9 @@ const CropModal = ({ isOpen, imageToCrop, onSave, onCancel }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-2xl w-full p-6">
-        <h3 className="text-xl font-bold mb-4 text-gray-800">Crop Profile Picture</h3>
+        <h3 className="text-xl font-bold mb-4 text-gray-800">
+          Crop Profile Picture
+        </h3>
 
         <div className="mb-6 flex justify-center">
           <div
@@ -93,8 +95,7 @@ const CropModal = ({ isOpen, imageToCrop, onSave, onCancel }) => {
             onMouseLeave={handleMouseUp}
             onTouchMove={handleMouseMove}
             onTouchEnd={handleMouseUp}
-            onWheel={handleWheel}
-          >
+            onWheel={handleWheel}>
             <img
               ref={cropImageRef}
               src={imageToCrop}
@@ -105,7 +106,7 @@ const CropModal = ({ isOpen, imageToCrop, onSave, onCancel }) => {
               onTouchStart={handleMouseDown}
               style={{
                 transform: `translate(${cropPosition.x}px, ${cropPosition.y}px) scale(${zoom})`,
-                transformOrigin: 'center center',
+                transformOrigin: "center center",
               }}
             />
           </div>
@@ -129,14 +130,14 @@ const CropModal = ({ isOpen, imageToCrop, onSave, onCancel }) => {
         <div className="flex gap-3 justify-end">
           <button
             onClick={onCancel}
-            className="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50"
-          >
+            className="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50">
             Cancel
           </button>
           <button
-            onClick={() => onSave(cropImageRef, cropContainerRef, cropPosition, zoom)}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700"
-          >
+            onClick={() =>
+              onSave(cropImageRef, cropContainerRef, cropPosition, zoom)
+            }
+            className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">
             Save
           </button>
         </div>
@@ -185,7 +186,7 @@ function CustomizeTeacherProfile() {
       try {
         const response = await fetch(API.GET_TEACHER_PROFILE_WITH_COURSES, {
           method: "GET",
-          credentials: "include"
+          credentials: "include",
         });
         const data = await response.json();
 
@@ -201,7 +202,9 @@ function CustomizeTeacherProfile() {
           setInitialFormData(loadedData);
 
           if (profile.profile_picture) {
-            setProfilePreview(`${API.TEACHER_PROFILE_PICTURES}/${profile.profile_picture}`);
+            setProfilePreview(
+              `${API.TEACHER_PROFILE_PICTURES}/${profile.profile_picture}`,
+            );
           }
         } else {
           toast.error(data.message || "Failed to load profile");
@@ -236,15 +239,17 @@ function CustomizeTeacherProfile() {
   const validatePhone = (phone) => {
     if (!phone || !phone.trim()) return "Phone number is required";
     const phoneRegex = /^(98|97)\d{8}$/;
-    if (!phoneRegex.test(phone)) return "Please enter a valid 10-digit Nepali phone number";
+    if (!phoneRegex.test(phone))
+      return "Please enter a valid 10-digit Nepali phone number";
     return "";
   };
 
-  const validateCategory = (cat) => (cat ? "" : "Please select a primary teaching category");
+  const validateCategory = (cat) =>
+    cat ? "" : "Please select a primary teaching category";
 
   const validateProfile = () => {
     // Required if no preview exists (meaning no previous image and no new image)
-    return (profileFile || profilePreview) ? "" : "Profile Picture is required";
+    return profileFile || profilePreview ? "" : "Profile Picture is required";
   };
 
   // Handlers
@@ -284,7 +289,12 @@ function CustomizeTeacherProfile() {
     reader.readAsDataURL(file);
   };
 
-  const handleCropAndSave = (cropImageRef, cropContainerRef, cropPosition, zoom) => {
+  const handleCropAndSave = (
+    cropImageRef,
+    cropContainerRef,
+    cropPosition,
+    zoom,
+  ) => {
     if (!imageToCrop) return;
 
     const canvas = document.createElement("canvas");
@@ -319,7 +329,17 @@ function CustomizeTeacherProfile() {
     ctx.closePath();
     ctx.clip();
 
-    ctx.drawImage(img, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
+    ctx.drawImage(
+      img,
+      sourceX,
+      sourceY,
+      sourceSize,
+      sourceSize,
+      0,
+      0,
+      size,
+      size,
+    );
 
     canvas.toBlob(
       (blob) => {
@@ -333,7 +353,7 @@ function CustomizeTeacherProfile() {
         setImageToCrop(null);
       },
       "image/jpeg",
-      0.95
+      0.95,
     );
   };
 
@@ -362,7 +382,7 @@ function CustomizeTeacherProfile() {
 
   const hasChanges = useCallback(() => {
     const isFormDataChanged = Object.keys(formData).some(
-      (key) => formData[key] !== initialFormData[key]
+      (key) => formData[key] !== initialFormData[key],
     );
     const isProfilePictureChanged = profileFile !== null;
     return isFormDataChanged || isProfilePictureChanged;
@@ -394,7 +414,7 @@ function CustomizeTeacherProfile() {
       const response = await fetch(API.UPDATE_TEACHER_PROFILE, {
         method: "POST",
         credentials: "include",
-        body: formBody
+        body: formBody,
       });
 
       const result = await response.json();
@@ -434,8 +454,7 @@ function CustomizeTeacherProfile() {
             type="button"
             onClick={() => navigate(-1)}
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 shadow-sm"
-            aria-label="Go back"
-          >
+            aria-label="Go back">
             <ArrowLeft className="w-4 h-4" />
             <span className="font-medium">Back</span>
           </button>
@@ -445,7 +464,9 @@ function CustomizeTeacherProfile() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
             Customize Teacher Profile
           </h1>
-          <p className="text-gray-600 text-lg">Update your teaching profile information</p>
+          <p className="text-gray-600 text-lg">
+            Update your teaching profile information
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
@@ -459,11 +480,16 @@ function CustomizeTeacherProfile() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.name ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"
-                  }`}
+                className={`w-full px-4 py-3.5 border-2 rounded-xl ${
+                  errors.name
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}
                 placeholder="Enter teacher or studio name"
               />
-              {errors.name && <p className="text-red-500 text-sm mt-2">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-2">{errors.name}</p>
+              )}
             </div>
 
             {/* Teaching Bio */}
@@ -476,17 +502,24 @@ function CustomizeTeacherProfile() {
                 value={formData.bio}
                 onChange={handleInputChange}
                 rows="5"
-                className={`w-full px-4 py-3.5 border-2 rounded-xl resize-none ${errors.bio ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"
-                  }`}
+                className={`w-full px-4 py-3.5 border-2 rounded-xl resize-none ${
+                  errors.bio
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}
                 placeholder="Describe your teaching experience, cultural background, and skills..."
               />
               <div className="flex justify-between mt-2">
                 <p className="text-gray-500 text-sm">
                   {formData.bio.length < 10 ? "⚠ Minimum 10 characters" : ""}
                 </p>
-                <p className="text-gray-500 text-sm">{formData.bio.length}/2000</p>
+                <p className="text-gray-500 text-sm">
+                  {formData.bio.length}/2000
+                </p>
               </div>
-              {errors.bio && <p className="text-red-500 text-sm mt-1">{errors.bio}</p>}
+              {errors.bio && (
+                <p className="text-red-500 text-sm mt-1">{errors.bio}</p>
+              )}
             </div>
 
             {/* Phone Number */}
@@ -500,34 +533,44 @@ function CustomizeTeacherProfile() {
                 onChange={handleInputChange}
                 maxLength="10"
                 placeholder="98XXXXXXXX"
-                className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.phone ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"
-                  }`}
+                className={`w-full px-4 py-3.5 border-2 rounded-xl ${
+                  errors.phone
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}
               />
               <p className="text-gray-500 text-sm mt-2">
                 Used for contact and payment (eSewa/Khalti)
               </p>
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+              )}
             </div>
 
             {/* Primary Teaching Category */}
             <div>
               <InlineLabel>
-                Primary Teaching Category <span className="text-red-500">*</span>
+                Primary Teaching Category{" "}
+                <span className="text-red-500">*</span>
               </InlineLabel>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.category ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"
-                  }`}
-              >
+                className={`w-full px-4 py-3.5 border-2 rounded-xl ${
+                  errors.category
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}>
                 <option value="">Select Category</option>
                 <option>Cultural Dances</option>
                 <option>Cultural Singing</option>
                 <option>Musical Instruments</option>
                 <option>Cultural Art & Crafts</option>
               </select>
-              {errors.category && <p className="text-red-500 text-sm mt-2">{errors.category}</p>}
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-2">{errors.category}</p>
+              )}
             </div>
 
             {/* Profile Picture Upload */}
@@ -537,7 +580,8 @@ function CustomizeTeacherProfile() {
                   Profile Picture <span className="text-red-500">*</span>
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Your profile picture will appear on your teacher profile and class listings
+                  Your profile picture will appear on your teacher profile and
+                  class listings
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-8 border border-gray-200">
@@ -545,22 +589,27 @@ function CustomizeTeacherProfile() {
                   <div className="flex-shrink-0">
                     <div className="w-40 h-40 rounded-full overflow-hidden bg-white border-4 border-gray-200 flex items-center justify-center shadow-sm">
                       {profilePreview ? (
-                        <img src={profilePreview} alt="profile" className="w-full h-full object-cover" />
+                        <img
+                          src={profilePreview}
+                          alt="profile"
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center">
                           <div
                             className="w-8 h-10 bg-white"
                             style={{
-                              clipPath: "polygon(50% 0%, 0% 40%, 30% 40%, 30% 100%, 70% 100%, 70% 40%, 100% 40%)",
-                            }}
-                          ></div>
+                              clipPath:
+                                "polygon(50% 0%, 0% 40%, 30% 40%, 30% 100%, 70% 100%, 70% 40%, 100% 40%)",
+                            }}></div>
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="flex-1">
                     <p className="text-gray-600 text-sm mb-4">
-                      Recommended: at least 98×98 pixels, max 5MB. JPG or PNG only.
+                      Recommended: at least 98×98 pixels, max 5MB. JPG or PNG
+                      only.
                     </p>
                     <div className="flex gap-3">
                       {profilePreview ? (
@@ -568,8 +617,7 @@ function CustomizeTeacherProfile() {
                           <button
                             type="button"
                             onClick={() => profileInputRef.current?.click()}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                          >
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                             Change
                           </button>
                           <button
@@ -578,8 +626,7 @@ function CustomizeTeacherProfile() {
                               setProfilePreview(null);
                               setProfileFile(null);
                             }}
-                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2.5 rounded-full font-medium transition-colors"
-                          >
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2.5 rounded-full font-medium transition-colors">
                             Remove
                           </button>
                         </>
@@ -587,8 +634,7 @@ function CustomizeTeacherProfile() {
                         <button
                           type="button"
                           onClick={() => profileInputRef.current?.click()}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                        >
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                           Upload
                         </button>
                       )}
@@ -603,10 +649,14 @@ function CustomizeTeacherProfile() {
                   </div>
                 </div>
               </div>
-              {errors.profile && <p className="text-red-500 text-sm mt-2">{errors.profile}</p>}
+              {errors.profile && (
+                <p className="text-red-500 text-sm mt-2">{errors.profile}</p>
+              )}
             </div>
 
-            {errors.profile && <p className="text-red-500 text-sm mt-2">{errors.profile}</p>}
+            {errors.profile && (
+              <p className="text-red-500 text-sm mt-2">{errors.profile}</p>
+            )}
           </div>
 
           {/* Submit Button */}
@@ -615,11 +665,11 @@ function CustomizeTeacherProfile() {
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || !hasChanges()}
-              className={`w-full font-bold py-4 rounded-xl shadow-lg transition-all ${isSubmitting || !hasChanges()
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
-                : "bg-gray-800 text-white hover:bg-gray-900"
-                }`}
-            >
+              className={`w-full font-bold py-4 rounded-xl shadow-lg transition-all ${
+                isSubmitting || !hasChanges()
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
+                  : "bg-gray-800 text-white hover:bg-gray-900"
+              }`}>
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -639,7 +689,9 @@ function CustomizeTeacherProfile() {
       <div className="text-center mt-6">
         <p className="text-gray-500 text-sm">
           Need help? Contact{" "}
-          <a href="mailto:support@cultureconnect.com" className="text-gray-800 font-semibold">
+          <a
+            href="mailto:support@cultureconnect.com"
+            className="text-gray-800 font-semibold">
             support@cultureconnect.com
           </a>
         </p>
@@ -657,7 +709,10 @@ function CustomizeTeacherProfile() {
       />
 
       {/* Success Modal */}
-      <SuccessModal isOpen={showSuccessModal} onClose={handleCloseSuccessModal} />
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseSuccessModal}
+      />
     </div>
   );
 }

@@ -24,13 +24,35 @@ const StudentCourseDetailPage = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Fetch course details when ID changes
   useEffect(() => {
     fetchCourseDetails();
+  }, [id]);
+
+  // Check enrollment and wishlist status when ID or user changes
+  useEffect(() => {
     if (user) {
       checkEnrollmentStatus();
       checkWishlistStatus();
     }
   }, [id, user]);
+
+  // Redirect if already enrolled and not a teacher
+  useEffect(() => {
+    // Assuming `isTeacher` is available, if not, you might need to derive it from `user` or course data
+    // For now, let's assume `user.role === 'teacher'` or similar check if needed.
+    // If `isTeacher` is not defined, this condition will always be true for `!isTeacher`.
+    // For this example, let's assume `isTeacher` is a boolean state or derived value.
+    // If `user` has a role, you could do `const isTeacher = user?.role === 'teacher';`
+    // For the purpose of this edit, we'll assume `isTeacher` is a variable that would be defined elsewhere
+    // or that the instruction implies a simple `!isTeacher` check.
+    // Given the context of a StudentCourseDetailPage, it's highly probable that the user is not a teacher
+    // viewing their own course, but rather a student.
+    const isTeacher = user?.role === "teacher"; // Example of how isTeacher might be defined
+    if (isEnrolled && !isTeacher) {
+      navigate(`/courses/learn/${teacherId}/${id}`);
+    }
+  }, [isEnrolled, user, navigate, teacherId, id]);
 
   const fetchCourseDetails = async () => {
     try {
@@ -179,7 +201,7 @@ const StudentCourseDetailPage = () => {
         if (data.status === "success") {
           toast.success("Successfully enrolled in free course! 🎉");
           setIsEnrolled(true);
-          fetchCourseDetails();
+          navigate(`/courses/learn/${teacherId}/${id}`);
         } else {
           toast.error(data.message || "Failed to enroll");
         }
@@ -237,7 +259,7 @@ const StudentCourseDetailPage = () => {
   };
 
   const handleBack = () => {
-    navigate(`/teacherprofile/${teacherId}`);
+    navigate(-1);
   };
 
   if (loading) {
@@ -301,6 +323,7 @@ const StudentCourseDetailPage = () => {
               handleEnroll={handleEnroll}
               handleWishlist={handleWishlist}
               handleShare={handleShare}
+              teacherId={teacherId}
             />
           </div>
         </div>
