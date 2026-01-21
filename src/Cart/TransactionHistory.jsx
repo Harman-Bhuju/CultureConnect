@@ -182,6 +182,11 @@ const TransactionHistory = ({ completedOrders, loading, selectedPeriod }) => {
                                 <h3 className="text-gray-900 font-semibold text-lg">
                                   {order.productName}
                                 </h3>
+                                {order.size && (
+                                  <p className="text-sm text-gray-600 mt-1">
+                                    Size: {order.size}
+                                  </p>
+                                )}
                                 <p className="text-xs text-gray-500 font-mono mt-1">
                                   Order ID: {order.order_number}
                                 </p>

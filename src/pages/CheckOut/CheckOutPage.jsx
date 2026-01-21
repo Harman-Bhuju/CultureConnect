@@ -15,6 +15,7 @@ export default function CheckOutPage() {
 
   const searchParams = new URLSearchParams(location.search);
   const initialQty = parseInt(searchParams.get("qty"), 10) || 1;
+  const initialSize = searchParams.get("size") || null;
 
   const { sellerId, productId } = useParams();
 
@@ -126,6 +127,8 @@ export default function CheckOutPage() {
             quantity: initialQty,
             image: data.product.product_image,
             stock: data.product.stock,
+            category: data.product.category,
+            size: initialSize,
           });
 
           if (data.hasLocation && data.location && !selectedLocation) {
@@ -297,6 +300,9 @@ export default function CheckOutPage() {
       formData.append("delivery_district", selectedLocation.district);
       formData.append("delivery_municipality", selectedLocation.municipality);
       formData.append("delivery_ward", selectedLocation.ward);
+      if (orderItem.size) {
+        formData.append("size", orderItem.size);
+      }
 
       const response = await fetch(API.CREATE_ORDER, {
         method: "POST",
@@ -425,11 +431,11 @@ export default function CheckOutPage() {
           "checkout_selectedLocation",
           JSON.stringify(selectedLocation),
         );
-      } catch (e) {}
+      } catch (e) { }
     } else {
       try {
         sessionStorage.removeItem("checkout_selectedLocation");
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [selectedLocation]);
 
@@ -440,11 +446,11 @@ export default function CheckOutPage() {
           "checkout_selectedPayment",
           JSON.stringify(selectedPayment),
         );
-      } catch (e) {}
+      } catch (e) { }
     } else {
       try {
         sessionStorage.removeItem("checkout_selectedPayment");
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [selectedPayment]);
 

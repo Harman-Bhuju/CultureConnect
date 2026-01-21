@@ -217,6 +217,11 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
                             <h3 className="text-gray-900 font-semibold text-lg mb-1">
                               {order.productName}
                             </h3>
+                            {order.size && (
+                              <p className="text-sm text-gray-600 mb-1">
+                                Size: {order.size}
+                              </p>
+                            )}
                             <p className="text-xs text-gray-500 font-mono">
                               Order ID: {order.order_number}
                             </p>
@@ -258,47 +263,47 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
                         {(order.cancellation?.reason ||
                           order.cancellation?.description ||
                           order.cancellation?.cancelled_by) && (
-                          <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            {order.cancellation?.cancelled_by && (
-                              <div className="mb-2 pb-2 border-b border-gray-200">
-                                <p className="text-xs text-gray-500 font-medium">
-                                  Cancelled By
-                                </p>
-                                <p className="text-sm text-gray-900 mt-1 capitalize">
-                                  {order.cancellation.cancelled_by === "buyer"
-                                    ? "You (Buyer)"
-                                    : order.cancellation.cancelled_by ===
+                            <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                              {order.cancellation?.cancelled_by && (
+                                <div className="mb-2 pb-2 border-b border-gray-200">
+                                  <p className="text-xs text-gray-500 font-medium">
+                                    Cancelled By
+                                  </p>
+                                  <p className="text-sm text-gray-900 mt-1 capitalize">
+                                    {order.cancellation.cancelled_by === "buyer"
+                                      ? "You (Buyer)"
+                                      : order.cancellation.cancelled_by ===
                                         "seller"
-                                      ? "Seller"
-                                      : order.cancellation.cancelled_by}
-                                </p>
-                              </div>
-                            )}
-                            {order.cancellation?.reason && (
-                              <div
-                                className={
-                                  order.cancellation?.description ? "mb-2" : ""
-                                }>
-                                <p className="text-xs text-gray-500 font-medium">
-                                  Cancellation Reason
-                                </p>
-                                <p className="text-sm text-gray-900 mt-1">
-                                  {order.cancellation.reason}
-                                </p>
-                              </div>
-                            )}
-                            {order.cancellation?.description && (
-                              <div>
-                                <p className="text-xs text-gray-500 font-medium">
-                                  Additional Details
-                                </p>
-                                <p className="text-sm text-gray-700 mt-1">
-                                  {order.cancellation.description}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                                        ? "Seller"
+                                        : order.cancellation.cancelled_by}
+                                  </p>
+                                </div>
+                              )}
+                              {order.cancellation?.reason && (
+                                <div
+                                  className={
+                                    order.cancellation?.description ? "mb-2" : ""
+                                  }>
+                                  <p className="text-xs text-gray-500 font-medium">
+                                    Cancellation Reason
+                                  </p>
+                                  <p className="text-sm text-gray-900 mt-1">
+                                    {order.cancellation.reason}
+                                  </p>
+                                </div>
+                              )}
+                              {order.cancellation?.description && (
+                                <div>
+                                  <p className="text-xs text-gray-500 font-medium">
+                                    Additional Details
+                                  </p>
+                                  <p className="text-sm text-gray-700 mt-1">
+                                    {order.cancellation.description}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          )}
 
                         <div className="grid grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
                           <div>
