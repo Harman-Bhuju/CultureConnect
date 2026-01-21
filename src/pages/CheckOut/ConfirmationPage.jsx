@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Check } from 'lucide-react';
-import API, { BASE_URL } from '../../Configs/ApiEndpoints';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { Check } from "lucide-react";
+import API, { BASE_URL } from "../../Configs/ApiEndpoints";
+import toast from "react-hot-toast";
 
 export default function ConfirmationPage({
   orderId,
@@ -21,7 +21,7 @@ export default function ConfirmationPage({
   useEffect(() => {
     const fetchOrderDetails = async () => {
       if (!orderId) {
-        toast.error('Order not found');
+        toast.error("Order not found");
         navigate(`/products/${sellerId}/${productId}`);
         return;
       }
@@ -31,23 +31,22 @@ export default function ConfirmationPage({
         const response = await fetch(
           `${API.GET_ORDER_DETAILS}?order_id=${orderId}`,
           {
-            method: 'GET',
-            credentials: 'include',
-          }
+            method: "GET",
+            credentials: "include",
+          },
         );
-
 
         const data = await response.json();
 
         if (data.success) {
           setOrderDetails(data);
         } else {
-          toast.error(data.error || 'Failed to load order details');
+          toast.error(data.error || "Failed to load order details");
           navigate(`/products/${sellerId}/${productId}`);
         }
       } catch (error) {
-        console.error('Error fetching order details:', error);
-        toast.error('Network error. Please try again.');
+        console.error("Error fetching order details:", error);
+        toast.error("Network error. Please try again.");
         navigate(`/products/${sellerId}/${productId}`);
       } finally {
         setLoading(false);
@@ -60,26 +59,28 @@ export default function ConfirmationPage({
   // Handle payment success notification
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const paymentStatus = params.get('payment');
+    const paymentStatus = params.get("payment");
 
-    if (paymentStatus === 'success') {
-      toast.success('Payment successful! Your order is being processed.', {
+    if (paymentStatus === "success") {
+      toast.success("Payment successful! Your order is being processed.", {
         duration: 5000,
-        icon: '🎉'
+        icon: "🎉",
       });
 
-      params.delete('payment');
-      const newUrl = params.toString() ? `${location.pathname}?${params.toString()}` : location.pathname;
+      params.delete("payment");
+      const newUrl = params.toString()
+        ? `${location.pathname}?${params.toString()}`
+        : location.pathname;
       navigate(newUrl, { replace: true });
     }
   }, [location.search, location.pathname, navigate]);
   const handleContinueShopping = () => {
     // Clear session storage
-    sessionStorage.removeItem('checkout_selectedLocation');
-    sessionStorage.removeItem('checkout_selectedPayment');
-    sessionStorage.removeItem('checkout_orderId');
-    sessionStorage.removeItem('checkout_orderNumber');
-    sessionStorage.removeItem('checkout_orderDetails');
+    sessionStorage.removeItem("checkout_selectedLocation");
+    sessionStorage.removeItem("checkout_selectedPayment");
+    sessionStorage.removeItem("checkout_orderId");
+    sessionStorage.removeItem("checkout_orderNumber");
+    sessionStorage.removeItem("checkout_orderDetails");
 
     setSelectedPayment(null);
     setSelectedLocation(null);
@@ -107,22 +108,22 @@ export default function ConfirmationPage({
   // Format status display
   const getStatusColor = (status) => {
     const statusColors = {
-      'processing': 'text-blue-600',
-      'shipped': 'text-indigo-600',
-      'completed': 'text-green-600',
-      'cancelled': 'text-red-600',
+      processing: "text-blue-600",
+      shipped: "text-indigo-600",
+      completed: "text-green-600",
+      cancelled: "text-red-600",
     };
-    return statusColors[status] || 'text-gray-600';
+    return statusColors[status] || "text-gray-600";
   };
 
   const getPaymentStatusColor = (status) => {
     const statusColors = {
-      'pending': 'text-yellow-600',
-      'success': 'text-green-600',
-      'failed': 'text-red-600',
-      'refunded': 'text-orange-600',
+      pending: "text-yellow-600",
+      success: "text-green-600",
+      failed: "text-red-600",
+      refunded: "text-orange-600",
     };
-    return statusColors[status] || 'text-gray-600';
+    return statusColors[status] || "text-gray-600";
   };
 
   const formatStatus = (status) => {
@@ -137,42 +138,54 @@ export default function ConfirmationPage({
             <Check className="text-white" size={48} />
           </div>
 
-          <h1 className="text-3xl font-bold text-black mb-2">Order Placed Successfully!</h1>
+          <h1 className="text-3xl font-bold text-black mb-2">
+            Order Placed Successfully!
+          </h1>
           <p className="text-gray-600 text-lg">Thank you for your purchase</p>
         </div>
 
         <div className="grid grid-cols-2 gap-6 mb-8">
           {/* Order Details */}
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-black mb-4">Order Details</h2>
+            <h2 className="text-lg font-semibold text-black mb-4">
+              Order Details
+            </h2>
 
             <div className="space-y-3 text-black">
               <div className="flex justify-between">
                 <span className="text-gray-600">Order Number</span>
-                <span className="font-mono font-semibold">{order.order_number}</span>
+                <span className="font-mono font-semibold">
+                  {order.order_number}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Order Status</span>
-                <span className={`font-medium ${getStatusColor(order.order_status)}`}>
+                <span
+                  className={`font-medium ${getStatusColor(order.order_status)}`}>
                   {formatStatus(order.order_status)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Payment Method</span>
                 <span className="font-medium">
-                  {payment.payment_method === 'esewa' ? 'eSewa' : 'Cash on Delivery'}
+                  {payment.payment_method === "esewa"
+                    ? "eSewa"
+                    : "Cash on Delivery"}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Payment Status</span>
-                <span className={`font-medium ${getPaymentStatusColor(payment.payment_status)}`}>
+                <span
+                  className={`font-medium ${getPaymentStatusColor(payment.payment_status)}`}>
                   {formatStatus(payment.payment_status)}
                 </span>
               </div>
               {payment.transaction_uuid && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Transaction ID</span>
-                  <span className="font-mono text-xs">{payment.transaction_uuid}</span>
+                  <span className="font-mono text-xs">
+                    {payment.transaction_uuid}
+                  </span>
                 </div>
               )}
             </div>
@@ -180,7 +193,9 @@ export default function ConfirmationPage({
 
           {/* Delivery Details */}
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-black mb-4">Delivery Details</h2>
+            <h2 className="text-lg font-semibold text-black mb-4">
+              Delivery Details
+            </h2>
 
             <div className="space-y-3 text-black">
               <div>
@@ -195,11 +210,14 @@ export default function ConfirmationPage({
                 <div>
                   <p className="text-gray-600 text-sm">Estimated Delivery</p>
                   <p className="font-medium">
-                    {new Date(order.estimated_delivery_time).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                    {new Date(order.estimated_delivery_time).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      },
+                    )}
                   </p>
                 </div>
               )}
@@ -225,7 +243,9 @@ export default function ConfirmationPage({
                   )}
                 </div>
                 <div>
-                  <span className="text-gray-700 font-medium">{order.product_name}</span>
+                  <span className="text-gray-700 font-medium">
+                    {order.product_name}
+                  </span>
                   <span className="text-gray-500 ml-2">x{order.quantity}</span>
                   {order.store_name && (
                     <div className="flex items-center gap-2 mt-1">
@@ -238,7 +258,9 @@ export default function ConfirmationPage({
                       ) : (
                         <div className="w-5 h-5 rounded-full bg-gray-300" />
                       )}
-                      <p className="text-sm text-gray-500">{order.store_name}</p>
+                      <p className="text-sm text-gray-500">
+                        {order.store_name}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -266,14 +288,12 @@ export default function ConfirmationPage({
         <div className="flex gap-4">
           <button
             onClick={handleContinueShopping}
-            className="flex-1 bg-black hover:bg-gray-800 transition-colors text-white font-semibold py-4 rounded-lg"
-          >
+            className="flex-1 bg-black hover:bg-gray-800 transition-colors text-white font-semibold py-4 rounded-lg">
             Continue Shopping
           </button>
           <button
-            onClick={() => toast.info('Order tracking coming soon!')}
-            className="flex-1 bg-white hover:bg-gray-100 border-2 border-black transition-colors text-black font-semibold py-4 rounded-lg"
-          >
+            onClick={() => toast.info("Order tracking coming soon!")}
+            className="flex-1 bg-white hover:bg-gray-100 border-2 border-black transition-colors text-black font-semibold py-4 rounded-lg">
             Track Order
           </button>
         </div>
