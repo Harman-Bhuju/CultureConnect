@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { useAuth } from "../../../../context/AuthContext";
 import TeacherCourseDetailPage from "../../../ManageCourses/CardHandling/TeacherCourseDetailPage/TeacherCourseDetailPage";
-import StudentCourseDetailPage from "../../../../pages/Teacher/TeacherPagesHandling/StudentCourseDetailPage";
+import StudentCourseDetailPage from "../../../ManageCourses/CardHandling/StudentCourseDetailPage/StudentCourseDetailPage";
 
 const CourseDetailRouter = () => {
   const { teacherId } = useParams();

@@ -13,9 +13,9 @@ import {
   BookOpen,
   Award,
 } from "lucide-react";
-import Loading from "../../../components/Common/Loading";
-import { useAuth } from "../../../context/AuthContext";
-import API from "../../../Configs/ApiEndpoints";
+import Loading from "../../../Common/Loading";
+import { useAuth } from "../../../../context/AuthContext";
+import API from "../../../../Configs/ApiEndpoints";
 
 const StudentCourseDetailPage = () => {
   const navigate = useNavigate();
