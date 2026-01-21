@@ -73,6 +73,7 @@ export default function CheckOutPage() {
   const [productInfo, setProductInfo] = useState(null);
   const [orderItem, setOrderItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const {
     provinces,
@@ -314,8 +315,12 @@ export default function CheckOutPage() {
       return;
     }
 
+    if (silent && isCalculating) return;
+
     try {
-      if (silent) toast("Calculating delivery fees...");
+      if (silent) {
+        setIsCalculating(true);
+      }
 
       const formData = new FormData();
       formData.append("seller_id", sellerId);
@@ -367,6 +372,8 @@ export default function CheckOutPage() {
     } catch (error) {
       console.error("Error creating order:", error);
       toast.error("Network error. Please try again.");
+    } finally {
+      setIsCalculating(false);
     }
   };
 
@@ -527,6 +534,7 @@ export default function CheckOutPage() {
           decrementQuantity={decrementQuantity}
           updateSize={updateSize}
           handleProceedToPayment={() => handleProceedToPayment(false)}
+          orderDetails={orderDetails}
           onBack={() => navigate(-1)}
         />
       )}

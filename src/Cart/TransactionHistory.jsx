@@ -163,7 +163,7 @@ const TransactionHistory = ({ completedOrders, loading, selectedPeriod }) => {
               <div className="space-y-3">
                 {orders.map((order) => (
                   <div
-                    key={order.order_number}
+                    key={order.id}
                     className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow bg-white">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">

@@ -34,6 +34,7 @@ export default function Checkout({
   decrementQuantity,
   updateSize,
   handleProceedToPayment,
+  orderDetails,
 }) {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
@@ -90,9 +91,8 @@ export default function Checkout({
                         <p className="text-black font-medium">
                           {selectedLocation.name}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Delivery charges will be calculated based on this
-                          location
+                        <p className="text-xs text-gray-400 mt-1">
+                          Delivery address
                         </p>
                       </div>
                     </div>
@@ -209,8 +209,8 @@ export default function Checkout({
                                 updateSize(size);
                               }}
                               className={`px-3 py-1.5 border-2 rounded-lg text-sm font-medium transition ${orderItem.size === size
-                                  ? "border-black bg-black text-white"
-                                  : "border-gray-300 hover:border-gray-400 text-gray-700"
+                                ? "border-black bg-black text-white"
+                                : "border-gray-300 hover:border-gray-400 text-gray-700"
                                 }`}>
                               {size}
                             </button>
@@ -231,13 +231,7 @@ export default function Checkout({
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
-                <span className="font-semibold">Note:</span> Delivery charges
-                are calculated live based on your selected location and distance
-                from the seller.
-              </p>
-            </div>
+
           </div>
 
           {/* Right Section - Summary */}
@@ -254,7 +248,7 @@ export default function Checkout({
                   {!selectedLocation
                     ? "Select address"
                     : (deliveryCharge === 0 && !orderDetails)
-                      ? "Calculating..."
+                      ? "..."
                       : `Rs. ${deliveryCharge}`}
                 </span>
               </div>
