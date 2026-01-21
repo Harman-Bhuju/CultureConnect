@@ -1,8 +1,8 @@
-import React from 'react';
-import { MapPin, ChevronRight, Truck, Package, ArrowLeft } from 'lucide-react';
-import EditModal from '../../profileSettings_Components/EditModal';
-import LocationForm from '../../profileSettings_Components/LocationForm';
-import API, { BASE_URL } from '../../Configs/ApiEndpoints';
+import React from "react";
+import { MapPin, ChevronRight, Truck, Package, ArrowLeft } from "lucide-react";
+import EditModal from "../../profileSettings_Components/EditModal";
+import LocationForm from "../../profileSettings_Components/LocationForm";
+import API, { BASE_URL } from "../../Configs/ApiEndpoints";
 
 export default function Checkout({
   orderItem,
@@ -51,7 +51,9 @@ export default function Checkout({
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-4">
                 <Truck className="text-black" size={24} />
-                <h2 className="text-xl font-semibold text-black">Delivery Address</h2>
+                <h2 className="text-xl font-semibold text-black">
+                  Delivery Address
+                </h2>
               </div>
 
               {!selectedLocation ? (
@@ -60,13 +62,14 @@ export default function Checkout({
                   tabIndex={0}
                   onClick={() => openLocationModal()}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') openLocationModal();
+                    if (e.key === "Enter" || e.key === " ") openLocationModal();
                   }}
-                  className="w-full bg-gray-100 hover:bg-gray-200 transition-colors rounded-lg p-6 flex items-center justify-between border-2 border-dashed border-gray-300 cursor-pointer"
-                >
+                  className="w-full bg-gray-100 hover:bg-gray-200 transition-colors rounded-lg p-6 flex items-center justify-between border-2 border-dashed border-gray-300 cursor-pointer">
                   <div className="flex items-center gap-3">
                     <MapPin className="text-gray-600" size={24} />
-                    <span className="text-gray-600 font-medium">Select delivery location</span>
+                    <span className="text-gray-600 font-medium">
+                      Select delivery location
+                    </span>
                   </div>
                   <ChevronRight className="text-gray-600" size={24} />
                 </div>
@@ -76,17 +79,19 @@ export default function Checkout({
                   tabIndex={0}
                   onClick={() => openLocationModal()}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') openLocationModal();
+                    if (e.key === "Enter" || e.key === " ") openLocationModal();
                   }}
-                  className="bg-gray-50 rounded-lg p-6 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors"
-                >
+                  className="bg-gray-50 rounded-lg p-6 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <MapPin className="text-black mt-1" size={20} />
                       <div>
-                        <p className="text-black font-medium">{selectedLocation.name}</p>
+                        <p className="text-black font-medium">
+                          {selectedLocation.name}
+                        </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          Delivery charges will be calculated based on this location
+                          Delivery charges will be calculated based on this
+                          location
                         </p>
                       </div>
                     </div>
@@ -96,8 +101,7 @@ export default function Checkout({
                         e.stopPropagation();
                         openLocationModal();
                       }}
-                      className="text-black underline text-sm hover:text-gray-700"
-                    >
+                      className="text-black underline text-sm hover:text-gray-700">
                       Change
                     </button>
                   </div>
@@ -126,7 +130,9 @@ export default function Checkout({
                     )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-black">{orderItem.name}</h3>
+                    <h3 className="font-semibold text-black">
+                      {orderItem.name}
+                    </h3>
                     {orderItem.storeName && (
                       <div className="flex items-center gap-2 mt-1">
                         {orderItem.storeLogo ? (
@@ -138,7 +144,9 @@ export default function Checkout({
                         ) : (
                           <div className="w-5 h-5 rounded-full bg-gray-300" />
                         )}
-                        <span className="text-xs text-gray-600">{orderItem.storeName}</span>
+                        <span className="text-xs text-gray-600">
+                          {orderItem.storeName}
+                        </span>
                       </div>
                     )}
                     <div className="flex items-center gap-3 mt-2">
@@ -151,12 +159,16 @@ export default function Checkout({
                             decrementQuantity();
                           }}
                           disabled={orderItem.quantity <= 1}
-                          className={`px-2 py-1 text-sm font-semibold ${orderItem.quantity <= 1 ? 'text-gray-300 cursor-not-allowed' : 'text-black hover:text-gray-700'
-                            }`}
-                        >
+                          className={`px-2 py-1 text-sm font-semibold ${
+                            orderItem.quantity <= 1
+                              ? "text-gray-300 cursor-not-allowed"
+                              : "text-black hover:text-gray-700"
+                          }`}>
                           -
                         </button>
-                        <span className="text-sm font-medium px-2">{orderItem.quantity}</span>
+                        <span className="text-sm font-medium px-2">
+                          {orderItem.quantity}
+                        </span>
                         <button
                           type="button"
                           onClick={(e) => {
@@ -164,11 +176,11 @@ export default function Checkout({
                             incrementQuantity();
                           }}
                           disabled={orderItem.quantity >= orderItem.stock}
-                          className={`px-2 py-1 text-sm font-semibold ${orderItem.quantity >= orderItem.stock
-                            ? 'text-gray-300 cursor-not-allowed'
-                            : 'text-black hover:text-gray-700'
-                            }`}
-                        >
+                          className={`px-2 py-1 text-sm font-semibold ${
+                            orderItem.quantity >= orderItem.stock
+                              ? "text-gray-300 cursor-not-allowed"
+                              : "text-black hover:text-gray-700"
+                          }`}>
                           +
                         </button>
                       </div>
@@ -178,8 +190,12 @@ export default function Checkout({
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-black text-lg">Rs. {orderItem.price * orderItem.quantity}</p>
-                    <p className="text-gray-600 text-sm">Rs. {orderItem.price} each</p>
+                    <p className="font-bold text-black text-lg">
+                      Rs. {orderItem.price * orderItem.quantity}
+                    </p>
+                    <p className="text-gray-600 text-sm">
+                      Rs. {orderItem.price} each
+                    </p>
                   </div>
                 </div>
               </div>
@@ -187,20 +203,27 @@ export default function Checkout({
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800">
-                <span className="font-semibold">Note:</span> Delivery charges are calculated live based on your selected location and distance from the seller.
+                <span className="font-semibold">Note:</span> Delivery charges
+                are calculated live based on your selected location and distance
+                from the seller.
               </p>
             </div>
           </div>
 
           {/* Right Section - Summary */}
           <div className="bg-gray-50 p-8">
-            <h2 className="text-xl font-semibold text-black mb-6">Order Summary</h2>
+            <h2 className="text-xl font-semibold text-black mb-6">
+              Order Summary
+            </h2>
 
             <div className="space-y-4 mb-6">
               <div className="flex items-center justify-between text-black">
                 <span className="text-gray-700">Delivery Fee</span>
-                <span className={`font-medium ${deliveryCharge === 0 ? 'text-gray-400' : 'text-green-600'}`}>
-                  {deliveryCharge === 0 ? 'Calculating...' : `Rs. ${deliveryCharge}`}
+                <span
+                  className={`font-medium ${deliveryCharge === 0 ? "text-gray-400" : "text-green-600"}`}>
+                  {deliveryCharge === 0
+                    ? "Calculating..."
+                    : `Rs. ${deliveryCharge}`}
                 </span>
               </div>
 
@@ -215,19 +238,23 @@ export default function Checkout({
             {selectedLocation && (
               <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
                 <p className="text-xs text-gray-500 mb-1">Selected Location</p>
-                <p className="text-sm text-black font-medium">{selectedLocation.name}</p>
+                <p className="text-sm text-black font-medium">
+                  {selectedLocation.name}
+                </p>
               </div>
             )}
 
             <button
               onClick={handleProceedToPayment}
               disabled={!selectedLocation}
-              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${selectedLocation
-                ? 'bg-black hover:bg-gray-800 text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-            >
-              {selectedLocation ? 'Proceed to Payment' : 'Select Location First'}
+              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${
+                selectedLocation
+                  ? "bg-black hover:bg-gray-800 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}>
+              {selectedLocation
+                ? "Proceed to Payment"
+                : "Select Location First"}
             </button>
 
             <p className="text-xs text-gray-600 text-center">
@@ -243,8 +270,7 @@ export default function Checkout({
         field="location"
         onSave={handleSaveLocation}
         onCancel={() => setShowLocationModal(false)}
-        isSaveDisabled={isLocationSaveDisabled}
-      >
+        isSaveDisabled={isLocationSaveDisabled}>
         <LocationForm
           provinces={provinces}
           districts={districts}
@@ -258,7 +284,9 @@ export default function Checkout({
           onDistrictChange={(v) => onDistrictChange(v)}
           onMunicipalChange={(v) => onMunicipalChange(v)}
           onWardChange={(v) => onWardChange(v)}
-          initialLocation={selectedLocation ? selectedLocation.name : 'Add Location'}
+          initialLocation={
+            selectedLocation ? selectedLocation.name : "Add Location"
+          }
         />
       </EditModal>
     </div>

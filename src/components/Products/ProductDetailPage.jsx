@@ -56,12 +56,6 @@ const ProductDetailPage = () => {
       if (data.success) {
         setProduct(data.product);
 
-        const defaultSize =
-          data.product.adultSizes?.[0] ||
-          data.product.childAgeGroups?.[0] ||
-          "";
-        setSelectedSize(defaultSize);
-
         // Check if product is in wishlist
         if (user) {
           checkWishlistStatus();
@@ -176,7 +170,10 @@ const ProductDetailPage = () => {
     }
 
     const hasSizes =
-      product.adultSizes?.length > 0 || product.childAgeGroups?.length > 0;
+      product.sizes?.length > 0 ||
+      product.ageGroups?.length > 0 ||
+      product.adultSizes?.length > 0 ||
+      product.childAgeGroups?.length > 0;
     if (hasSizes && !selectedSize) {
       toast.error("Please select a size");
       return;
@@ -229,7 +226,10 @@ const ProductDetailPage = () => {
     }
 
     const hasSizes =
-      product.adultSizes?.length > 0 || product.childAgeGroups?.length > 0;
+      product.sizes?.length > 0 ||
+      product.ageGroups?.length > 0 ||
+      product.adultSizes?.length > 0 ||
+      product.childAgeGroups?.length > 0;
     if (hasSizes && !selectedSize) {
       toast.error("Please select a size");
       return;
@@ -419,7 +419,7 @@ const ProductDetailPage = () => {
         const avgRating =
           totalReviews > 0
             ? updatedReviews.reduce((acc, r) => acc + r.rating, 0) /
-            totalReviews
+              totalReviews
             : 0;
 
         setProduct({
