@@ -10,9 +10,15 @@ import {
 import Card from "../../../components/cardLayout/Card";
 import API from "../../../Configs/ApiEndpoints";
 
-const CategoryPageLayout = ({ category, title, description, showAudienceFilter = false }) => {
+const CategoryPageLayout = ({
+  category,
+  title,
+  description,
+  showAudienceFilter = false,
+}) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [sortBy, setSortBy] = useState("newest");
@@ -64,7 +70,7 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
 
         const response = await fetch(
           `${API.GET_CATEGORY_PRODUCTS}?${params.toString()}`,
-          { credentials: "include" }
+          { credentials: "include" },
         );
         const data = await response.json();
 
@@ -78,11 +84,20 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
         setError("Failed to connect to server");
       } finally {
         setLoading(false);
+        setInitialLoading(false);
       }
     };
 
     fetchProducts();
-  }, [category, sortBy, currentPage, priceRange, selectedRating, selectedAudience, itemsPerPage]);
+  }, [
+    category,
+    sortBy,
+    currentPage,
+    priceRange,
+    selectedRating,
+    selectedAudience,
+    itemsPerPage,
+  ]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -140,26 +155,10 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
     }
   };
 
-  if (loading) {
+  if (initialLoading) {
     return (
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+      <div className="bg-white min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-red-600" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700"
-          >
-            Retry
-          </button>
-        </div>
       </div>
     );
   }
@@ -181,11 +180,11 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
                     <button
                       key={option.value || "all"}
                       onClick={() => setSelectedAudience(option.value)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedAudience === option.value
-                        ? "bg-red-600 text-white shadow-md"
-                        : "bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200"
-                        }`}
-                    >
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        selectedAudience === option.value
+                          ? "bg-red-600 text-white shadow-md"
+                          : "bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200"
+                      }`}>
                       {option.label}
                     </button>
                   ))}
@@ -238,8 +237,7 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
               )}
               <button
                 onClick={applyPriceFilter}
-                className="mt-3 w-full py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
-              >
+                className="mt-3 w-full py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
                 Apply Price
               </button>
             </div>
@@ -255,17 +253,16 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
                     key={rating}
                     onClick={() => {
                       setSelectedRating(
-                        selectedRating === rating ? null : rating
+                        selectedRating === rating ? null : rating,
                       );
                     }}
-                    className="flex items-center gap-3 w-full group hover:bg-red-50 p-2 rounded-lg transition-all -ml-2"
-                  >
+                    className="flex items-center gap-3 w-full group hover:bg-red-50 p-2 rounded-lg transition-all -ml-2">
                     <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${selectedRating === rating
-                        ? "bg-red-600 border-red-600"
-                        : "border-gray-300 group-hover:border-red-400"
-                        }`}
-                    >
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                        selectedRating === rating
+                          ? "bg-red-600 border-red-600"
+                          : "border-gray-300 group-hover:border-red-400"
+                      }`}>
                       {selectedRating === rating && (
                         <Check size={12} className="text-white" />
                       )}
@@ -319,8 +316,7 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none bg-gray-50 pl-4 pr-10 py-2.5 rounded-full text-sm font-semibold text-gray-900 border-none focus:ring-2 focus:ring-black cursor-pointer hover:bg-gray-100 transition-colors"
-                  >
+                    className="appearance-none bg-gray-50 pl-4 pr-10 py-2.5 rounded-full text-sm font-semibold text-gray-900 border-none focus:ring-2 focus:ring-black cursor-pointer hover:bg-gray-100 transition-colors">
                     <option value="newest">Newest Arrivals</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
@@ -332,30 +328,46 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
             </div>
 
             {/* Products Grid */}
-            {products.length > 0 ? (
-              <div className="grid grid-cols-4 min-[540px]:grid-cols-5 md:grid-cols-6 lg:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-4">
-                {products.map((product) => (
-                  <div key={product.id} className="group">
-                    <Card product={product} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-32">
-                <h3 className="text-gray-900 font-medium text-xl mb-2">
-                  No matching products
-                </h3>
-                <p className="text-gray-500 mb-8">
-                  Adjust your filters to discover more cultural treasures.
-                </p>
-                <button
-                  onClick={clearAllFilters}
-                  className="px-8 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-shadow shadow-lg shadow-red-200 font-medium"
-                >
-                  Clear All Filters
-                </button>
-              </div>
-            )}
+            <div className="relative min-h-[400px]">
+              {loading && !initialLoading && (
+                <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl">
+                  <Loader2 className="w-10 h-10 animate-spin text-red-600" />
+                </div>
+              )}
+
+              {error ? (
+                <div className="text-center py-20">
+                  <p className="text-red-600 mb-4 font-medium">{error}</p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-8 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all">
+                    Retry
+                  </button>
+                </div>
+              ) : products.length > 0 ? (
+                <div className="grid grid-cols-4 min-[540px]:grid-cols-5 md:grid-cols-6 lg:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-4">
+                  {products.map((product) => (
+                    <div key={product.id} className="group">
+                      <Card product={product} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-32">
+                  <h3 className="text-gray-900 font-medium text-xl mb-2">
+                    No matching products
+                  </h3>
+                  <p className="text-gray-500 mb-8">
+                    Adjust your filters to discover more cultural treasures.
+                  </p>
+                  <button
+                    onClick={clearAllFilters}
+                    className="px-8 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-shadow shadow-lg shadow-red-200 font-medium">
+                    Clear All Filters
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Pagination - Red Theme */}
             {pagination.total_pages > 1 && (
@@ -363,23 +375,22 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={!pagination.has_prev}
-                  className="w-11 h-11 flex items-center justify-center border border-gray-200 rounded-full hover:border-red-600 hover:text-red-600 transition-all disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-400"
-                >
+                  className="w-11 h-11 flex items-center justify-center border border-gray-200 rounded-full hover:border-red-600 hover:text-red-600 transition-all disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-400">
                   <ChevronLeft size={20} />
                 </button>
 
                 {Array.from(
                   { length: pagination.total_pages },
-                  (_, i) => i + 1
+                  (_, i) => i + 1,
                 ).map((page) => (
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`w-11 h-11 flex items-center justify-center rounded-full text-sm font-bold transition-all ${currentPage === page
-                      ? "bg-red-600 text-white shadow-md shadow-red-200 scale-110"
-                      : "bg-white text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200"
-                      }`}
-                  >
+                    className={`w-11 h-11 flex items-center justify-center rounded-full text-sm font-bold transition-all ${
+                      currentPage === page
+                        ? "bg-red-600 text-white shadow-md shadow-red-200 scale-110"
+                        : "bg-white text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200"
+                    }`}>
                     {page}
                   </button>
                 ))}
@@ -387,8 +398,7 @@ const CategoryPageLayout = ({ category, title, description, showAudienceFilter =
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={!pagination.has_next}
-                  className="w-11 h-11 flex items-center justify-center border border-gray-200 rounded-full hover:border-red-600 hover:text-red-600 transition-all disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-400"
-                >
+                  className="w-11 h-11 flex items-center justify-center border border-gray-200 rounded-full hover:border-red-600 hover:text-red-600 transition-all disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-400">
                   <ChevronRight size={20} />
                 </button>
               </div>

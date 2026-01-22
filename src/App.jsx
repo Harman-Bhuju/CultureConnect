@@ -92,7 +92,7 @@ const TeacherCourseUpload = lazy(
   () =>
     import("./components/ManageCourses/CardHandling/TeacherCourseUpload/TeacherCourseUpload"),
 );
-const TeacherClassEdit = lazy(
+const TeacherCourseEditPage = lazy(
   () =>
     import("./components/ManageCourses/CardHandling/TeacherCourseEdit/TeacherCourseEditPage"),
 );
@@ -315,7 +315,7 @@ function App() {
           />
 
           <Route
-            path="/teacher/classes/new/:teacherId"
+            path="/teacher/courses/new/:teacherId"
             element={
               <ProtectedTeacherRoute>
                 <TeacherCourseUpload />
@@ -324,10 +324,10 @@ function App() {
           />
 
           <Route
-            path="/teacher/classes/edit/:teacherId/:id"
+            path="/teacher/courses/edit/:teacherId/:id"
             element={
               <ProtectedTeacherRoute>
-                <TeacherClassEdit />
+                <TeacherCourseEditPage />
               </ProtectedTeacherRoute>
             }
           />

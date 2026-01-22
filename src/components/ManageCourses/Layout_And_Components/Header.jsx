@@ -9,7 +9,7 @@ const Header = () => {
   const { user } = useAuth();
 
   const handleAddCourse = () => {
-    navigate(`/teacher/classes/new/${user?.teacher_id}`);
+    navigate(`/teacher/courses/new/${user?.teacher_id}`);
   };
 
   const handleViewAnalytics = () => {
