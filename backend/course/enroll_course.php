@@ -1,16 +1,5 @@
 <?php
 require_once __DIR__ . '/../config/session_config.php';
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: http://localhost:3000');
-header('Access-Control-Allow-Credentials: true');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
 include("../config/header.php");
 
 // Check if user is logged in
@@ -61,7 +50,7 @@ try {
             tc.teacher_id,
             COUNT(ts.id) as current_enrollments
         FROM teacher_courses tc
-        LEFT JOIN teacher_students ts ON tc.id = ts.course_id
+        LEFT JOIN teacher_course_enroll ts ON tc.id = ts.course_id
         WHERE tc.id = ?
         GROUP BY tc.id
         LIMIT 1
@@ -89,10 +78,11 @@ try {
         exit;
     }
 
-    // Check if already enrolled
+    // Check if already enrolled (only block if already active)
     $stmt = $conn->prepare("
-        SELECT id FROM teacher_students 
+        SELECT id FROM teacher_course_enroll 
         WHERE course_id = ? AND student_id = ? 
+        AND (payment_status = 'paid' OR payment_status = 'free')
         LIMIT 1
     ");
     $stmt->bind_param("ii", $course_id, $user_id);
@@ -109,11 +99,10 @@ try {
         exit;
     }
 
-    // Enroll the student
     $stmt = $conn->prepare("
-        INSERT INTO teacher_students 
-        (course_id, student_id, enrollment_date, completion_status, payment_status, paid_amount, progress_percentage)
-        VALUES (?, ?, NOW(), 'enrolled', 'free', 0.00, 0.00)
+        INSERT INTO teacher_course_enroll 
+        (course_id, student_id, enrollment_date, payment_status)
+        VALUES (?, ?, NOW(), 'free')
     ");
     $stmt->bind_param("ii", $course_id, $user_id);
 

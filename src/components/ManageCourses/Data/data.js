@@ -90,11 +90,10 @@ export const getEnrollmentsByEmail = (initialCourses, email) => {
 // Categories matching the upload form
 export const categories = [
   "All Categories",
-  "Dance",
-  "Music",
-  "Art",
-  "Language",
-  "Cooking",
+  "Cultural Dances",
+  "Cultural Singing",
+  "Musical Instruments",
+  "Cultural Art & Crafts",
 ];
 
 export const sortOptions = ["Latest", "Oldest", "Recently Updated"];

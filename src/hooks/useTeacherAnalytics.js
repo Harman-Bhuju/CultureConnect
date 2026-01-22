@@ -1,95 +1,6 @@
 import { useState, useEffect } from "react";
 import API from "../Configs/ApiEndpoints";
 
-// MOCK DATA for analytics
-const MOCK_STATS = {
-  total_revenue: 12500.5,
-  total_students: 145,
-  total_courses: 5,
-  average_rating: 4.8,
-};
-
-const MOCK_COURSE_STATS = {
-  active_courses: 5,
-  draft_courses: 2,
-  under_review: 1,
-  total_views: 3500,
-};
-
-const MOCK_TOP_COURSES = [
-  {
-    id: "1",
-    title: "Introduction to Classical Dance",
-    revenue: 5000,
-    students: 45,
-    rating: 4.9,
-  },
-  {
-    id: "2",
-    title: "Advanced Violin Masterclass",
-    revenue: 3500,
-    students: 30,
-    rating: 4.7,
-  },
-  {
-    id: "3",
-    title: "Digital Art Fundamentals",
-    revenue: 2500,
-    students: 40,
-    rating: 4.8,
-  },
-  {
-    id: "4",
-    title: "Piano for Beginners",
-    revenue: 1500,
-    students: 30,
-    rating: 4.6,
-  },
-];
-
-const MOCK_ENROLLMENTS = [
-  {
-    id: "e1",
-    student_name: "Rahul Sharma",
-    course_title: "Introduction to Classical Dance",
-    amount: 49.99,
-    date: "2025-01-20",
-    status: "Completed",
-  },
-  {
-    id: "e2",
-    student_name: "Priya Patel",
-    course_title: "Advanced Violin Masterclass",
-    amount: 120.0,
-    date: "2025-01-19",
-    status: "In Progress",
-  },
-  {
-    id: "e3",
-    student_name: "Amit Singh",
-    course_title: "Introduction to Classical Dance",
-    amount: 49.99,
-    date: "2025-01-19",
-    status: "Started",
-  },
-  {
-    id: "e4",
-    student_name: "Sneha Gupta",
-    course_title: "Digital Art Fundamentals",
-    amount: 35.0,
-    date: "2025-01-18",
-    status: "Completed",
-  },
-  {
-    id: "e5",
-    student_name: "Vikram Malhotra",
-    course_title: "Piano for Beginners",
-    amount: 55.0,
-    date: "2025-01-18",
-    status: "In Progress",
-  },
-];
-
 const useTeacherAnalytics = (period) => {
   const [stats, setStats] = useState({
     total_revenue: 0,
@@ -100,8 +11,8 @@ const useTeacherAnalytics = (period) => {
   const [courseStats, setCourseStats] = useState({
     active_courses: 0,
     draft_courses: 0,
-    under_review: 0,
-    total_views: 0,
+    archived_courses: 0,
+    total_courses: 0,
   });
   const [topCourses, setTopCourses] = useState([]);
   const [recentEnrollments, setRecentEnrollments] = useState([]);
@@ -111,21 +22,46 @@ const useTeacherAnalytics = (period) => {
   useEffect(() => {
     const fetchAnalytics = async () => {
       setLoading(true);
+      setError(null);
+
       try {
-        // SIMULATED API CALL
-        // const statsResponse = await fetch(`${API.GET_TEACHER_ANALYTICS_STATS}?period=${period}`);
+        // Fetch all analytics data in parallel
+        const [statsRes, topCoursesRes, enrollmentsRes] = await Promise.all([
+          fetch(`${API.GET_TEACHER_ANALYTICS_STATS}?period=${encodeURIComponent(period)}`, {
+            credentials: "include",
+          }),
+          fetch(`${API.GET_TOP_PERFORMING_COURSES}?limit=5`, {
+            credentials: "include",
+          }),
+          fetch(`${API.GET_RECENT_ENROLLMENTS}?limit=10`, {
+            credentials: "include",
+          }),
+        ]);
 
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay
+        const statsData = await statsRes.json();
+        const topCoursesData = await topCoursesRes.json();
+        const enrollmentsData = await enrollmentsRes.json();
 
-        console.log(`Fetching analytics for ${period}`);
+        if (statsData.success) {
+          setStats(statsData.stats);
+          setCourseStats(statsData.course_stats);
+        } else {
+          console.warn("Stats fetch failed:", statsData.error);
+        }
 
-        // Mocking period interaction simply by not changing data for now,
-        // in real app backend filters data
-        setStats(MOCK_STATS);
-        setCourseStats(MOCK_COURSE_STATS);
-        setTopCourses(MOCK_TOP_COURSES);
-        setRecentEnrollments(MOCK_ENROLLMENTS);
+        if (topCoursesData.success) {
+          setTopCourses(topCoursesData.top_courses);
+        } else {
+          console.warn("Top courses fetch failed:", topCoursesData.error);
+        }
+
+        if (enrollmentsData.success) {
+          setRecentEnrollments(enrollmentsData.enrollments);
+        } else {
+          console.warn("Enrollments fetch failed:", enrollmentsData.error);
+        }
       } catch (err) {
+        console.error("Analytics fetch error:", err);
         setError(err.message || "Failed to fetch analytics");
       } finally {
         setLoading(false);

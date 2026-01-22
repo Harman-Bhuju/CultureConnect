@@ -8,6 +8,7 @@ export default function CourseCheckout({
   courseId,
   navigate,
   onProceed,
+  isLoading = false,
 }) {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
@@ -126,8 +127,11 @@ export default function CourseCheckout({
 
             <button
               onClick={onProceed}
-              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-4 rounded-lg transition-colors mb-3">
-              Proceed to Payment
+              disabled={isLoading}
+              className={`w-full bg-black hover:bg-gray-800 text-white font-semibold py-4 rounded-lg transition-colors mb-3 ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}>
+              {isLoading ? "Creating Order..." : "Proceed to Payment"}
             </button>
 
             <p className="text-xs text-gray-600 text-center">

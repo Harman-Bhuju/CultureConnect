@@ -1,6 +1,6 @@
 <?php
 include("../config/header.php");
-include("username_gen.php");
+include("../username_gen.php");
 
 // Check if username is available
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

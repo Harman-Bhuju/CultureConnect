@@ -21,7 +21,7 @@ const StudentCourseDetailPage = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [hasPendingEnrollment, setHasPendingEnrollment] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
   // Fetch course details when ID changes
@@ -33,26 +33,9 @@ const StudentCourseDetailPage = () => {
   useEffect(() => {
     if (user) {
       checkEnrollmentStatus();
-      checkWishlistStatus();
     }
   }, [id, user]);
 
-  // Redirect if already enrolled and not a teacher
-  useEffect(() => {
-    // Assuming `isTeacher` is available, if not, you might need to derive it from `user` or course data
-    // For now, let's assume `user.role === 'teacher'` or similar check if needed.
-    // If `isTeacher` is not defined, this condition will always be true for `!isTeacher`.
-    // For this example, let's assume `isTeacher` is a boolean state or derived value.
-    // If `user` has a role, you could do `const isTeacher = user?.role === 'teacher';`
-    // For the purpose of this edit, we'll assume `isTeacher` is a variable that would be defined elsewhere
-    // or that the instruction implies a simple `!isTeacher` check.
-    // Given the context of a StudentCourseDetailPage, it's highly probable that the user is not a teacher
-    // viewing their own course, but rather a student.
-    const isTeacher = user?.role === "teacher"; // Example of how isTeacher might be defined
-    if (isEnrolled && !isTeacher) {
-      navigate(`/courses/learn/${teacherId}/${id}`);
-    }
-  }, [isEnrolled, user, navigate, teacherId, id]);
 
   const fetchCourseDetails = async () => {
     try {
@@ -105,15 +88,15 @@ const StudentCourseDetailPage = () => {
           })(),
           teacher: data.teacher
             ? {
-                id: data.teacher.id,
-                name: data.teacher.name || "Unknown Teacher",
-                profile_picture: data.teacher.profile_picture
-                  ? `${API.TEACHER_PROFILE_PICTURES}/${data.teacher.profile_picture}`
-                  : "https://ui-avatars.com/api/?name=" +
-                    encodeURIComponent(data.teacher.name || "Teacher"),
-                experience_years: parseInt(data.teacher.experience_years) || 0,
-                bio: data.teacher.bio || "",
-              }
+              id: data.teacher.id,
+              name: data.teacher.name || "Unknown Teacher",
+              profile_picture: data.teacher.profile_picture
+                ? `${API.TEACHER_PROFILE_PICTURES}/${data.teacher.profile_picture}`
+                : "https://ui-avatars.com/api/?name=" +
+                encodeURIComponent(data.teacher.name || "Teacher"),
+              experience_years: parseInt(data.teacher.experience_years) || 0,
+              bio: data.teacher.bio || "",
+            }
             : null,
           videos: (data.videos || [])
             .map((video, index) => ({
@@ -132,8 +115,8 @@ const StudentCourseDetailPage = () => {
             .sort((a, b) => a.order - b.order),
           learningOutcomes: data.course.what_you_will_learn
             ? data.course.what_you_will_learn
-                .split("\n")
-                .filter((item) => item.trim())
+              .split("\n")
+              .filter((item) => item.trim())
             : [],
           requirements: data.course.requirements
             ? data.course.requirements.split("\n").filter((item) => item.trim())
@@ -161,25 +144,12 @@ const StudentCourseDetailPage = () => {
       });
       const data = await response.json();
       setIsEnrolled(data.is_enrolled || false);
+      setHasPendingEnrollment(data.has_pending_enrollment || false);
     } catch (error) {
       console.error("Error checking enrollment:", error);
     }
   };
 
-  const checkWishlistStatus = async () => {
-    try {
-      const response = await fetch(
-        `${API.CHECK_COURSE_WISHLIST}?course_id=${id}`,
-        {
-          credentials: "include",
-        },
-      );
-      const data = await response.json();
-      setIsWishlisted(data.is_wishlisted || false);
-    } catch (error) {
-      console.error("Error checking wishlist:", error);
-    }
-  };
 
   const handleEnroll = async () => {
     if (!user) {
@@ -190,18 +160,20 @@ const StudentCourseDetailPage = () => {
 
     if (course.price === 0) {
       try {
+        const formData = new FormData();
+        formData.append("course_id", id);
+
         const response = await fetch(API.ENROLL_COURSE, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ course_id: id }),
+          body: formData,
         });
         const data = await response.json();
 
         if (data.status === "success") {
           toast.success("Successfully enrolled in free course! 🎉");
           setIsEnrolled(true);
-          navigate(`/courses/learn/${teacherId}/${id}`);
+          navigate(`/courses/${teacherId}/${id}`);
         } else {
           toast.error(data.message || "Failed to enroll");
         }
@@ -214,39 +186,6 @@ const StudentCourseDetailPage = () => {
     }
   };
 
-  const handleWishlist = async () => {
-    if (!user) {
-      toast.error("Please login to add to wishlist");
-      navigate("/login", { state: { from: location.pathname } });
-      return;
-    }
-
-    try {
-      const response = await fetch(API.ADD_TO_COURSE_WISHLIST, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          course_id: id,
-          action: isWishlisted ? "remove" : "add",
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.status === "success") {
-        setIsWishlisted(!isWishlisted);
-        toast.success(
-          isWishlisted ? "Removed from wishlist" : "Added to wishlist ❤️",
-        );
-      } else {
-        toast.error(data.message || "Failed to update wishlist");
-      }
-    } catch (error) {
-      console.error("Error updating wishlist:", error);
-      toast.error("Failed to update wishlist");
-    }
-  };
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -319,9 +258,8 @@ const StudentCourseDetailPage = () => {
             <StudentCourseSidebar
               course={course}
               isEnrolled={isEnrolled}
-              isWishlisted={isWishlisted}
+              hasPendingEnrollment={hasPendingEnrollment}
               handleEnroll={handleEnroll}
-              handleWishlist={handleWishlist}
               handleShare={handleShare}
               teacherId={teacherId}
             />

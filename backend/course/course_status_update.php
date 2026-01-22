@@ -11,8 +11,21 @@ if (!isset($_SESSION['user_email'])) {
     exit;
 }
 
-$course_id = isset($_POST['course_id']) ? intval($_POST['course_id']) : null;
-$new_status = isset($_POST['status']) ? strtolower(trim($_POST['status'])) : null;
+$course_id = null;
+$new_status = null;
+
+// Handle JSON input
+$json_input = file_get_contents('php://input');
+$data = json_decode($json_input, true);
+
+if ($data) {
+    $course_id = isset($data['course_id']) ? intval($data['course_id']) : null;
+    $new_status = isset($data['status']) ? strtolower(trim($data['status'])) : null;
+} else {
+    // Handle form data
+    $course_id = isset($_POST['course_id']) ? intval($_POST['course_id']) : null;
+    $new_status = isset($_POST['status']) ? strtolower(trim($_POST['status'])) : null;
+}
 
 if (!$course_id || !$new_status) {
     echo json_encode([

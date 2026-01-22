@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/session_config.php';
-include("mail.php");
+include("../config/mail.php");
 include("../config/header.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

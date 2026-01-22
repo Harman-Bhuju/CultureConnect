@@ -37,7 +37,7 @@ export default function CourseSidebar({
         <div className="space-y-3">
           <button
             onClick={() =>
-              navigate(`/teacher/courses/edit/${teacherId}/${course.id}`)
+              navigate(`/teacher/classes/edit/${teacherId}/${course.id}`)
             }
             className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2 font-medium shadow-sm">
             <Edit className="w-4 h-4" />
@@ -54,11 +54,10 @@ export default function CourseSidebar({
           <div className="pt-2 border-t">
             <button
               onClick={course.status === "Active" ? handleDraft : handlePublish}
-              className={`w-full py-3 rounded-lg transition font-medium flex items-center justify-center gap-2 ${
-                course.status === "Active"
+              className={`w-full py-3 rounded-lg transition font-medium flex items-center justify-center gap-2 ${course.status === "Active"
                   ? "bg-yellow-50 text-yellow-700 border-2 border-yellow-200 hover:bg-yellow-100"
                   : "bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100"
-              }`}>
+                }`}>
               {course.status === "Active" ? (
                 <>
                   <Save className="w-4 h-4" />
@@ -90,11 +89,10 @@ export default function CourseSidebar({
               Status
             </span>
             <span
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                course.status === "Active"
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${course.status === "Active"
                   ? "bg-green-100 text-green-700"
                   : "bg-gray-100 text-gray-700"
-              }`}>
+                }`}>
               {course.status}
             </span>
           </div>

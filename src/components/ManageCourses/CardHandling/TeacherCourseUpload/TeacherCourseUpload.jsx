@@ -72,7 +72,7 @@ export default function TeacherCourseUpload() {
     price: "",
     recommendedWeeks: "",
     hoursPerWeek: "",
-    accessDuration: "lifetime",
+    hoursPerWeek: "",
     description: "",
     tags: [],
     whatYouWillLearn: "",
@@ -539,7 +539,6 @@ export default function TeacherCourseUpload() {
       fd.append("price", formData.price || 0);
       fd.append("durationWeeks", formData.recommendedWeeks);
       fd.append("hoursPerWeek", formData.hoursPerWeek);
-      fd.append("accessDuration", formData.accessDuration);
       fd.append("description", formData.description);
       fd.append("whatYouWillLearn", formData.whatYouWillLearn);
       fd.append("requirements", formData.requirements);
@@ -617,7 +616,6 @@ export default function TeacherCourseUpload() {
       fd.append("price", formData.price || 0);
       fd.append("durationWeeks", formData.recommendedWeeks || "");
       fd.append("hoursPerWeek", formData.hoursPerWeek || "");
-      fd.append("accessDuration", formData.accessDuration);
       fd.append("description", formData.description);
       fd.append("whatYouWillLearn", formData.whatYouWillLearn);
       fd.append("requirements", formData.requirements);
@@ -718,21 +716,19 @@ export default function TeacherCourseUpload() {
               <div className="flex border-b">
                 <button
                   onClick={() => setActiveTab("basic")}
-                  className={`flex-1 py-4 font-semibold flex items-center justify-center gap-2 transition ${
-                    activeTab === "basic"
+                  className={`flex-1 py-4 font-semibold flex items-center justify-center gap-2 transition ${activeTab === "basic"
                       ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50"
                       : "text-gray-600 hover:bg-gray-50"
-                  }`}>
+                    }`}>
                   <Tag className="w-4 h-4" />
                   Basic Info
                 </button>
                 <button
                   onClick={() => setActiveTab("details")}
-                  className={`flex-1 py-4 font-semibold flex items-center justify-center gap-2 transition ${
-                    activeTab === "details"
+                  className={`flex-1 py-4 font-semibold flex items-center justify-center gap-2 transition ${activeTab === "details"
                       ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50"
                       : "text-gray-600 hover:bg-gray-50"
-                  }`}>
+                    }`}>
                   <Info className="w-4 h-4" />
                   Details
                 </button>
@@ -822,12 +818,12 @@ export default function TeacherCourseUpload() {
             prev.map((v) =>
               v.id === updatedData.id
                 ? {
-                    ...v,
-                    title: updatedData.title,
-                    description: updatedData.description,
-                    thumbnailUrl: updatedData.thumbnailUrl,
-                    thumbnailFile: updatedData.thumbnailFile,
-                  }
+                  ...v,
+                  title: updatedData.title,
+                  description: updatedData.description,
+                  thumbnailUrl: updatedData.thumbnailUrl,
+                  thumbnailFile: updatedData.thumbnailFile,
+                }
                 : v,
             ),
           );

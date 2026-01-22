@@ -17,7 +17,25 @@ try {
     // Fetch course details with teacher information
     $course_query = "
         SELECT 
-            tc.*,
+            tc.id,
+            tc.teacher_id,
+            tc.course_title,
+            tc.category,
+            tc.skill_level,
+            tc.price,
+            tc.duration_weeks,
+            tc.hours_per_week,
+            tc.learning_schedule,
+            tc.description,
+            tc.what_you_will_learn,
+            tc.requirements,
+            tc.language,
+            tc.status,
+            tc.thumbnail,
+            tc.average_rating,
+            tc.total_reviews,
+            tc.created_at,
+            tc.updated_at,
             t.id as teacher_id,
             t.teacher_name,
             t.profile_picture as teacher_profile_picture,
@@ -97,7 +115,7 @@ try {
     $enrollment_query = "
         SELECT COUNT(*) as enrolled_count
         FROM teacher_students
-        WHERE course_id = ?
+        WHERE course_id = ? AND payment_status IN ('paid', 'free')
     ";
 
     $stmt = $conn->prepare($enrollment_query);
@@ -124,11 +142,11 @@ try {
     // Calculate max_students (default to 20 if not set)
     $max_students = 20;
 
-    // Calculate total revenue for this course
     $revenue_query = "
-        SELECT COALESCE(SUM(paid_amount), 0) as total_revenue
-        FROM teacher_students
-        WHERE course_id = ? AND payment_status = 'paid'
+        SELECT COALESCE(SUM(amount), 0) as total_revenue
+        FROM teacher_course_payment
+        WHERE enrollment_id IN (SELECT id FROM teacher_course_enroll WHERE course_id = ?) 
+        AND payment_status = 'success'
     ";
 
     $stmt = $conn->prepare($revenue_query);
@@ -139,24 +157,6 @@ try {
     $total_revenue = (float)$revenue['total_revenue'];
     $stmt->close();
 
-    // Calculate completion rate
-    $completion_query = "
-        SELECT 
-            COUNT(*) as total_students,
-            SUM(CASE WHEN completion_status = 'completed' THEN 1 ELSE 0 END) as completed_students
-        FROM teacher_students
-        WHERE course_id = ?
-    ";
-
-    $stmt = $conn->prepare($completion_query);
-    $stmt->bind_param("i", $course_id);
-    $stmt->execute();
-    $completion_result = $stmt->get_result();
-    $completion = $completion_result->fetch_assoc();
-    $total_students = (int)$completion['total_students'];
-    $completed_students = (int)$completion['completed_students'];
-    $completion_rate = $total_students > 0 ? round(($completed_students / $total_students) * 100) : 0;
-    $stmt->close();
 
     // Prepare response
     $response = [
@@ -171,6 +171,8 @@ try {
             "price" => (float)$course['price'],
             "is_premium" => (float)$course['price'] > 0 ? 1 : 0,
             "duration_weeks" => (int)$course['duration_weeks'],
+            "hours_per_week" => (int)$course['hours_per_week'],
+            "learning_schedule" => $course['learning_schedule'],
             "description" => $course['description'],
             "what_you_will_learn" => $course['what_you_will_learn'],
             "requirements" => $course['requirements'],
@@ -183,7 +185,6 @@ try {
             "average_rating" => (float)$course['average_rating'],
             "total_reviews" => (int)$course['total_reviews'],
             "total_revenue" => $total_revenue,
-            "completion_rate" => $completion_rate,
             "created_at" => $course['created_at'],
             "updated_at" => $course['updated_at'],
             "tags" => $tags

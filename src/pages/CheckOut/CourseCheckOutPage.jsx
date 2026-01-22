@@ -17,6 +17,8 @@ export default function CourseCheckOutPage() {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [enrollmentId, setEnrollmentId] = useState(null);
+  const [creatingOrder, setCreatingOrder] = useState(false);
 
   const path = location.pathname;
   const currentStep = path.includes("payment")
@@ -27,7 +29,27 @@ export default function CourseCheckOutPage() {
 
   useEffect(() => {
     fetchCourseDetails();
-  }, [courseId]);
+    if (currentStep === "payment" && !enrollmentId) {
+      checkEnrollmentStatus();
+    }
+  }, [courseId, currentStep]);
+
+  const checkEnrollmentStatus = async () => {
+    try {
+      const response = await fetch(
+        `${API.CHECK_ENROLLMENT}?course_id=${courseId}`,
+        {
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+      if (data.has_pending_enrollment) {
+        setEnrollmentId(data.enrollment.id);
+      }
+    } catch (error) {
+      console.error("Error checking enrollment:", error);
+    }
+  };
 
   const fetchCourseDetails = async () => {
     try {
@@ -55,8 +77,35 @@ export default function CourseCheckOutPage() {
     }
   };
 
-  const handleProceedToPayment = () => {
-    navigate(`/course/checkout/payment/${teacherId}/${courseId}`);
+  const handleProceedToPayment = async () => {
+    try {
+      setCreatingOrder(true);
+
+      // Create course order/enrollment
+      const formData = new FormData();
+      formData.append("teacher_id", teacherId);
+      formData.append("course_id", courseId);
+
+      const response = await fetch(API.CREATE_COURSE_ORDER, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setEnrollmentId(data.enrollment_id);
+        navigate(`/course/checkout/payment/${teacherId}/${courseId}`);
+      } else {
+        toast.error(data.error || "Failed to create order");
+      }
+    } catch (error) {
+      console.error("Error creating order:", error);
+      toast.error("Failed to proceed to payment");
+    } finally {
+      setCreatingOrder(false);
+    }
   };
 
   const handleConfirmPayment = async () => {
@@ -65,34 +114,58 @@ export default function CourseCheckOutPage() {
       return;
     }
 
-    // Add your payment processing logic here
-    // For now, we'll just simulate success
-    try {
-      // Example API call structure (uncomment and modify as needed):
-      /*
-      const response = await fetch(API.ENROLL_COURSE, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          course_id: courseId,
-          payment_method: selectedPayment,
-        }),
-      });
-      
-      const data = await response.json();
-      
-      if (data.status === "success") {
-        toast.success("Payment successful! Redirecting...");
-        navigate(`/course/checkout/confirmation/${teacherId}/${courseId}`);
-      } else {
-        toast.error(data.message || "Payment failed");
-      }
-      */
+    if (!enrollmentId) {
+      toast.error("Order not found. Please go back and try again.");
+      return;
+    }
 
-      // Temporary success simulation
-      toast.success("Payment successful! Redirecting...");
-      navigate(`/course/checkout/confirmation/${teacherId}/${courseId}`);
+    try {
+      const formData = new FormData();
+      formData.append("enrollment_id", enrollmentId);
+      formData.append("payment_method", selectedPayment);
+      formData.append("frontend_url", window.location.origin);
+
+      const response = await fetch(API.CONFIRM_COURSE_PAYMENT, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const contentType = response.headers.get("content-type");
+
+      if (contentType && contentType.includes("text/html")) {
+        // eSewa payment - response is HTML form
+        const html = await response.text();
+
+        toast("Redirecting to eSewa payment gateway...");
+        const formContainer = document.createElement("div");
+        formContainer.style.display = "none";
+        formContainer.innerHTML = html;
+        document.body.appendChild(formContainer);
+
+        setTimeout(() => {
+          const form = formContainer.querySelector("form");
+          if (form) {
+            form.submit();
+          } else {
+            toast.error("Payment form error. Please try again.");
+          }
+        }, 100);
+
+        return;
+      }
+
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        if (data.success) {
+          if (data.redirect_to_esewa === false) {
+            toast.success("Payment successful! Redirecting...");
+            navigate(`/course/checkout/confirmation/${teacherId}/${courseId}`);
+          }
+        } else {
+          toast.error(data.error || "Payment failed");
+        }
+      }
     } catch (error) {
       console.error("Error processing payment:", error);
       toast.error("Payment processing failed. Please try again.");
@@ -111,6 +184,7 @@ export default function CourseCheckOutPage() {
           courseId={courseId}
           navigate={navigate}
           onProceed={handleProceedToPayment}
+          isLoading={creatingOrder}
         />
       )}
 
@@ -123,6 +197,7 @@ export default function CourseCheckOutPage() {
           selectedPayment={selectedPayment}
           setSelectedPayment={setSelectedPayment}
           onConfirm={handleConfirmPayment}
+          enrollmentId={enrollmentId}
         />
       )}
 

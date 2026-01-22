@@ -27,9 +27,8 @@ export default function BasicInfoForm({
           value={formData.courseTitle}
           onChange={handleInputChange}
           disabled={isSubmitting}
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition ${
-            errors.courseTitle ? "border-red-300 bg-red-50" : "border-gray-300"
-          }`}
+          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition ${errors.courseTitle ? "border-red-300 bg-red-50" : "border-gray-300"
+            }`}
           placeholder="e.g. Beginner Kathak Dance Course"
           maxLength="255"
         />
@@ -52,9 +51,8 @@ export default function BasicInfoForm({
             value={formData.category}
             onChange={handleInputChange}
             disabled={isSubmitting}
-            className={`w-full px-4 py-3 border rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${
-              errors.category ? "border-red-300 bg-red-50" : "border-gray-300"
-            }`}>
+            className={`w-full px-4 py-3 border rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${errors.category ? "border-red-300 bg-red-50" : "border-gray-300"
+              }`}>
             <option value="">Select Category</option>
             <option>Cultural Dances</option>
             <option>Cultural Singing</option>
@@ -78,9 +76,8 @@ export default function BasicInfoForm({
             value={formData.skillLevel}
             onChange={handleInputChange}
             disabled={isSubmitting}
-            className={`w-full px-4 py-3 border rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${
-              errors.skillLevel ? "border-red-300 bg-red-50" : "border-gray-300"
-            }`}>
+            className={`w-full px-4 py-3 border rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${errors.skillLevel ? "border-red-300 bg-red-50" : "border-gray-300"
+              }`}>
             <option value="">Select level</option>
             <option value="beginner">Beginner</option>
             <option value="intermediate">Intermediate</option>
@@ -110,9 +107,8 @@ export default function BasicInfoForm({
           min="0"
           max="999999999"
           placeholder="0 (Free course)"
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${
-            errors.price ? "border-red-300 bg-red-50" : "border-gray-300"
-          }`}
+          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${errors.price ? "border-red-300 bg-red-50" : "border-gray-300"
+            }`}
         />
         {errors.price && (
           <p className="text-xs text-red-600 font-medium flex items-center gap-1">
@@ -140,11 +136,10 @@ export default function BasicInfoForm({
               min="1"
               max="52"
               placeholder="Weeks"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${
-                errors.recommendedWeeks
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${errors.recommendedWeeks
                   ? "border-red-300 bg-red-50"
                   : "border-gray-300 bg-white"
-              }`}
+                }`}
             />
             <p className="text-xs text-gray-500">1-52 weeks</p>
             {errors.recommendedWeeks && (
@@ -165,11 +160,10 @@ export default function BasicInfoForm({
               min="1"
               max="40"
               placeholder="Hours/week"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${
-                errors.hoursPerWeek
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none ${errors.hoursPerWeek
                   ? "border-red-300 bg-red-50"
                   : "border-gray-300 bg-white"
-              }`}
+                }`}
             />
             <p className="text-xs text-gray-500">Study pace</p>
             {errors.hoursPerWeek && (
@@ -215,9 +209,8 @@ export default function BasicInfoForm({
           disabled={isSubmitting}
           rows="5"
           maxLength="5000"
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none ${
-            errors.description ? "border-red-300 bg-red-50" : "border-gray-300"
-          }`}
+          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none ${errors.description ? "border-red-300 bg-red-50" : "border-gray-300"
+            }`}
           placeholder="Describe your course, what students will learn, teaching methodology..."
         />
         <p className="text-xs text-gray-500">
@@ -237,9 +230,8 @@ export default function BasicInfoForm({
           Tags <span className="text-red-500">*</span>
         </label>
         <div
-          className={`flex flex-wrap gap-2 rounded-lg border px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition ${
-            errors.tags ? "border-red-300 bg-red-50" : "border-gray-300"
-          }`}>
+          className={`flex flex-wrap gap-2 rounded-lg border px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition ${errors.tags ? "border-red-300 bg-red-50" : "border-gray-300"
+            }`}>
           {formData.tags.map((tag) => (
             <span
               key={tag}

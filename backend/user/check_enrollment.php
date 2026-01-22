@@ -47,11 +47,9 @@ try {
     $stmt = $conn->prepare("
         SELECT 
             id,
-            completion_status,
             payment_status,
-            progress_percentage,
             enrollment_date
-        FROM teacher_students 
+        FROM teacher_course_enroll 
         WHERE course_id = ? AND student_id = ? 
         LIMIT 1
     ");
@@ -62,21 +60,23 @@ try {
     $stmt->close();
 
     if ($enrollment) {
+        $is_paid = ($enrollment['payment_status'] === 'paid' || $enrollment['payment_status'] === 'free');
         echo json_encode([
             "status" => "success",
-            "is_enrolled" => true,
+            "is_enrolled" => $is_paid,
+            "has_pending_enrollment" => ($enrollment['payment_status'] === 'pending'),
+            "payment_status" => $enrollment['payment_status'],
             "enrollment" => [
                 "id" => (int)$enrollment['id'],
-                "completion_status" => $enrollment['completion_status'],
                 "payment_status" => $enrollment['payment_status'],
-                "progress_percentage" => (float)$enrollment['progress_percentage'],
                 "enrollment_date" => $enrollment['enrollment_date']
             ]
         ]);
     } else {
         echo json_encode([
             "status" => "success",
-            "is_enrolled" => false
+            "is_enrolled" => false,
+            "has_pending_enrollment" => false
         ]);
     }
 } catch (Exception $e) {

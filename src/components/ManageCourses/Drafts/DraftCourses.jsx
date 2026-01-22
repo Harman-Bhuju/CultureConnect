@@ -28,54 +28,45 @@ const DraftCourses = () => {
   const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [courseToPublish, setCourseToPublish] = useState(null);
 
-  // Static Data for Drafts
+  // Fetch drafts from API
   useEffect(() => {
     const loadDrafts = async () => {
       setLoading(true);
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      try {
+        const response = await fetch(API.GET_DRAFT_COURSES, {
+          credentials: "include",
+        });
+        const data = await response.json();
 
-      const staticDrafts = [
-        {
-          id: "draft_1",
-          title: "Introduction to Kathak",
-          category: "Dance",
-          seats: 15,
-          price: 1500,
-          createdAt: "2025-01-18T10:00:00Z",
-          images: [
-            "https://images.unsplash.com/photo-1542382156-9725f7789182?w=800",
-          ],
-          status: "Draft",
-        },
-        {
-          id: "draft_2",
-          title: "Sitar Basics: Week 1",
-          category: "Music",
-          seats: 5,
-          price: 2000,
-          createdAt: "2025-01-19T14:30:00Z",
-          images: [
-            "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800",
-          ],
-          status: "Draft",
-        },
-        {
-          id: "draft_3",
-          title: "Madhubani Painting Workshop",
-          category: "Art",
-          seats: 0,
-          price: 999,
-          createdAt: "2025-01-20T09:15:00Z",
-          images: [
-            "https://images.unsplash.com/photo-1627915505436-512cb148404a?w=800",
-          ],
-          status: "Draft",
-        },
-      ];
-
-      setCourses(staticDrafts);
-      setLoading(false);
+        if (data.success) {
+          // Map backend data to expected format
+          const drafts = (data.drafts || []).map((course) => ({
+            id: course.id,
+            title: course.title,
+            category: course.category,
+            seats: 100, // Default seats for courses
+            price: course.price,
+            createdAt: course.createdAt,
+            updatedAt: course.updatedAt,
+            images: course.image ? [`${API.COURSE_THUMBNAILS}/${course.image}`] : [],
+            status: "Draft",
+            duration: course.duration,
+            level: course.level,
+            video_count: course.video_count,
+          }));
+          setCourses(drafts);
+        } else {
+          console.warn("Failed to fetch drafts:", data.error);
+          toast.error(data.error || "Failed to load drafts");
+          setCourses([]);
+        }
+      } catch (error) {
+        console.error("Error loading drafts:", error);
+        toast.error("Failed to load drafts");
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadDrafts();
@@ -111,12 +102,9 @@ const DraftCourses = () => {
   };
 
   const handleView = (course) => {
-    // Navigate to detail view (even for drafts if needed, or maybe edit?)
-    // Usually clicking a draft goes to edit or preview.
-    // Let's go to edit for drafts as they aren't "live".
-    // Or maybe detail page.
     const id = course.id || course;
-    navigate(`/teacher/courses/${teacherId}/${id}`);
+    // App.jsx route is /courses/:teacherId/:id
+    navigate(`/courses/${teacherId}/${id}`);
   };
 
   const handlePublish = (course) => {
@@ -124,22 +112,54 @@ const DraftCourses = () => {
     setPublishModalOpen(true);
   };
 
-  const confirmPublish = () => {
+  const confirmPublish = async () => {
     if (!courseToPublish) return;
     const id = courseToPublish.id || courseToPublish;
 
-    // Simulate API call
-    toast.success("Course Published Successfully");
-    setCourses((prev) => prev.filter((c) => c.id !== id));
-    setPublishModalOpen(false);
-    setCourseToPublish(null);
+    try {
+      const response = await fetch(API.UPDATE_COURSE_STATUS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ course_id: id, status: "published" }),
+      });
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Course Published Successfully");
+        setCourses((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        toast.error(data.message || "Failed to publish course");
+      }
+    } catch (error) {
+      console.error("Publish error:", error);
+      toast.error("Failed to publish course");
+    } finally {
+      setPublishModalOpen(false);
+      setCourseToPublish(null);
+    }
   };
 
-  const handleDelete = (course) => {
+  const handleDelete = async (course) => {
     const id = course.id || course;
-    if (window.confirm("Delete this draft?")) {
-      toast.success("Draft Deleted (Mock)");
-      setCourses((prev) => prev.filter((c) => c.id !== id));
+    if (!window.confirm("Delete this draft?")) return;
+
+    try {
+      const response = await fetch(`${API.DELETE_COURSE}?course_id=${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Draft deleted successfully");
+        setCourses((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        toast.error(data.message || "Failed to delete draft");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete draft");
     }
   };
 

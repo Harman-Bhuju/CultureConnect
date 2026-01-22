@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/session_config.php';
-include("mail.php");
+include("../config/mail.php");
 include("../config/header.php");
 
 
@@ -56,11 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $stmt->close();
 
-if($action === "resend_otp"){
-        $response = ["status" => "otp_sent", "message" => "Verification code resent to $email"];
-} else {
-        $response = ["status" => "otp_sent", "message" => "Verification code sent to $email"];
-}
+        if ($action === "resend_otp") {
+            $response = ["status" => "otp_sent", "message" => "Verification code resent to $email"];
+        } else {
+            $response = ["status" => "otp_sent", "message" => "Verification code sent to $email"];
+        }
         sendResponseAndContinue($response);
         sendOTPEmail($email, $verify_token, 'forgot');
         exit();

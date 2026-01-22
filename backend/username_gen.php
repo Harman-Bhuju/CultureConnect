@@ -1,5 +1,5 @@
 <?php
-include "dbconnect.php";
+include __DIR__ . "/config/dbconnect.php";
 function generateSignupUsername($email, $conn)
 {
     // take first part of email and sanitize

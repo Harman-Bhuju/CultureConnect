@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/session_config.php';
-include("../config/header.php");
+include(__DIR__ . "/../config/header.php");
 
 function sendResponse($status, $message, $data = null)
 {
@@ -67,6 +67,8 @@ $category = trim($_POST['category'] ?? '');
 $skill_level = trim($_POST['skillLevel'] ?? '');
 $price = trim($_POST['price'] ?? '0');
 $duration_weeks = trim($_POST['durationWeeks'] ?? '');
+$hours_per_week = trim($_POST['hoursPerWeek'] ?? '');
+$learning_schedule = trim($_POST['learningSchedule'] ?? '');
 $description = trim($_POST['description'] ?? '');
 $what_you_will_learn = trim($_POST['whatYouWillLearn'] ?? '');
 $requirements = trim($_POST['requirements'] ?? '');
@@ -78,7 +80,7 @@ if (empty($course_title) || strlen($course_title) < 3) {
     sendResponse("error", "Course title must be at least 3 characters");
 }
 
-if (!in_array($category, ['dance', 'music', 'yoga', 'art', 'language'])) {
+if (!in_array($category, ['dance', 'music', 'yoga', 'art', 'language', 'Cultural Dances', 'Cultural Singing', 'Musical Instruments', 'Cultural Art & Crafts'])) {
     sendResponse("error", "Invalid category selected");
 }
 
@@ -190,6 +192,7 @@ if (count($uploadedVideos) === 0) {
 // Get video metadata
 $video_titles = isset($_POST['video_titles']) ? $_POST['video_titles'] : [];
 $video_descriptions = isset($_POST['video_descriptions']) ? $_POST['video_descriptions'] : [];
+$video_durations = isset($_POST['video_durations']) ? $_POST['video_durations'] : [];
 
 // Validate that all videos have title and description
 for ($i = 0; $i < count($uploadedVideos); $i++) {
@@ -285,24 +288,26 @@ $conn->begin_transaction();
 
 try {
     // Insert course record
-    $stmt = $conn->prepare("INSERT INTO teacher_courses (teacher_id, course_title, category, skill_level, price, duration_weeks, description, thumbnail, what_you_will_learn, requirements, language, status, total_videos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO teacher_courses (teacher_id, course_title, category, skill_level, price, duration_weeks, hours_per_week, description, thumbnail, what_you_will_learn, requirements, learning_schedule, language, status, total_videos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     $what_learn_value = !empty($what_you_will_learn) ? $what_you_will_learn : null;
     $requirements_value = !empty($requirements) ? $requirements : null;
     $total_videos = count($uploadedVideos);
 
     $stmt->bind_param(
-        "isssdissssssi",
+        "isssdiisssssssi",
         $teacher_id,
         $course_title,
         $category,
         $skill_level,
         $price,
         $duration_weeks,
+        $hours_per_week,
         $description,
         $courseThumbnailName,
         $what_learn_value,
         $requirements_value,
+        $learning_schedule,
         $language,
         $status,
         $total_videos
@@ -315,8 +320,8 @@ try {
     $course_id = $stmt->insert_id;
     $stmt->close();
 
-    // Insert course videos with thumbnails and metadata
-    $stmt = $conn->prepare("INSERT INTO teacher_videos (teacher_id, course_id, video_filename, file_size, thumbnail, video_title, video_description, is_intro, order_in_course) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    // Insert course videos with thumbnails, metadata, and duration
+    $stmt = $conn->prepare("INSERT INTO teacher_videos (teacher_id, course_id, video_filename, file_size, thumbnail, video_title, video_description, duration, is_intro, order_in_course) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     foreach ($uploadedVideos as $index => $video) {
         $is_intro = ($index === 0) ? 1 : 0;
@@ -324,10 +329,11 @@ try {
 
         $title = isset($video_titles[$index]) ? trim($video_titles[$index]) : '';
         $description_val = isset($video_descriptions[$index]) ? trim($video_descriptions[$index]) : '';
+        $duration = isset($video_durations[$index]) ? intval($video_durations[$index]) : null;
         $thumbnailName = isset($uploadedThumbnails[$index]) ? $uploadedThumbnails[$index] : null;
 
         $stmt->bind_param(
-            "iisssssii",
+            "iisssssiii",
             $teacher_id,
             $course_id,
             $video['filename'],
@@ -335,6 +341,7 @@ try {
             $thumbnailName,
             $title,
             $description_val,
+            $duration,
             $is_intro,
             $order_in_course
         );

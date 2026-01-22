@@ -22,7 +22,7 @@ export default function VideoPlayerSection({
             autoPlay
             poster={`${API.COURSE_THUMBNAILS}/${activeVideo.thumbnail || course.thumbnail}`}>
             <source
-              src={`${API.COURSE_VIDEOS}/${activeVideo.video_url}`}
+              src={`${API.COURSE_VIDEOS}/${activeVideo.video_filename || activeVideo.video_url}`}
               type="video/mp4"
             />
             Your browser does not support the video tag.

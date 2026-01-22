@@ -5,9 +5,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-require './php_mailer/Exception.php';
-require './php_mailer/PHPMailer.php';
-require './php_mailer/SMTP.php';
+require __DIR__ . '/php_mailer/Exception.php';
+require __DIR__ . '/php_mailer/PHPMailer.php';
+require __DIR__ . '/php_mailer/SMTP.php';
 
 
 function sendResponseAndContinue($data)

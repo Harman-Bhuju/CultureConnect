@@ -8,6 +8,8 @@ import CourseGrid from "../../../components/ManageCourses/CourseDisplay/CourseGr
 import CourseList from "../../../components/ManageCourses/CourseDisplay/CourseList";
 import DeleteCourseModal from "../../../components/ManageCourses/Modals/DeleteCourseModal";
 import useTeacherCourses from "../../../hooks/useTeacherCourses";
+import API from "../../../Configs/ApiEndpoints";
+import { toast } from "react-hot-toast";
 import {
   categories,
   sortOptions,
@@ -25,7 +27,7 @@ const CourseManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [sortOption, setSortOption] = useState("Latest");
-  const [stockFilter, setStockFilter] = useState("All Status"); // Using stockFilter name to match Filters.jsx, but it maps to status options
+  const [stockFilter, setStockFilter] = useState("Published"); // Hardcoded to Published for this view
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -49,8 +51,8 @@ const CourseManagement = () => {
         course.category === categoryFilter;
       const matchesStatus =
         stockFilter === "All Status"
-          ? course.status !== "Draft" && course.status !== "draft" // Check lowercase too just in case
-          : course.status === stockFilter;
+          ? true
+          : course.status.toLowerCase() === stockFilter.toLowerCase();
 
       return matchesSearch && matchesCategory && matchesStatus;
     })
@@ -66,14 +68,32 @@ const CourseManagement = () => {
     });
 
   const handleDeleteCourse = async () => {
-    // Mock delete for now, connect to API later
     if (!selectedCourse) return;
-    console.log("Deleting course", selectedCourse.id);
 
-    // Simulate delete
-    setCourses((prev) => prev.filter((c) => c.id !== selectedCourse.id));
-    setShowDeleteModal(false);
-    setSelectedCourse(null);
+    try {
+      const response = await fetch(
+        `${API.DELETE_COURSE}?course_id=${selectedCourse.id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Course deleted successfully");
+        setCourses((prev) => prev.filter((c) => c.id !== selectedCourse.id));
+      } else {
+        toast.error(data.message || "Failed to delete course");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("An error occurred while deleting");
+    } finally {
+      setShowDeleteModal(false);
+      setSelectedCourse(null);
+    }
   };
 
   const handleViewCourse = (course) => {
@@ -131,11 +151,11 @@ const CourseManagement = () => {
           setCategoryFilter={setCategoryFilter}
           sortOption={sortOption}
           setSortOption={setSortOption}
-          stockFilter={stockFilter} // Passing status options as stock filter
-          setStockFilter={setStockFilter}
+          stockFilter={null}
+          setStockFilter={null}
           categories={categories}
           sortOptions={sortOptions}
-          stockOptions={stockOptions}
+          stockOptions={null} // Remove options to hide dropdown
           filteredCount={filteredCourses.length}
           viewMode={viewMode}
           setViewMode={setViewMode}

@@ -109,20 +109,21 @@ const API = {
   CHECK_TEACHER_FOLLOW_STATUS: `${BASE_URL}/user/check_teacher_follow_status.php`,
   GET_USER_FOLLOWING_TEACHERS: `${BASE_URL}/user/get_user_following_teacher.php`,
 
-  // Enrollemnt & Wishlist
-  CHECK_ENROLLMENT: `${BASE_URL}/course/check_enrollment.php`,
-  CHECK_COURSE_WISHLIST: `${BASE_URL}/course/check_wishlist.php`,
+  // Enrollment
+  CHECK_ENROLLMENT: `${BASE_URL}/user/check_enrollment.php`,
   ENROLL_COURSE: `${BASE_URL}/course/enroll_course.php`,
-  ADD_COURSE_WISHLIST: `${BASE_URL}/course/add_wishlist.php`,
-  REMOVE_COURSE_WISHLIST: `${BASE_URL}/course/remove_wishlist.php`,
+
+  // Course Orders & Payments
+  CREATE_COURSE_ORDER: `${BASE_URL}/course/create_course_order.php`,
+  CONFIRM_COURSE_PAYMENT: `${BASE_URL}/course/confirm_course_payment.php`,
 
   // Teacher Courses
   COURSE_UPLOAD: `${BASE_URL}/course/course_upload.php`,
-  GET_TEACHER_COURSES: `${BASE_URL}/get_teacher_courses.php`,
-  GET_DRAFT_COURSES: `${BASE_URL}/get_draft_courses.php`,
+  GET_TEACHER_COURSES: `${BASE_URL}/course/get_teacher_courses.php`,
+  GET_DRAFT_COURSES: `${BASE_URL}/course/get_draft_courses.php`,
   GET_COURSE_DETAILS: `${BASE_URL}/course/get_course_details.php`,
   UPDATE_COURSE: `${BASE_URL}/course/course_update.php`,
-  DELETE_COURSE: `${BASE_URL}/course/course_delete.php`,
+  DELETE_COURSE: `${BASE_URL}/course/delete_course.php`,
   UPDATE_COURSE_STATUS: `${BASE_URL}/course/course_status_update.php`,
 
   // Teacher Analytics

@@ -58,29 +58,26 @@ const TeacherAnalyticsDashboard = () => {
             <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
               <button
                 onClick={() => setActiveTab("overview")}
-                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === "overview"
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === "overview"
                     ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
-                }`}>
+                  }`}>
                 Overview
               </button>
               <button
                 onClick={() => setActiveTab("enrollments")}
-                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === "enrollments"
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === "enrollments"
                     ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
-                }`}>
+                  }`}>
                 Enrollments
               </button>
               <button
                 onClick={() => setActiveTab("history")}
-                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === "history"
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === "history"
                     ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
-                }`}>
+                  }`}>
                 Transaction History
               </button>
             </div>
@@ -152,7 +149,7 @@ const TeacherAnalyticsDashboard = () => {
             <RecentEnrollments
               selectedPeriod={selectedPeriod}
               enrollments={recentEnrollments.filter(
-                (e) => !["Completed", "Refunded"].includes(e.status),
+                (e) => !["Refunded"].includes(e.status),
               )} // Pass filtered or all
               loading={loading}
             />
@@ -164,9 +161,7 @@ const TeacherAnalyticsDashboard = () => {
           <div className="mt-2">
             <TeacherTransactionHistory
               selectedPeriod={selectedPeriod}
-              enrollments={recentEnrollments.filter((e) =>
-                ["Completed"].includes(e.status),
-              )}
+              enrollments={recentEnrollments}
               loading={loading}
             />
           </div>

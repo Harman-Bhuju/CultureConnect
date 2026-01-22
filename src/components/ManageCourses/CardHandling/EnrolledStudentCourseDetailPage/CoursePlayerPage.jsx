@@ -13,7 +13,7 @@ import ProgressStatsCard from "./ProgressStatsCard";
 import CurriculumSidebar from "./CurriculumSidebar";
 
 export default function CoursePlayerPage() {
-  const { teacherId, courseId } = useParams();
+  const { teacherId, id: courseId } = useParams();
   const navigate = useNavigate();
 
   const [course, setCourse] = useState(null);
@@ -21,10 +21,40 @@ export default function CoursePlayerPage() {
   const [activeVideo, setActiveVideo] = useState(null);
   const [completedVideos, setCompletedVideos] = useState([]);
   const [activeTab, setActiveTab] = useState("description");
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   useEffect(() => {
-    fetchCourseData();
+    checkEnrollment();
   }, [courseId]);
+
+  useEffect(() => {
+    if (isEnrolled) {
+      fetchCourseData();
+    }
+  }, [courseId, isEnrolled]);
+
+  const checkEnrollment = async () => {
+    try {
+      const response = await fetch(
+        `${API.CHECK_ENROLLMENT}?course_id=${courseId}`,
+        {
+          credentials: "include",
+        },
+      );
+      const data = await response.json();
+
+      if (data.is_enrolled || data.isEnrolled) {
+        setIsEnrolled(true);
+      } else {
+        toast.error("You are not enrolled in this course");
+        navigate(`/courses/${teacherId}/${courseId}`);
+      }
+    } catch (error) {
+      console.error("Error checking enrollment:", error);
+      toast.error("Failed to verify enrollment");
+      navigate(`/courses/${teacherId}/${courseId}`);
+    }
+  };
 
   const fetchCourseData = async () => {
     try {
@@ -38,11 +68,25 @@ export default function CoursePlayerPage() {
       const data = await response.json();
 
       if (data.status === "success" && data.course) {
-        setCourse(data.course);
+        // Transform course data
+        const transformedCourse = {
+          ...data.course,
+          videos: (data.videos || []).map((video) => ({
+            id: video.id,
+            video_title: video.video_title,
+            description: video.description || video.video_description || "",
+            duration: video.duration,
+            thumbnail: video.thumbnail,
+            video_filename: video.video_filename,
+            order_in_course: video.order_in_course || 0,
+          })).sort((a, b) => a.order_in_course - b.order_in_course),
+        };
+
+        setCourse(transformedCourse);
+
         // Find first video to play
-        const videos = data.videos || [];
-        if (videos.length > 0) {
-          setActiveVideo(videos[0]);
+        if (transformedCourse.videos.length > 0) {
+          setActiveVideo(transformedCourse.videos[0]);
         }
       } else {
         toast.error("Course access denied or not found");
@@ -72,6 +116,7 @@ export default function CoursePlayerPage() {
 
   const handleVideoSelect = (video) => {
     setActiveVideo(video);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePreviousLesson = () => {
@@ -96,7 +141,7 @@ export default function CoursePlayerPage() {
     }
   };
 
-  if (loading) return <Loading message="Entering classroom..." />;
+  if (loading || !isEnrolled) return <Loading message="Entering classroom..." />;
   if (!course) return null;
 
   const currentVideos = course.videos || [];

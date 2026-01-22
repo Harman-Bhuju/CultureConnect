@@ -33,7 +33,7 @@ const CourseDetailRouter = () => {
         },
       );
       const data = await response.json();
-      setIsEnrolled(data.isEnrolled);
+      setIsEnrolled(data.is_enrolled);
     } catch (error) {
       console.error("Error checking enrollment:", error);
     } finally {

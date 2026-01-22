@@ -1,19 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Tag, Save, Eye, Info, Loader2 } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Tag, Save, Eye, Info, Loader2, Edit } from "lucide-react";
 import VideoDetailEdit from "./VideoDetailEdit";
 import CourseEditHeader from "./CourseEditHeader";
 import MediaEditSection from "./MediaEditSection";
 import BasicInfoForm from "./BasicInfoForm";
 import AdditionalInfoForm from "./AdditionalInfoForm";
 import PublishCourseModal from "../../Modals/PublishCourseModal";
-
-// Mock API endpoints
-const API = {
-  COURSE_UPLOAD: "/api/courses/upload",
-};
-
+import EditCourseConfirmationModal from "../../Modals/EditCourseConfirmationModal";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import API from "../../../../Configs/ApiEndpoints";
 
 // Helper function to get video duration
 function getVideoDuration(file) {
@@ -51,9 +47,15 @@ function secondsToHoursMinutes(seconds) {
   return { hours, minutes };
 }
 
-// Main Course Edit Component (Replicated from Upload)
+// Main Course Edit Component
 export default function TeacherCourseEditPage() {
+  const { id: courseId, teacherId } = useParams();
+  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [courseData, setCourseData] = useState(null);
   const [videos, setVideos] = useState([]);
+  const [deletedVideoIds, setDeletedVideoIds] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(0);
   const draggedIndexRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -66,7 +68,13 @@ export default function TeacherCourseEditPage() {
   const [currentEditingVideo, setCurrentEditingVideo] = useState(null);
   const [courseThumbnailFile, setCourseThumbnailFile] = useState(null);
   const [courseThumbnailUrl, setCourseThumbnailUrl] = useState(null);
-  const navigate = useNavigate();
+  const [submissionType, setSubmissionType] = useState(null);
+  const [courseStatus, setCourseStatus] = useState(null); // 'published' or 'draft'
+  const [editConfirmationModalOpen, setEditConfirmationModalOpen] = useState(false);
+  const [confirmationActionType, setConfirmationActionType] = useState("saveAsDraft"); // 'saveAsDraft' or 'editCourse'
+  const [originalFormData, setOriginalFormData] = useState(null);
+  const [originalVideos, setOriginalVideos] = useState([]);
+  const [originalThumbnailUrl, setOriginalThumbnailUrl] = useState(null);
 
   const [formData, setFormData] = useState({
     courseTitle: "",
@@ -75,7 +83,7 @@ export default function TeacherCourseEditPage() {
     price: "",
     recommendedWeeks: "",
     hoursPerWeek: "",
-    accessDuration: "lifetime",
+    hoursPerWeek: "",
     description: "",
     tags: [],
     whatYouWillLearn: "",
@@ -95,12 +103,141 @@ export default function TeacherCourseEditPage() {
   const { hours: totalHours, minutes: totalMinutes } =
     secondsToHoursMinutes(totalDurationSeconds);
 
+  // Check if form has been modified
+  const hasFormChanged = useCallback(() => {
+    if (!originalFormData) return false;
+
+    // Check form data changes
+    const formChanged = JSON.stringify(formData) !== JSON.stringify(originalFormData);
+
+    // Check videos changes (count, order, or content)
+    const videosChanged =
+      videos.length !== originalVideos.length ||
+      videos.some((vid, idx) => {
+        const orig = originalVideos[idx];
+        if (!orig) return true;
+        return (
+          vid.title !== orig.title ||
+          vid.description !== orig.description ||
+          vid.dbId !== orig.dbId ||
+          vid.duration !== orig.duration
+        );
+      }) ||
+      deletedVideoIds.length > 0;
+
+    // Check thumbnail changes
+    const thumbnailChanged =
+      (courseThumbnailFile !== null) ||
+      (courseThumbnailUrl !== originalThumbnailUrl && courseThumbnailUrl !== null);
+
+    return formChanged || videosChanged || thumbnailChanged;
+  }, [formData, originalFormData, videos, originalVideos, deletedVideoIds, courseThumbnailFile, courseThumbnailUrl, originalThumbnailUrl]);
+
+  // Fetch existing course data on mount
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      if (!courseId) {
+        toast.error("Course ID is required");
+        navigate(-1);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `${API.GET_COURSE_DETAILS}?course_id=${courseId}`,
+          { credentials: "include" }
+        );
+        const data = await response.json();
+
+        if (data.status === "success") {
+          setCourseData(data.course);
+          setCourseStatus(data.course.status || "draft"); // Store course status
+
+          // Populate form with existing data
+          const initialFormData = {
+            courseTitle: data.course.course_title || "",
+            category: data.course.category || "",
+            skillLevel: data.course.skill_level?.toLowerCase() || "",
+            price: data.course.price || "",
+            recommendedWeeks: data.course.duration_weeks || "",
+            hoursPerWeek: data.course.hours_per_week || "",
+            description: data.course.description || "",
+            tags: data.course.tags || [],
+            whatYouWillLearn: data.course.what_you_will_learn || "",
+            requirements: data.course.requirements || "",
+            learningSchedule: data.course.learning_schedule || "",
+            language: data.course.language || "English",
+          };
+          setFormData(initialFormData);
+          setOriginalFormData(JSON.parse(JSON.stringify(initialFormData))); // Deep copy for comparison
+
+          // Set thumbnail URL if exists
+          const thumbnailUrl = data.course.thumbnail
+            ? `${API.COURSE_THUMBNAILS}/${data.course.thumbnail}`
+            : null;
+          if (thumbnailUrl) {
+            setCourseThumbnailUrl(thumbnailUrl);
+            setOriginalThumbnailUrl(thumbnailUrl);
+          }
+
+          // Transform video data
+          if (data.videos && data.videos.length > 0) {
+            const transformedVideos = data.videos.map((vid) => ({
+              id: vid.id,
+              dbId: vid.id, // Keep track of database ID for updates
+              title: vid.video_title,
+              description: vid.description || "",
+              duration: parseDurationToSeconds(vid.duration),
+              durationFormatted: vid.duration,
+              thumbnail: vid.thumbnail,
+              thumbnailUrl: vid.thumbnail
+                ? `${API.COURSE_THUMBNAILS}/${vid.thumbnail}`
+                : null,
+              video_filename: vid.video_filename,
+              url: vid.video_filename
+                ? `${API.COURSE_VIDEOS}/${vid.video_filename}`
+                : null,
+              isExisting: true, // Mark as existing video
+            }));
+            setVideos(transformedVideos);
+            setOriginalVideos(JSON.parse(JSON.stringify(transformedVideos))); // Deep copy for comparison
+          }
+        } else {
+          toast.error(data.message || "Failed to load course");
+          navigate(-1);
+        }
+      } catch (error) {
+        console.error("Error loading course:", error);
+        toast.error("Failed to load course data");
+        navigate(-1);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCourseData();
+  }, [courseId, navigate]);
+
+  // Helper to parse duration string to seconds
+  function parseDurationToSeconds(durationStr) {
+    if (!durationStr) return 0;
+    const parts = durationStr.split(":");
+    if (parts.length === 2) {
+      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    } else if (parts.length === 3) {
+      return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+    }
+    return 0;
+  }
+
+  // Cleanup effect
   useEffect(() => {
     return () => {
       videos.forEach((vid) => {
-        if (vid.url) URL.revokeObjectURL(vid.url);
+        if (vid.url && !vid.isExisting) URL.revokeObjectURL(vid.url);
       });
-      if (courseThumbnailUrl) URL.revokeObjectURL(courseThumbnailUrl);
+      if (courseThumbnailUrl && courseThumbnailFile) URL.revokeObjectURL(courseThumbnailUrl);
     };
   }, []);
 
@@ -186,7 +323,12 @@ export default function TeacherCourseEditPage() {
       const removedIndex = prev.findIndex((v) => v.id === id);
       const vid = prev[removedIndex];
 
-      if (vid && vid.url) URL.revokeObjectURL(vid.url);
+      // Track deleted video IDs for existing videos
+      if (vid && vid.dbId) {
+        setDeletedVideoIds((prevDeleted) => [...prevDeleted, vid.dbId]);
+      }
+
+      if (vid && vid.url && !vid.isExisting) URL.revokeObjectURL(vid.url);
 
       const newVideos = prev.filter((v) => v.id !== id);
 
@@ -531,68 +673,78 @@ export default function TeacherCourseEditPage() {
     setPublishModalOpen(false);
 
     setIsSubmitting(true);
+    setSubmissionType("publish");
     const toastId = toast.loading("Publishing course...");
 
     try {
       const fd = new FormData();
+      fd.append("course_id", courseId);
       fd.append("courseTitle", formData.courseTitle);
       fd.append("category", formData.category);
       fd.append("skillLevel", formData.skillLevel);
       fd.append("price", formData.price || 0);
-      fd.append("recommendedWeeks", formData.recommendedWeeks);
-      fd.append("hoursPerWeek", formData.hoursPerWeek);
-      fd.append("accessDuration", formData.accessDuration);
+      fd.append("durationWeeks", formData.recommendedWeeks);
+      fd.append("hoursPerWeek", formData.hoursPerWeek || "");
+      fd.append("accessDuration", formData.accessDuration || "lifetime");
       fd.append("description", formData.description);
       fd.append("whatYouWillLearn", formData.whatYouWillLearn);
       fd.append("requirements", formData.requirements);
-      fd.append("learningSchedule", formData.learningSchedule);
+      fd.append("learningSchedule", formData.learningSchedule || "");
       fd.append("language", formData.language || "English");
       fd.append("status", "published");
       fd.append("tags", JSON.stringify(formData.tags));
-      fd.append("totalVideoDuration", totalDurationSeconds);
+      fd.append("deleted_video_ids", JSON.stringify(deletedVideoIds));
 
       if (courseThumbnailFile) {
         fd.append("course_thumbnail", courseThumbnailFile);
       }
 
+      // Send existing video IDs and updated metadata
       videos.forEach((vid, idx) => {
-        if (vid.file) fd.append("videos[]", vid.file);
+        if (vid.dbId) fd.append("video_ids[]", vid.dbId);
         fd.append("video_titles[]", vid.title || "");
         fd.append("video_descriptions[]", vid.description || "");
         fd.append("video_durations[]", vid.duration || 0);
-        if (vid.thumbnailFile) {
-          fd.append(`thumbnails[${idx}]`, vid.thumbnailFile);
-        }
       });
 
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await fetch(API.UPDATE_COURSE, {
+        method: "POST",
+        body: fd,
+        credentials: "include",
+      });
 
-      toast.success("Course published successfully!", { id: toastId });
-      console.log(
-        "Form data ready for submission:",
-        Object.fromEntries(fd.entries()),
-      );
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Course published successfully!", { id: toastId });
+        navigate(`/teacher/manageclasses/${teacherId}`);
+      } else {
+        throw new Error(data.message || "Failed to publish course");
+      }
     } catch (error) {
       console.error(error);
       toast.error(error.message || "Failed to publish course", { id: toastId });
     } finally {
       setIsSubmitting(false);
+      setSubmissionType(null);
     }
   }, [
     isSubmitting,
+    courseId,
+    teacherId,
     videos,
     formData,
     courseThumbnailFile,
-    totalDurationSeconds,
+    deletedVideoIds,
+    navigate,
   ]);
 
-  const handleSaveDraft = useCallback(async () => {
+  const handleSaveDraftFromPublished = useCallback(async () => {
+    setEditConfirmationModalOpen(false);
     if (isSubmitting) return;
 
     if (!validateForDraft()) {
       toast.error("Please provide Title and at least 1 Video for draft");
-      // Switch to basic tab if title is missing
       if (!formData.courseTitle.trim() && activeTab !== "basic") {
         setActiveTab("basic");
       }
@@ -600,59 +752,232 @@ export default function TeacherCourseEditPage() {
     }
 
     setIsSubmitting(true);
-    const toastId = toast.loading("Saving draft...");
+    setSubmissionType("draft");
+    const toastId = toast.loading("Saving as draft...");
 
     try {
       const fd = new FormData();
+      fd.append("course_id", courseId);
       fd.append("courseTitle", formData.courseTitle);
       fd.append("category", formData.category);
       fd.append("skillLevel", formData.skillLevel);
       fd.append("price", formData.price || 0);
-      fd.append("recommendedWeeks", formData.recommendedWeeks || "");
+      fd.append("durationWeeks", formData.recommendedWeeks || "");
       fd.append("hoursPerWeek", formData.hoursPerWeek || "");
-      fd.append("accessDuration", formData.accessDuration);
+      fd.append("accessDuration", formData.accessDuration || "lifetime");
       fd.append("description", formData.description);
       fd.append("whatYouWillLearn", formData.whatYouWillLearn);
       fd.append("requirements", formData.requirements);
-      fd.append("learningSchedule", formData.learningSchedule);
+      fd.append("learningSchedule", formData.learningSchedule || "");
       fd.append("language", formData.language || "English");
       fd.append("status", "draft");
       fd.append("tags", JSON.stringify(formData.tags));
-      fd.append("totalVideoDuration", totalDurationSeconds);
+      fd.append("deleted_video_ids", JSON.stringify(deletedVideoIds));
+
+      if (courseThumbnailFile) {
+        fd.append("course_thumbnail", courseThumbnailFile);
+      }
+
+      videos.forEach((vid) => {
+        if (vid.dbId) fd.append("video_ids[]", vid.dbId);
+        fd.append("video_titles[]", vid.title || "");
+        fd.append("video_descriptions[]", vid.description || "");
+        fd.append("video_durations[]", vid.duration || 0);
+      });
+
+      const response = await fetch(API.UPDATE_COURSE, {
+        method: "POST",
+        body: fd,
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Course saved as draft!", { id: toastId });
+        navigate(`/teacher/manageclasses/${teacherId}`);
+      } else {
+        throw new Error(data.message || "Failed to save as draft");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Failed to save as draft", { id: toastId });
+    } finally {
+      setIsSubmitting(false);
+      setSubmissionType(null);
+    }
+  }, [isSubmitting, validateForDraft, courseId, teacherId, videos, formData, courseThumbnailFile, deletedVideoIds, activeTab, navigate]);
+
+  const handleEditPublishedCourse = useCallback(async () => {
+    setEditConfirmationModalOpen(false);
+    if (!validateForPublish()) {
+      const errorCount = Object.keys(errors).length || "multiple";
+      toast.error(`Please fix ${errorCount} validation errors`);
+      const basicInfoErrors = [
+        "courseTitle",
+        "category",
+        "skillLevel",
+        "price",
+        "recommendedWeeks",
+        "hoursPerWeek",
+        "description",
+        "tags",
+      ];
+      const hasBasicErrors = basicInfoErrors.some((key) => errors[key]);
+      if (hasBasicErrors && activeTab !== "basic") {
+        setActiveTab("basic");
+      }
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmissionType("publish");
+    const toastId = toast.loading("Updating course...");
+
+    try {
+      const fd = new FormData();
+      fd.append("course_id", courseId);
+      fd.append("courseTitle", formData.courseTitle);
+      fd.append("category", formData.category);
+      fd.append("skillLevel", formData.skillLevel);
+      fd.append("price", formData.price || 0);
+      fd.append("durationWeeks", formData.recommendedWeeks);
+      fd.append("hoursPerWeek", formData.hoursPerWeek || "");
+      fd.append("accessDuration", formData.accessDuration || "lifetime");
+      fd.append("description", formData.description);
+      fd.append("whatYouWillLearn", formData.whatYouWillLearn);
+      fd.append("requirements", formData.requirements);
+      fd.append("learningSchedule", formData.learningSchedule || "");
+      fd.append("language", formData.language || "English");
+      fd.append("status", "published"); // Keep as published
+      fd.append("tags", JSON.stringify(formData.tags));
+      fd.append("deleted_video_ids", JSON.stringify(deletedVideoIds));
 
       if (courseThumbnailFile) {
         fd.append("course_thumbnail", courseThumbnailFile);
       }
 
       videos.forEach((vid, idx) => {
-        if (vid.file) fd.append("videos[]", vid.file);
+        if (vid.dbId) fd.append("video_ids[]", vid.dbId);
         fd.append("video_titles[]", vid.title || "");
         fd.append("video_descriptions[]", vid.description || "");
         fd.append("video_durations[]", vid.duration || 0);
-        if (vid.thumbnailFile) {
-          fd.append(`thumbnails[${idx}]`, vid.thumbnailFile);
-        }
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch(API.UPDATE_COURSE, {
+        method: "POST",
+        body: fd,
+        credentials: "include",
+      });
 
-      toast.success("Draft saved successfully!", { id: toastId });
-      console.log("Draft data ready:", Object.fromEntries(fd.entries()));
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Course updated successfully!", { id: toastId });
+        navigate(`/teacher/manageclasses/${teacherId}`);
+      } else {
+        throw new Error(data.message || "Failed to update course");
+      }
     } catch (error) {
       console.error(error);
-      toast.error(error.message || "Failed to save draft", { id: toastId });
+      toast.error(error.message || "Failed to update course", { id: toastId });
     } finally {
       setIsSubmitting(false);
+      setSubmissionType(null);
+    }
+  }, [isSubmitting, validateForPublish, courseId, teacherId, videos, formData, courseThumbnailFile, deletedVideoIds, errors, activeTab, navigate]);
+
+  const handleSaveDraft = useCallback(async () => {
+    if (isSubmitting) return;
+
+    if (!validateForDraft()) {
+      toast.error("Please provide Title and at least 1 Video for draft");
+      if (!formData.courseTitle.trim() && activeTab !== "basic") {
+        setActiveTab("basic");
+      }
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmissionType("draft");
+    const toastId = toast.loading("Saving changes...");
+
+    try {
+      const fd = new FormData();
+      fd.append("course_id", courseId);
+      fd.append("courseTitle", formData.courseTitle);
+      fd.append("category", formData.category);
+      fd.append("skillLevel", formData.skillLevel);
+      fd.append("price", formData.price || 0);
+      fd.append("durationWeeks", formData.recommendedWeeks || "");
+      fd.append("hoursPerWeek", formData.hoursPerWeek || "");
+      fd.append("accessDuration", formData.accessDuration || "lifetime");
+      fd.append("description", formData.description);
+      fd.append("whatYouWillLearn", formData.whatYouWillLearn);
+      fd.append("requirements", formData.requirements);
+      fd.append("learningSchedule", formData.learningSchedule || "");
+      fd.append("language", formData.language || "English");
+      fd.append("status", "draft");
+      fd.append("tags", JSON.stringify(formData.tags));
+      fd.append("deleted_video_ids", JSON.stringify(deletedVideoIds));
+
+      if (courseThumbnailFile) {
+        fd.append("course_thumbnail", courseThumbnailFile);
+      }
+
+      // Send existing video IDs and updated metadata
+      videos.forEach((vid) => {
+        if (vid.dbId) fd.append("video_ids[]", vid.dbId);
+        fd.append("video_titles[]", vid.title || "");
+        fd.append("video_descriptions[]", vid.description || "");
+        fd.append("video_durations[]", vid.duration || 0);
+      });
+
+      const response = await fetch(API.UPDATE_COURSE, {
+        method: "POST",
+        body: fd,
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Changes saved successfully!", { id: toastId });
+        navigate(`/teacher/manageclasses/${teacherId}`);
+      } else {
+        throw new Error(data.message || "Failed to save changes");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Failed to save changes", { id: toastId });
+    } finally {
+      setIsSubmitting(false);
+      setSubmissionType(null);
     }
   }, [
     isSubmitting,
     validateForDraft,
+    courseId,
+    teacherId,
     videos,
     formData,
     courseThumbnailFile,
-    totalDurationSeconds,
+    deletedVideoIds,
     activeTab,
+    navigate,
   ]);
+
+  // Show loading screen while fetching data
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading course data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 py-8 px-4">
@@ -699,21 +1024,19 @@ export default function TeacherCourseEditPage() {
               <div className="flex border-b">
                 <button
                   onClick={() => setActiveTab("basic")}
-                  className={`flex-1 py-4 font-semibold flex items-center justify-center gap-2 transition ${
-                    activeTab === "basic"
-                      ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}>
+                  className={`flex-1 py-4 font-semibold flex items-center justify-center gap-2 transition ${activeTab === "basic"
+                    ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50"
+                    : "text-gray-600 hover:bg-gray-50"
+                    }`}>
                   <Tag className="w-4 h-4" />
                   Basic Info
                 </button>
                 <button
                   onClick={() => setActiveTab("details")}
-                  className={`flex-1 py-4 font-semibold flex items-center justify-center gap-2 transition ${
-                    activeTab === "details"
-                      ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}>
+                  className={`flex-1 py-4 font-semibold flex items-center justify-center gap-2 transition ${activeTab === "details"
+                    ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50"
+                    : "text-gray-600 hover:bg-gray-50"
+                    }`}>
                   <Info className="w-4 h-4" />
                   Details
                 </button>
@@ -746,38 +1069,93 @@ export default function TeacherCourseEditPage() {
 
               {/* Action Buttons */}
               <div className="border-t bg-gray-50 px-6 py-4 flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={handleSaveDraft}
-                  disabled={isSubmitting || isUploading}
-                  className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-5 h-5" />
-                      Save as Draft
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={handlePublishClick}
-                  disabled={isSubmitting || isUploading}
-                  className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-indigo-700 shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed">
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Publishing...
-                    </>
-                  ) : (
-                    <>
-                      <Eye className="w-5 h-5" />
-                      Publish Course
-                    </>
-                  )}
-                </button>
+                {courseStatus === "published" ? (
+                  <>
+                    {/* Published Course: Show Save as Draft and Edit Course */}
+                    <button
+                      onClick={() => {
+                        setConfirmationActionType("saveAsDraft");
+                        setEditConfirmationModalOpen(true);
+                      }}
+                      disabled={isSubmitting || isUploading}
+                      className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                      {isSubmitting && submissionType === "draft" ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-5 h-5" />
+                          Save as Draft
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (hasFormChanged()) {
+                          setConfirmationActionType("editCourse");
+                          setEditConfirmationModalOpen(true);
+                        }
+                      }}
+                      disabled={isSubmitting || isUploading || !hasFormChanged()}
+                      className={`flex-1 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed ${hasFormChanged()
+                        ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}>
+                      {isSubmitting && submissionType === "publish" ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <Edit className="w-5 h-5" />
+                          Edit Course
+                        </>
+                      )}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {/* Draft Course: Show Save as Draft and Publish Course */}
+                    <button
+                      onClick={handleSaveDraft}
+                      disabled={isSubmitting || isUploading || !hasFormChanged()}
+                      className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                      {isSubmitting && submissionType === "draft" ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-5 h-5" />
+                          Save Draft
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={handlePublishClick}
+                      disabled={isSubmitting || isUploading || !hasFormChanged()}
+                      className={`flex-1 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed ${hasFormChanged()
+                        ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}>
+                      {isSubmitting && submissionType === "publish" ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Publishing...
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="w-5 h-5" />
+                          Publish Course
+                        </>
+                      )}
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -797,12 +1175,12 @@ export default function TeacherCourseEditPage() {
             prev.map((v) =>
               v.id === updatedData.id
                 ? {
-                    ...v,
-                    title: updatedData.title,
-                    description: updatedData.description,
-                    thumbnailUrl: updatedData.thumbnailUrl,
-                    thumbnailFile: updatedData.thumbnailFile,
-                  }
+                  ...v,
+                  title: updatedData.title,
+                  description: updatedData.description,
+                  thumbnailUrl: updatedData.thumbnailUrl,
+                  thumbnailFile: updatedData.thumbnailFile,
+                }
                 : v,
             ),
           );
@@ -819,6 +1197,20 @@ export default function TeacherCourseEditPage() {
           course={{ title: formData.courseTitle }}
           onClose={() => setPublishModalOpen(false)}
           onPublish={confirmPublish}
+        />
+      )}
+
+      {/* Edit Course Confirmation Modal (for published courses) */}
+      {editConfirmationModalOpen && courseStatus === "published" && (
+        <EditCourseConfirmationModal
+          course={{ title: formData.courseTitle, courseTitle: formData.courseTitle }}
+          onClose={() => setEditConfirmationModalOpen(false)}
+          onConfirm={
+            confirmationActionType === "saveAsDraft"
+              ? handleSaveDraftFromPublished
+              : handleEditPublishedCourse
+          }
+          actionType={confirmationActionType}
         />
       )}
     </div>

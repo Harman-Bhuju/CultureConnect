@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/../config/session_config.php';
 include("../config/header.php");
-include("mail.php");
-include("username_gen.php");
+include("../config/mail.php");
+include("../username_gen.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_SESSION['google_email'] ?? '';
