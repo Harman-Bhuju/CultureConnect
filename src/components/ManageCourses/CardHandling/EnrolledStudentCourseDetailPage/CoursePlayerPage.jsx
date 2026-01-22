@@ -11,6 +11,9 @@ import LessonTabsSection from "./LessonTabsSection";
 import LessonNavigation from "./LessonNavigation";
 import ProgressStatsCard from "./ProgressStatsCard";
 import CurriculumSidebar from "./CurriculumSidebar";
+import CourseReviewForm from "../Reviews/CourseReviewForm";
+import DeleteReviewModal from "../Reviews/DeleteReviewModal";
+import { useAuth } from "../../../../context/AuthContext";
 
 export default function CoursePlayerPage() {
   const { teacherId, id: courseId } = useParams();
@@ -22,6 +25,16 @@ export default function CoursePlayerPage() {
   const [completedVideos, setCompletedVideos] = useState([]);
   const [activeTab, setActiveTab] = useState("description");
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const { user } = useAuth();
+
+  // Review states
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewToDeleteId, setReviewToDeleteId] = useState(null);
 
   useEffect(() => {
     checkEnrollment();
@@ -71,15 +84,17 @@ export default function CoursePlayerPage() {
         // Transform course data
         const transformedCourse = {
           ...data.course,
-          videos: (data.videos || []).map((video) => ({
-            id: video.id,
-            video_title: video.video_title,
-            description: video.description || video.video_description || "",
-            duration: video.duration,
-            thumbnail: video.thumbnail,
-            video_filename: video.video_filename,
-            order_in_course: video.order_in_course || 0,
-          })).sort((a, b) => a.order_in_course - b.order_in_course),
+          videos: (data.videos || [])
+            .map((video) => ({
+              id: video.id,
+              video_title: video.video_title,
+              description: video.description || video.video_description || "",
+              duration: video.duration,
+              thumbnail: video.thumbnail,
+              video_filename: video.video_filename,
+              order_in_course: video.order_in_course || 0,
+            }))
+            .sort((a, b) => a.order_in_course - b.order_in_course),
         };
 
         setCourse(transformedCourse);
@@ -141,7 +156,92 @@ export default function CoursePlayerPage() {
     }
   };
 
-  if (loading || !isEnrolled) return <Loading message="Entering classroom..." />;
+  const openReviewForm = (review = null) => {
+    if (review) {
+      setEditingReview(review);
+      setReviewRating(review.rating);
+      setReviewText(review.comment);
+    } else {
+      setEditingReview(null);
+      setReviewRating(0);
+      setReviewText("");
+    }
+    setIsReviewModalOpen(true);
+  };
+
+  const openDeleteModal = (reviewId) => {
+    setReviewToDeleteId(reviewId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (reviewRating === 0 || reviewText.trim().length < 10) return;
+
+    try {
+      setIsSubmittingReview(true);
+      const formData = new FormData();
+      formData.append("course_id", courseId);
+      formData.append("rating", reviewRating);
+      formData.append("comment", reviewText.trim());
+      if (editingReview) {
+        formData.append("review_id", editingReview.id);
+      }
+
+      const response = await fetch(API.SUBMIT_COURSE_REVIEW, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success(editingReview ? "Review updated!" : "Review submitted!");
+        setIsReviewModalOpen(false);
+        fetchCourseData(); // Refresh to show new review
+      } else {
+        toast.error(data.message || "Failed to submit review");
+      }
+    } catch (error) {
+      console.error("Review submission error:", error);
+      toast.error("An error occurred");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!reviewToDeleteId) return;
+
+    try {
+      setIsSubmittingReview(true);
+      const response = await fetch(API.DELETE_COURSE_REVIEW, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ review_id: reviewToDeleteId }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Review deleted");
+        setIsDeleteModalOpen(false);
+        fetchCourseData(); // Refresh
+      } else {
+        toast.error(data.message || "Failed to delete review");
+      }
+    } catch (error) {
+      console.error("Delete review error:", error);
+      toast.error("An error occurred");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  if (loading || !isEnrolled)
+    return <Loading message="Entering classroom..." />;
   if (!course) return null;
 
   const currentVideos = course.videos || [];
@@ -178,7 +278,13 @@ export default function CoursePlayerPage() {
             <LessonTabsSection
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              activeVideo={activeVideo}
+              activeVideo={{
+                ...activeVideo,
+                course: course,
+                user: user,
+                openReviewForm,
+                openDeleteModal,
+              }}
             />
 
             {/* Lesson Navigation */}
@@ -211,6 +317,27 @@ export default function CoursePlayerPage() {
           </div>
         </div>
       </main>
+
+      {/* Review Modals */}
+      <CourseReviewForm
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        course={course}
+        editingReviewId={editingReview?.id}
+        reviewRating={reviewRating}
+        setReviewRating={setReviewRating}
+        reviewText={reviewText}
+        setReviewText={setReviewText}
+        isSubmitting={isSubmittingReview}
+        handleSubmitReview={handleSubmitReview}
+      />
+
+      <DeleteReviewModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteReview}
+        isDeleting={isSubmittingReview}
+      />
     </div>
   );
 }

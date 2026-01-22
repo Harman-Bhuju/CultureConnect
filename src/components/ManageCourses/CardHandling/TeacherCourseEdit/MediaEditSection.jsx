@@ -51,26 +51,8 @@ export default function MediaEditSection({
           )}
         </h2>
 
-        {/* Total Duration Display */}
-        {videos.length > 0 && (
-          <div className="mb-4 bg-indigo-50 p-4 rounded-lg border border-indigo-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-700">
-                  Total Video Content
-                </p>
-                <p className="text-2xl font-bold text-indigo-600 mt-1">
-                  {totalHours > 0 && `${totalHours}h `}
-                  {totalMinutes}min
-                </p>
-              </div>
-              <Clock className="w-10 h-10 text-indigo-400" />
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              Across {videos.length} video lessons
-            </p>
-          </div>
-        )}
+   
+        
 
         {/* Video Preview */}
         <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden border-2 border-gray-200 mb-4">

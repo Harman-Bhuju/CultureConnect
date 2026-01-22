@@ -130,7 +130,6 @@ const TeacherProfile = () => {
     navigate(`/teacherprofile/${id}/followers`);
   };
 
- 
   if (isLoading) {
     return <Loading message="Loading Profile..." />;
   }
@@ -262,19 +261,19 @@ const TeacherProfile = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 mt-6 md:mt-0">
-                {!isOwnProfile ? (
+              {!isOwnProfile ? (
+                <div className="flex gap-3 mt-4 md:mt-0">
                   <button
                     onClick={handleFollowToggle}
                     disabled={followLoading}
-                    className={`px-6 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                    className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${
                       isFollowing
                         ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
                         : "bg-gray-800 text-white hover:bg-gray-700"
                     } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}>
                     {followLoading ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         <span>Loading...</span>
                       </>
                     ) : (
@@ -282,27 +281,27 @@ const TeacherProfile = () => {
                         <Heart
                           className={`w-4 h-4 ${isFollowing ? "fill-current" : ""}`}
                         />
-                        {isFollowing ? "Following" : "Follow"}
+                        <span>{isFollowing ? "Following" : "Follow"}</span>
                       </>
                     )}
                   </button>
-                ) : (
-                  <>
-                    <Link to="/customise-teacher-profile">
-                      <button className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                        Customize Profile
-                      </button>
-                    </Link>
-                    <button
-                      onClick={() =>
-                        navigate(`/teacher/manageclasses/${user?.teacher_id}`)
-                      }
-                      className="px-5 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium ml-2 shadow-sm">
-                      Manage Courses
+                </div>
+              ) : (
+                <div className="flex gap-3 mt-4 md:mt-0">
+                  <Link to="/customise-teacher-profile">
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                      Customize Profile
                     </button>
-                  </>
-                )}
-              </div>
+                  </Link>
+                  <button
+                    onClick={() =>
+                      navigate(`/teacher/manageclasses/${user?.teacher_id}`)
+                    }
+                    className="px-4 py-2 border border-gray-800 text-gray-800 rounded hover:bg-gray-100 transition-colors">
+                    Manage Courses
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Tabs */}

@@ -76,7 +76,7 @@ const CourseManagement = () => {
         {
           method: "DELETE",
           credentials: "include",
-        }
+        },
       );
 
       const data = await response.json();
@@ -101,7 +101,7 @@ const CourseManagement = () => {
   };
 
   const handleNavigateToEdit = (course) => {
-    navigate(`/teacher/classes/edit/${teacherId}/${course.id}`);
+    navigate(`/teacher/courses/edit/${teacherId}/${course.id}`);
   };
 
   const openDeleteModal = (course) => {

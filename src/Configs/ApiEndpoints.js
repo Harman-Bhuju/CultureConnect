@@ -3,7 +3,8 @@ const getBaseUrl = () => {
 
   // Local development
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return "http://localhost/CultureConnect/backend";
+    // return "http://localhost/CultureConnect/backend";
+    return "https://api.harmanbhuju.com.np/cultureconnect/backend";
   }
 
   // Production
@@ -138,6 +139,12 @@ const API = {
 
   // Course Thumbnails
   COURSE_THUMBNAILS: `${BASE_URL}/uploads/teacher_datas/course_thumbnails`,
+
+  // Course Reviews
+  SUBMIT_COURSE_REVIEW: `${BASE_URL}/course/submit_course_review.php`,
+  DELETE_COURSE_REVIEW: `${BASE_URL}/course/delete_course_review.php`,
+  TEACHER_REPLY_COURSE_REVIEW: `${BASE_URL}/course/teacher_reply_course_review.php`,
+  TEACHER_DELETE_COURSE_REPLY: `${BASE_URL}/course/teacher_delete_course_reply.php`,
 };
 
 export default API;

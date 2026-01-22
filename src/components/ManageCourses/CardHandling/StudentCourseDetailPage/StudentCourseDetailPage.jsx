@@ -11,6 +11,8 @@ import StudentCourseHeader from "./StudentCourseHeader";
 import StudentVideoPreview from "./StudentVideoPreview";
 import StudentCourseSidebar from "./StudentCourseSidebar";
 import CourseContent from "../TeacherCourseDetailPage/CourseContent";
+import CourseReviewForm from "../Reviews/CourseReviewForm";
+import DeleteReviewModal from "../Reviews/DeleteReviewModal";
 
 const StudentCourseDetailPage = () => {
   const navigate = useNavigate();
@@ -24,6 +26,15 @@ const StudentCourseDetailPage = () => {
   const [hasPendingEnrollment, setHasPendingEnrollment] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Review states
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewToDeleteId, setReviewToDeleteId] = useState(null);
+
   // Fetch course details when ID changes
   useEffect(() => {
     fetchCourseDetails();
@@ -35,7 +46,6 @@ const StudentCourseDetailPage = () => {
       checkEnrollmentStatus();
     }
   }, [id, user]);
-
 
   const fetchCourseDetails = async () => {
     try {
@@ -88,15 +98,15 @@ const StudentCourseDetailPage = () => {
           })(),
           teacher: data.teacher
             ? {
-              id: data.teacher.id,
-              name: data.teacher.name || "Unknown Teacher",
-              profile_picture: data.teacher.profile_picture
-                ? `${API.TEACHER_PROFILE_PICTURES}/${data.teacher.profile_picture}`
-                : "https://ui-avatars.com/api/?name=" +
-                encodeURIComponent(data.teacher.name || "Teacher"),
-              experience_years: parseInt(data.teacher.experience_years) || 0,
-              bio: data.teacher.bio || "",
-            }
+                id: data.teacher.id,
+                name: data.teacher.name || "Unknown Teacher",
+                profile_picture: data.teacher.profile_picture
+                  ? `${API.TEACHER_PROFILE_PICTURES}/${data.teacher.profile_picture}`
+                  : "https://ui-avatars.com/api/?name=" +
+                    encodeURIComponent(data.teacher.name || "Teacher"),
+                experience_years: parseInt(data.teacher.experience_years) || 0,
+                bio: data.teacher.bio || "",
+              }
             : null,
           videos: (data.videos || [])
             .map((video, index) => ({
@@ -115,12 +125,13 @@ const StudentCourseDetailPage = () => {
             .sort((a, b) => a.order - b.order),
           learningOutcomes: data.course.what_you_will_learn
             ? data.course.what_you_will_learn
-              .split("\n")
-              .filter((item) => item.trim())
+                .split("\n")
+                .filter((item) => item.trim())
             : [],
           requirements: data.course.requirements
             ? data.course.requirements.split("\n").filter((item) => item.trim())
             : [],
+          reviews: data.reviews || [],
         };
 
         setCourse(transformedCourse);
@@ -149,7 +160,6 @@ const StudentCourseDetailPage = () => {
       console.error("Error checking enrollment:", error);
     }
   };
-
 
   const handleEnroll = async () => {
     if (!user) {
@@ -186,7 +196,6 @@ const StudentCourseDetailPage = () => {
     }
   };
 
-
   const handleShare = async () => {
     const url = window.location.href;
     try {
@@ -199,6 +208,90 @@ const StudentCourseDetailPage = () => {
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const openReviewForm = (review = null) => {
+    if (review) {
+      setEditingReview(review);
+      setReviewRating(review.rating);
+      setReviewText(review.comment);
+    } else {
+      setEditingReview(null);
+      setReviewRating(0);
+      setReviewText("");
+    }
+    setIsReviewModalOpen(true);
+  };
+
+  const openDeleteModal = (reviewId) => {
+    setReviewToDeleteId(reviewId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (reviewRating === 0 || reviewText.trim().length < 10) return;
+
+    try {
+      setIsSubmittingReview(true);
+      const formData = new FormData();
+      formData.append("course_id", id);
+      formData.append("rating", reviewRating);
+      formData.append("comment", reviewText.trim());
+      if (editingReview) {
+        formData.append("review_id", editingReview.id);
+      }
+
+      const response = await fetch(API.SUBMIT_COURSE_REVIEW, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success(editingReview ? "Review updated!" : "Review submitted!");
+        setIsReviewModalOpen(false);
+        fetchCourseDetails(); // Refresh
+      } else {
+        toast.error(data.message || "Failed to submit review");
+      }
+    } catch (error) {
+      console.error("Review submission error:", error);
+      toast.error("An error occurred");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!reviewToDeleteId) return;
+
+    try {
+      setIsSubmittingReview(true);
+      const response = await fetch(API.DELETE_COURSE_REVIEW, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ review_id: reviewToDeleteId }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Review deleted");
+        setIsDeleteModalOpen(false);
+        fetchCourseDetails(); // Refresh
+      } else {
+        toast.error(data.message || "Failed to delete review");
+      }
+    } catch (error) {
+      console.error("Delete review error:", error);
+      toast.error("An error occurred");
+    } finally {
+      setIsSubmittingReview(false);
+    }
   };
 
   if (loading) {
@@ -247,9 +340,12 @@ const StudentCourseDetailPage = () => {
 
             {/* Course Content Tabs */}
             <CourseContent
-              course={course}
+              course={{ ...course, isEnrolled }}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
+              user={user}
+              openReviewForm={openReviewForm}
+              openDeleteModal={openDeleteModal}
             />
           </div>
 
@@ -266,6 +362,27 @@ const StudentCourseDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Review Modals */}
+      <CourseReviewForm
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        course={course}
+        editingReviewId={editingReview?.id}
+        reviewRating={reviewRating}
+        setReviewRating={setReviewRating}
+        reviewText={reviewText}
+        setReviewText={setReviewText}
+        isSubmitting={isSubmittingReview}
+        handleSubmitReview={handleSubmitReview}
+      />
+
+      <DeleteReviewModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteReview}
+        isDeleting={isSubmittingReview}
+      />
     </div>
   );
 };
