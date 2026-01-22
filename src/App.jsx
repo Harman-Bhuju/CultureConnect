@@ -23,6 +23,7 @@ const ChangePassword = lazy(
 );
 const SetPassword = lazy(() => import("./pages/SetPassword/SetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
+const Notification = lazy(() => import("./pages/Notification/Notification"));
 
 // Learn Culture pages
 const LearnCulture = lazy(() => import("./pages/LearnCulture/LearnCulture"));
@@ -69,7 +70,7 @@ const Password_Settings = lazy(
 const AdminProtectedRoute = lazy(
   () => import("./components/Auth/Route/AdminProtectedRoute"),
 );
-const AdminPanel = lazy(() => import("./admin/AdminPanel"));
+const AdminPanel = lazy(() => import("./AdminPage/AdminDashboard"));
 const ProtectedSellerRoute = lazy(
   () => import("./components/Auth/Route/ProtectedSellerRoute"),
 );
@@ -92,7 +93,7 @@ const TeacherCourseUpload = lazy(
   () =>
     import("./components/ManageCourses/CardHandling/TeacherCourseUpload/TeacherCourseUpload"),
 );
-const TeacherClassEdit = lazy(
+const TeacherCourseEditPage = lazy(
   () =>
     import("./components/ManageCourses/CardHandling/TeacherCourseEdit/TeacherCourseEditPage"),
 );
@@ -133,6 +134,25 @@ const CartPage = lazy(() => import("./pages/Cart/CartPage"));
 const FollowingPage = lazy(() => import("./pages/Following/FollowingPage"));
 const FollowersPage = lazy(() => import("./pages/Followers/FollowersPage"));
 
+// Admin sub-pages
+const AdminOverview = lazy(
+  () => import("./AdminPage/components/AdminOverview"),
+);
+const AdminTeacherApprovals = lazy(
+  () => import("./AdminPage/components/AdminTeacherApprovals"),
+);
+const AdminUserManagement = lazy(
+  () => import("./AdminPage/components/AdminUserManagement"),
+);
+
+const AdminAnalytics = lazy(
+  () => import("./AdminPage/components/AdminAnalytics"),
+);
+const AdminHomepageContent = lazy(
+  () => import("./AdminPage/components/AdminHomepageContent"),
+);
+
+
 // Home Route Wrapper
 function HomeRoute() {
   const { user, loading } = useAuth();
@@ -168,8 +188,14 @@ function App() {
               <AdminProtectedRoute>
                 <AdminPanel />
               </AdminProtectedRoute>
-            }
-          />
+            }>
+            <Route index element={<Navigate to="overview" replace />} />
+            <Route path="overview" element={<AdminOverview />} />
+            <Route path="teachers" element={<AdminTeacherApprovals />} />
+            <Route path="users" element={<AdminUserManagement />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="homepage" element={<AdminHomepageContent />} />
+          </Route>
 
           {/* ==================== Marketplace Routes ==================== */}
           <Route
@@ -315,7 +341,7 @@ function App() {
           />
 
           <Route
-            path="/teacher/classes/new/:teacherId"
+            path="/teacher/courses/new/:teacherId"
             element={
               <ProtectedTeacherRoute>
                 <TeacherCourseUpload />
@@ -324,10 +350,10 @@ function App() {
           />
 
           <Route
-            path="/teacher/classes/edit/:teacherId/:id"
+            path="/teacher/courses/edit/:teacherId/:id"
             element={
               <ProtectedTeacherRoute>
-                <TeacherClassEdit />
+                <TeacherCourseEditPage />
               </ProtectedTeacherRoute>
             }
           />
@@ -429,6 +455,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <FollowingPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notification />
               </ProtectedRoute>
             }
           />

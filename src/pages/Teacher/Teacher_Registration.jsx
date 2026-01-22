@@ -32,7 +32,8 @@ const SuccessModal = ({ isOpen, onClose }) => {
 
           {/* Message */}
           <p className="text-gray-600 mb-6 leading-relaxed">
-            Thank you for registering as a teacher on <span className="font-semibold text-red-500">CultureConnect</span>!
+            Thank you for registering as a teacher on{" "}
+            <span className="font-semibold text-red-500">CultureConnect</span>!
           </p>
 
           {/* Info Box */}
@@ -43,7 +44,9 @@ const SuccessModal = ({ isOpen, onClose }) => {
                 <p className="font-semibold mb-2">What happens next?</p>
                 <ul className="space-y-1.5 text-gray-600">
                   <li>• Your application is under review</li>
-                  <li>• Verification takes <strong>5-7 business days</strong></li>
+                  <li>
+                    • Verification takes <strong>5-7 business days</strong>
+                  </li>
                   <li>• You'll receive an email confirmation</li>
                   <li>• After verification, you can create classes</li>
                 </ul>
@@ -54,8 +57,7 @@ const SuccessModal = ({ isOpen, onClose }) => {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white font-semibold py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all"
-          >
+            className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white font-semibold py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all">
             Got It!
           </button>
         </div>
@@ -66,7 +68,7 @@ const SuccessModal = ({ isOpen, onClose }) => {
 
 function TeacherRegistration() {
   const { checkSession } = useAuth?.() || {
-    checkSession: async () => { },
+    checkSession: async () => {},
   };
   const navigate = useNavigate();
 
@@ -121,14 +123,18 @@ function TeacherRegistration() {
   const validatePhone = (phone) => {
     if (!phone || !phone.trim()) return "Phone number is required";
     const phoneRegex = /^(98|97)\d{8}$/;
-    if (!phoneRegex.test(phone)) return "Please enter a valid 10-digit Nepali phone number";
+    if (!phoneRegex.test(phone))
+      return "Please enter a valid 10-digit Nepali phone number";
     return "";
   };
 
-  const validateCategory = (cat) => (cat ? "" : "Please select a primary teaching category");
-  const validateProfile = () => (profileFile ? "" : "Profile Picture is required");
+  const validateCategory = (cat) =>
+    cat ? "" : "Please select a primary teaching category";
+  const validateProfile = () =>
+    profileFile ? "" : "Profile Picture is required";
   const validateCertificates = () => {
-    if (certificates.length === 0) return "At least one certificate is required";
+    if (certificates.length === 0)
+      return "At least one certificate is required";
     return "";
   };
 
@@ -204,7 +210,17 @@ function TeacherRegistration() {
     ctx.closePath();
     ctx.clip();
 
-    ctx.drawImage(img, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
+    ctx.drawImage(
+      img,
+      sourceX,
+      sourceY,
+      sourceSize,
+      sourceSize,
+      0,
+      0,
+      size,
+      size,
+    );
 
     canvas.toBlob(
       (blob) => {
@@ -218,7 +234,7 @@ function TeacherRegistration() {
         setImageToCrop(null);
       },
       "image/jpeg",
-      0.95
+      0.95,
     );
   };
 
@@ -234,7 +250,7 @@ function TeacherRegistration() {
 
   const handleMouseMove = (e) => {
     if (!isDragging) return;
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const clientX = e.clientX || e.touches?.[0]?.clientX;
     const clientY = e.clientY || e.touches?.[0]?.clientY;
     const deltaX = clientX - dragStart.x;
@@ -246,7 +262,7 @@ function TeacherRegistration() {
   const handleMouseUp = () => setIsDragging(false);
 
   const handleWheel = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const delta = e.deltaY * -0.01;
     setZoom((prev) => Math.min(Math.max(0.5, prev + delta * 0.5), 3));
   };
@@ -267,9 +283,16 @@ function TeacherRegistration() {
       }
 
       // Only accept image files
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+      ];
       if (!allowedTypes.includes(file.type)) {
-        toast.error(`Invalid file type: ${file.name}. Only JPG, PNG, and GIF are allowed`);
+        toast.error(
+          `Invalid file type: ${file.name}. Only JPG, PNG, and GIF are allowed`,
+        );
         return;
       }
 
@@ -314,7 +337,9 @@ function TeacherRegistration() {
     const certErr = validateCertificates();
     if (certErr) newErrors.certificates = certErr;
 
-    const termsErr = formData.termsAccepted ? "" : "You must accept the terms and conditions";
+    const termsErr = formData.termsAccepted
+      ? ""
+      : "You must accept the terms and conditions";
     if (termsErr) newErrors.terms = termsErr;
 
     setErrors(newErrors);
@@ -326,7 +351,9 @@ function TeacherRegistration() {
     if (!validateRequiredFields()) {
       const firstKey = Object.keys(errors)[0];
       if (firstKey) {
-        const el = document.querySelector(`[name="${firstKey}"]`) || document.querySelector("#certificates-section");
+        const el =
+          document.querySelector(`[name="${firstKey}"]`) ||
+          document.querySelector("#certificates-section");
         if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       }
       return;
@@ -386,8 +413,7 @@ function TeacherRegistration() {
             type="button"
             onClick={() => navigate("/", { replace: true })}
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 shadow-sm"
-            aria-label="Go back"
-          >
+            aria-label="Go back">
             <ArrowLeft className="w-4 h-4" />
             <span className="font-medium">Back</span>
           </button>
@@ -397,7 +423,9 @@ function TeacherRegistration() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
             Be an Expert
           </h1>
-          <p className="text-gray-600 text-lg">Register as a cultural instructor</p>
+          <p className="text-gray-600 text-lg">
+            Register as a cultural instructor
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
@@ -411,11 +439,16 @@ function TeacherRegistration() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.name ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"
-                  }`}
+                className={`w-full px-4 py-3.5 border-2 rounded-xl ${
+                  errors.name
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}
                 placeholder="Enter teacher or studio name"
               />
-              {errors.name && <p className="text-red-500 text-sm mt-2">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-2">{errors.name}</p>
+              )}
             </div>
 
             {/* Teaching Bio */}
@@ -428,17 +461,24 @@ function TeacherRegistration() {
                 value={formData.bio}
                 onChange={handleInputChange}
                 rows="5"
-                className={`w-full px-4 py-3.5 border-2 rounded-xl resize-none ${errors.bio ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"
-                  }`}
+                className={`w-full px-4 py-3.5 border-2 rounded-xl resize-none ${
+                  errors.bio
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}
                 placeholder="Describe your teaching experience, cultural background, and skills..."
               />
               <div className="flex justify-between mt-2">
                 <p className="text-gray-500 text-sm">
                   {formData.bio.length < 10 ? "⚠ Minimum 10 characters" : ""}
                 </p>
-                <p className="text-gray-500 text-sm">{formData.bio.length}/2000</p>
+                <p className="text-gray-500 text-sm">
+                  {formData.bio.length}/2000
+                </p>
               </div>
-              {errors.bio && <p className="text-red-500 text-sm mt-1">{errors.bio}</p>}
+              {errors.bio && (
+                <p className="text-red-500 text-sm mt-1">{errors.bio}</p>
+              )}
             </div>
 
             {/* Phone Number */}
@@ -452,34 +492,44 @@ function TeacherRegistration() {
                 onChange={handleInputChange}
                 maxLength="10"
                 placeholder="98XXXXXXXX"
-                className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.phone ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"
-                  }`}
+                className={`w-full px-4 py-3.5 border-2 rounded-xl ${
+                  errors.phone
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}
               />
               <p className="text-gray-500 text-sm mt-2">
                 Used for contact and payment (eSewa/Khalti)
               </p>
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+              )}
             </div>
 
             {/* Primary Teaching Category */}
             <div>
               <InlineLabel>
-                Primary Teaching Category <span className="text-red-500">*</span>
+                Primary Teaching Category{" "}
+                <span className="text-red-500">*</span>
               </InlineLabel>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.category ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"
-                  }`}
-              >
+                className={`w-full px-4 py-3.5 border-2 rounded-xl ${
+                  errors.category
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-200 bg-gray-50"
+                }`}>
                 <option value="">Select Category</option>
                 <option>Cultural Dances</option>
                 <option>Cultural Singing</option>
                 <option>Musical Instruments</option>
                 <option>Cultural Art & Crafts</option>
               </select>
-              {errors.category && <p className="text-red-500 text-sm mt-2">{errors.category}</p>}
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-2">{errors.category}</p>
+              )}
             </div>
 
             {/* Profile Picture Upload */}
@@ -489,7 +539,8 @@ function TeacherRegistration() {
                   Profile Picture <span className="text-red-500">*</span>
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Your profile picture will appear on your teacher profile and class listings
+                  Your profile picture will appear on your teacher profile and
+                  class listings
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-8 border border-gray-200">
@@ -497,22 +548,27 @@ function TeacherRegistration() {
                   <div className="flex-shrink-0">
                     <div className="w-40 h-40 rounded-full overflow-hidden bg-white border-4 border-gray-200 flex items-center justify-center shadow-sm">
                       {profilePreview ? (
-                        <img src={profilePreview} alt="profile" className="w-full h-full object-cover" />
+                        <img
+                          src={profilePreview}
+                          alt="profile"
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center">
                           <div
                             className="w-8 h-10 bg-white"
                             style={{
-                              clipPath: "polygon(50% 0%, 0% 40%, 30% 40%, 30% 100%, 70% 100%, 70% 40%, 100% 40%)",
-                            }}
-                          ></div>
+                              clipPath:
+                                "polygon(50% 0%, 0% 40%, 30% 40%, 30% 100%, 70% 100%, 70% 40%, 100% 40%)",
+                            }}></div>
                         </div>
                       )}
                     </div>
                   </div>
                   <div className="flex-1">
                     <p className="text-gray-600 text-sm mb-4">
-                      Recommended: at least 98×98 pixels, max 4MB. JPG or PNG only.
+                      Recommended: at least 98×98 pixels, max 4MB. JPG or PNG
+                      only.
                     </p>
                     <div className="flex gap-3">
                       {profilePreview ? (
@@ -520,8 +576,7 @@ function TeacherRegistration() {
                           <button
                             type="button"
                             onClick={() => profileInputRef.current?.click()}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                          >
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                             Change
                           </button>
                           <button
@@ -530,8 +585,7 @@ function TeacherRegistration() {
                               setProfilePreview(null);
                               setProfileFile(null);
                             }}
-                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2.5 rounded-full font-medium transition-colors"
-                          >
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2.5 rounded-full font-medium transition-colors">
                             Remove
                           </button>
                         </>
@@ -539,8 +593,7 @@ function TeacherRegistration() {
                         <button
                           type="button"
                           onClick={() => profileInputRef.current?.click()}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                        >
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                           Upload
                         </button>
                       )}
@@ -555,7 +608,9 @@ function TeacherRegistration() {
                   </div>
                 </div>
               </div>
-              {errors.profile && <p className="text-red-500 text-sm mt-2">{errors.profile}</p>}
+              {errors.profile && (
+                <p className="text-red-500 text-sm mt-2">{errors.profile}</p>
+              )}
             </div>
 
             {/* Certificates Upload */}
@@ -565,7 +620,8 @@ function TeacherRegistration() {
                   Certificates <span className="text-red-500">*</span>
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Upload your teaching qualifications, diplomas, or cultural training certificates
+                  Upload your teaching qualifications, diplomas, or cultural
+                  training certificates
                 </p>
               </div>
 
@@ -577,8 +633,12 @@ function TeacherRegistration() {
                         <div className="aspect-square bg-white rounded-lg overflow-hidden border-2 border-gray-200 shadow-sm">
                           {preview === "pdf" ? (
                             <div className="w-full h-full flex flex-col items-center justify-center bg-red-50">
-                              <div className="text-4xl font-bold text-red-600">PDF</div>
-                              <p className="text-xs text-gray-600 mt-1">Certificate {index + 1}</p>
+                              <div className="text-4xl font-bold text-red-600">
+                                PDF
+                              </div>
+                              <p className="text-xs text-gray-600 mt-1">
+                                Certificate {index + 1}
+                              </p>
                             </div>
                           ) : (
                             <img
@@ -591,8 +651,7 @@ function TeacherRegistration() {
                         <button
                           type="button"
                           onClick={() => removeCertificate(index)}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                        >
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -613,8 +672,7 @@ function TeacherRegistration() {
                       <button
                         type="button"
                         onClick={() => certificateInputRef.current?.click()}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-medium transition-colors shadow-sm"
-                      >
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-medium transition-colors shadow-sm">
                         Choose Files
                       </button>
                       <input
@@ -627,23 +685,27 @@ function TeacherRegistration() {
                       />
                     </>
                   ) : (
-                    <p className="text-gray-600 font-medium">Maximum 5 certificates uploaded</p>
+                    <p className="text-gray-600 font-medium">
+                      Maximum 5 certificates uploaded
+                    </p>
                   )}
                 </div>
 
                 {errors.certificates && (
-                  <p className="text-red-500 text-sm mt-3">{errors.certificates}</p>
+                  <p className="text-red-500 text-sm mt-3">
+                    {errors.certificates}
+                  </p>
                 )}
               </div>
             </div>
 
             {/* Terms & Conditions */}
             <div
-              className={`border-2 rounded-2xl p-6 ${errors.terms
-                ? "border-red-300 bg-red-50"
-                : "border-gray-200 bg-gradient-to-br from-slate-50 to-gray-50"
-                }`}
-            >
+              className={`border-2 rounded-2xl p-6 ${
+                errors.terms
+                  ? "border-red-300 bg-red-50"
+                  : "border-gray-200 bg-gradient-to-br from-slate-50 to-gray-50"
+              }`}>
               <h3 className="font-bold mb-4 text-lg text-gray-800 flex items-center gap-2">
                 Terms & Conditions
               </h3>
@@ -670,11 +732,13 @@ function TeacherRegistration() {
                   className="w-5 h-5"
                 />
                 <span className="text-sm text-gray-700 leading-relaxed">
-                  I agree to the Teacher Terms & Conditions and confirm that the information provided
-                  is accurate.
+                  I agree to the Teacher Terms & Conditions and confirm that the
+                  information provided is accurate.
                 </span>
               </label>
-              {errors.terms && <p className="text-red-500 text-sm mt-3">{errors.terms}</p>}
+              {errors.terms && (
+                <p className="text-red-500 text-sm mt-3">{errors.terms}</p>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -683,8 +747,7 @@ function TeacherRegistration() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white font-bold py-4 rounded-xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed shadow-lg"
-              >
+                className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white font-bold py-4 rounded-xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed shadow-lg">
                 {isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -704,7 +767,9 @@ function TeacherRegistration() {
         <div className="text-center mt-6">
           <p className="text-gray-500 text-sm">
             Need help? Contact{" "}
-            <a href="mailto:support@cultureconnect.com" className="text-gray-800 font-semibold">
+            <a
+              href="mailto:support@cultureconnect.com"
+              className="text-gray-800 font-semibold">
               support@cultureconnect.com
             </a>
           </p>
@@ -735,7 +800,10 @@ function TeacherRegistration() {
       />
 
       {/* Success Modal */}
-      <SuccessModal isOpen={showSuccessModal} onClose={handleCloseSuccessModal} />
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseSuccessModal}
+      />
     </div>
   );
 }

@@ -13,7 +13,6 @@ const CourseDetailRouter = () => {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Check if the logged-in user is the teacher who owns this course
   const isTeacher = user?.teacher_id && user.teacher_id == teacherId;
 
   useEffect(() => {
@@ -49,7 +48,6 @@ const CourseDetailRouter = () => {
     );
   }
 
-  // Return appropriate view based on user type and enrollment
   if (isTeacher) {
     return <TeacherCourseDetailPage />;
   } else if (isEnrolled) {

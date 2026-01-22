@@ -12,12 +12,13 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
   const [sortBy, setSortBy] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
+  const [loading, setLoading] = useState(false); // Prepared for future async fetching
 
   // Filters State
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [priceInput, setPriceInput] = useState({ min: "", max: "" }); // Local state for typing
+  const [priceError, setPriceError] = useState(""); // Validation error
   const [selectedRating, setSelectedRating] = useState(null);
-
-
 
   // 1. Filter Logic
   const filteredCourses = useMemo(() => {
@@ -107,12 +108,40 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
     }
   };
 
-
-
   const clearAllFilters = () => {
     setPriceRange({ min: "", max: "" });
+    setPriceInput({ min: "", max: "" });
+    setPriceError("");
     setSelectedRating(null);
     setCurrentPage(1);
+  };
+
+  // Apply price filter with validation and artificial loading
+  const applyPriceFilter = () => {
+    const minVal = priceInput.min ? parseFloat(priceInput.min) : null;
+    const maxVal = priceInput.max ? parseFloat(priceInput.max) : null;
+
+    // Validation: max < min
+    if (minVal !== null && maxVal !== null && maxVal < minVal) {
+      setPriceError("Max cannot be less than Min");
+      return;
+    }
+
+    setPriceError("");
+    setLoading(true);
+
+    // Artificial delay for smooth transition (matches Marketplace feel)
+    setTimeout(() => {
+      setPriceRange({ ...priceInput });
+      setCurrentPage(1);
+      setLoading(false);
+    }, 400);
+  };
+
+  const handlePriceKeyDown = (e) => {
+    if (e.key === "Enter") {
+      applyPriceFilter();
+    }
   };
 
   return (
@@ -134,14 +163,15 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
                   step="100"
                   min="0"
                   className="w-full p-3 bg-gray-50 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all placeholder-gray-400"
-                  value={priceRange.min}
+                  value={priceInput.min}
                   onChange={(e) => {
                     const val = e.target.value;
                     if (val === "" || parseFloat(val) >= 0) {
-                      setPriceRange({ ...priceRange, min: val });
-                      setCurrentPage(1);
+                      setPriceInput({ ...priceInput, min: val });
+                      setPriceError("");
                     }
                   }}
+                  onKeyDown={handlePriceKeyDown}
                 />
                 <span className="text-gray-300 font-light">to</span>
                 <input
@@ -150,16 +180,25 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
                   step="100"
                   min="0"
                   className="w-full p-3 bg-gray-50 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none transition-all placeholder-gray-400"
-                  value={priceRange.max}
+                  value={priceInput.max}
                   onChange={(e) => {
                     const val = e.target.value;
                     if (val === "" || parseFloat(val) >= 0) {
-                      setPriceRange({ ...priceRange, max: val });
-                      setCurrentPage(1);
+                      setPriceInput({ ...priceInput, max: val });
+                      setPriceError("");
                     }
                   }}
+                  onKeyDown={handlePriceKeyDown}
                 />
               </div>
+              {priceError && (
+                <p className="text-xs text-red-500 mt-2">{priceError}</p>
+              )}
+              <button
+                onClick={applyPriceFilter}
+                className="mt-3 w-full py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors shadow-sm shadow-teal-100">
+                Apply Price
+              </button>
             </div>
 
             {/* Rating Filter */}
@@ -179,10 +218,11 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
                     }}
                     className="flex items-center gap-3 w-full group hover:bg-teal-50 p-2 rounded-xl transition-all -ml-2">
                     <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${selectedRating === rating
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                        selectedRating === rating
                           ? "bg-teal-600 border-teal-600"
                           : "border-gray-300 group-hover:border-teal-400"
-                        }`}>
+                      }`}>
                       {selectedRating === rating && (
                         <Check size={12} className="text-white" />
                       )}
@@ -206,7 +246,6 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
                 ))}
               </div>
             </div>
-
           </aside>
 
           {/* Main Content */}
@@ -255,35 +294,43 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
             </div>
 
             {/* Courses Grid */}
-            {currentCourses.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
-                {currentCourses.map((course) => (
-                  <CourseCard
-                    key={course.id}
-                    course={course}
-                    teacherId={course.teacherId || 1}
-                    teacherName={course.teacher_name || "Verified Guru"}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="col-span-full flex flex-col items-center justify-center py-24">
-                <div className="text-center py-24">
-                  <h3 className="text-gray-900 font-bold text-xl mb-2">
-                    No courses match your filters
-                  </h3>
-                  <p className="text-gray-500 mb-8">
-                    Try clearing your filters to discover more cultural
-                    masterclasses.
-                  </p>
-                  <button
-                    onClick={clearAllFilters}
-                    className="px-8 py-3 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition-all font-semibold shadow-md">
-                    Clear All Filters
-                  </button>
+            <div className="relative min-h-[400px]">
+              {loading && (
+                <div className="absolute inset-0 bg-white/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl">
+                  <div className="w-10 h-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {currentCourses.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
+                  {currentCourses.map((course) => (
+                    <CourseCard
+                      key={course.id}
+                      course={course}
+                      teacherId={course.teacherId || 1}
+                      teacherName={course.teacher_name || "Verified Guru"}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="col-span-full flex flex-col items-center justify-center py-24">
+                  <div className="text-center py-24">
+                    <h3 className="text-gray-900 font-bold text-xl mb-2">
+                      No courses match your filters
+                    </h3>
+                    <p className="text-gray-500 mb-8">
+                      Try clearing your filters to discover more cultural
+                      masterclasses.
+                    </p>
+                    <button
+                      onClick={clearAllFilters}
+                      className="px-8 py-3 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition-all font-semibold shadow-md">
+                      Clear All Filters
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
@@ -300,10 +347,11 @@ const CourseCategoryPageLayout = ({ title, description, courses }) => {
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
-                      className={`w-12 h-12 flex items-center justify-center rounded-full text-sm font-bold transition-all ${currentPage === page
+                      className={`w-12 h-12 flex items-center justify-center rounded-full text-sm font-bold transition-all ${
+                        currentPage === page
                           ? "bg-teal-600 text-white shadow-lg shadow-teal-100 scale-110"
                           : "bg-white text-gray-600 hover:bg-teal-50 border border-transparent"
-                        }`}>
+                      }`}>
                       {page}
                     </button>
                   ),

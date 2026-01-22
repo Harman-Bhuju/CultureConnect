@@ -11,7 +11,7 @@ import {
   Settings2,
   User,
   ShoppingCart,
-  UserCheck
+  UserCheck,
 } from "lucide-react";
 
 import { Avatar, AvatarImage } from "../ui/avatar";
@@ -87,7 +87,9 @@ export function NavUser({ user }) {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem
-              onClick={() => { navigate("/following") }}
+              onClick={() => {
+                navigate("/following");
+              }}
               className="cursor-pointer">
               <UserCheck className="w-4 h-4 mr-2" />
               <span className="text-sm">Following</span>
@@ -108,11 +110,15 @@ export function NavUser({ user }) {
 
             {/* Account Options */}
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => navigate("/cart")} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => navigate("/cart")}
+                className="cursor-pointer">
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Cart
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => navigate("/notifications")}>
                 <Bell className="w-4 h-4 mr-2" />
                 Notifications
               </DropdownMenuItem>
@@ -132,4 +138,3 @@ export function NavUser({ user }) {
     </SidebarMenu>
   );
 }
-

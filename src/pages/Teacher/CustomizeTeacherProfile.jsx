@@ -53,7 +53,7 @@ const CropModal = ({ isOpen, imageToCrop, onSave, onCancel }) => {
   if (!isOpen) return null;
 
   const handleMouseDown = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     setIsDragging(true);
     setDragStart({
       x: e.clientX || e.touches?.[0]?.clientX,
@@ -63,7 +63,7 @@ const CropModal = ({ isOpen, imageToCrop, onSave, onCancel }) => {
 
   const handleMouseMove = (e) => {
     if (!isDragging) return;
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const clientX = e.clientX || e.touches?.[0]?.clientX;
     const clientY = e.clientY || e.touches?.[0]?.clientY;
     const deltaX = clientX - dragStart.x;
@@ -75,7 +75,7 @@ const CropModal = ({ isOpen, imageToCrop, onSave, onCancel }) => {
   const handleMouseUp = () => setIsDragging(false);
 
   const handleWheel = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const delta = e.deltaY * -0.01;
     setZoom((prev) => Math.min(Math.max(0.5, prev + delta * 0.5), 3));
   };
@@ -90,7 +90,7 @@ const CropModal = ({ isOpen, imageToCrop, onSave, onCancel }) => {
         <div className="mb-6 flex justify-center">
           <div
             ref={cropContainerRef}
-            className="relative w-80 h-80 rounded-full overflow-hidden border-4 border-gray-200 bg-gray-100"
+            className="relative w-80 h-80 rounded-full overflow-hidden border-4 border-gray-200 bg-gray-100 touch-none"
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
