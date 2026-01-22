@@ -62,7 +62,7 @@ const AdminTeacherApprovals = () => {
       const result = await response.json();
 
       if (result.success) {
-        toast.success(`Teacher ${action}ed successfully`);
+        toast.success(`Teacher ${action} successfully`);
         setPendingTeachers(pendingTeachers.filter((t) => t.id !== teacherId));
       } else {
         toast.error(result.message || "Action failed");
@@ -147,7 +147,10 @@ const AdminTeacherApprovals = () => {
                       alt={teacher.name}
                       className="w-20 h-20 rounded-full object-cover border-4 border-gray-100 shadow-sm"
                       onError={(e) => {
-                        console.error("Profile image failed to load:", e.target.src);
+                        console.error(
+                          "Profile image failed to load:",
+                          e.target.src,
+                        );
                         e.target.src = "/default-avatar.png";
                       }}
                     />
@@ -243,13 +246,21 @@ const AdminTeacherApprovals = () => {
                             ) : (
                               <div
                                 className="cursor-pointer relative"
-                                onClick={() => openImageModal(certUrl, `Certificate ${i + 1}`)}>
+                                onClick={() =>
+                                  openImageModal(
+                                    certUrl,
+                                    `Certificate ${i + 1}`,
+                                  )
+                                }>
                                 <img
                                   src={certUrl}
                                   alt={`Certificate ${i + 1}`}
                                   className="w-full aspect-square object-cover rounded-lg border-2 border-gray-200 hover:border-purple-500 transition-all shadow-md hover:shadow-xl"
                                   onError={() => {
-                                    console.error("Certificate image failed to load:", certUrl);
+                                    console.error(
+                                      "Certificate image failed to load:",
+                                      certUrl,
+                                    );
                                     handleImageError(teacher.id, i);
                                   }}
                                   loading="lazy"

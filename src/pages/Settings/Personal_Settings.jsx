@@ -156,14 +156,14 @@ const Personal_Settings = () => {
       0,
       0,
       size,
-      size
+      size,
     );
 
     canvas.toBlob(
       async (blob) => {
         // ✅ CHANGED: Send location fields separately
         const locationParts = user.location?.split(", ") || ["", "", "", ""];
-        
+
         const formData = new FormData();
         formData.append("avatar", blob, "avatar.jpg");
         formData.append("email", user.email);
@@ -186,16 +186,16 @@ const Personal_Settings = () => {
             const newAvatarUrl = result.avatar.startsWith("http")
               ? result.avatar
               : `${API.UPLOADS}/${result.avatar}`;
-            
+
             // ✅ CHANGED: Handle location object from PHP response
-            const newLocation = result.location 
+            const newLocation = result.location
               ? `${result.location.province}, ${result.location.district}, ${result.location.municipality}, ${result.location.ward}`
               : user.location;
-            
-            setUser((prev) => ({ 
-              ...prev, 
+
+            setUser((prev) => ({
+              ...prev,
               avatar: newAvatarUrl,
-              location: newLocation 
+              location: newLocation,
             }));
 
             login({
@@ -216,13 +216,13 @@ const Personal_Settings = () => {
         }
       },
       "image/jpeg",
-      0.95
+      0.95,
     );
   };
 
   // Handle mouse/touch drag
   const handleMouseDown = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     setIsDragging(true);
     setDragStart({
       x: e.clientX || e.touches?.[0]?.clientX,
@@ -232,7 +232,7 @@ const Personal_Settings = () => {
 
   const handleMouseMove = (e) => {
     if (!isDragging) return;
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
 
     const clientX = e.clientX || e.touches?.[0]?.clientX;
     const clientY = e.clientY || e.touches?.[0]?.clientY;
@@ -254,7 +254,7 @@ const Personal_Settings = () => {
 
   // Handle mouse wheel zoom
   const handleWheel = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const delta = e.deltaY * -0.01;
     setZoom((prev) => Math.min(Math.max(0.5, prev + delta * 0.5), 3));
   };
@@ -352,7 +352,7 @@ const Personal_Settings = () => {
           setUser((prev) => ({ ...prev, username: oldValue }));
           if (result.message === "Username already taken") {
             setUsernameTakenError(
-              "Username is already taken, choose another one"
+              "Username is already taken, choose another one",
             );
           }
           toast.error(result.message || "Failed to update username");
@@ -376,12 +376,12 @@ const Personal_Settings = () => {
 
         if (result.status === "success") {
           // ✅ CHANGED: Handle location object from PHP response
-          const newLocation = result.location 
+          const newLocation = result.location
             ? `${result.location.province}, ${result.location.district}, ${result.location.municipality}, ${result.location.ward}`
             : value;
-          
+
           setUser((prev) => ({ ...prev, location: newLocation }));
-          
+
           login({
             ...authUser,
             location: newLocation,
@@ -410,7 +410,7 @@ const Personal_Settings = () => {
 
     // ✅ CHANGED: Send location fields separately
     const locationParts = user.location?.split(", ") || ["", "", "", ""];
-    
+
     const formData = new FormData();
     formData.append("email", user.email);
     formData.append("province", locationParts[0] || "");
@@ -430,10 +430,10 @@ const Personal_Settings = () => {
 
       if (result.status === "success") {
         // ✅ CHANGED: Handle location object from PHP response
-        const newLocation = result.location 
+        const newLocation = result.location
           ? `${result.location.province}, ${result.location.district}, ${result.location.municipality}, ${result.location.ward}`
           : user.location;
-        
+
         login({
           ...authUser,
           name: result.username,
@@ -589,7 +589,7 @@ const Personal_Settings = () => {
             onDistrictChange={setSelectedDistrict}
             onMunicipalChange={setSelectedMunicipal}
             onWardChange={setSelectedWard}
-             initialLocation={user.location}
+            initialLocation={user.location}
           />
         ) : (
           <UsernameInput

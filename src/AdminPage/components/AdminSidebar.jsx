@@ -9,6 +9,7 @@ import {
   PanelLeftIcon,
   ChevronsUpDown,
   LogOut,
+  FileText,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import CultureConnectLogo from "../../assets/logo/cultureconnect__fav.png";
@@ -60,6 +61,12 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
       label: "Analytics",
       icon: BarChart3,
       path: "/admin/analytics",
+    },
+    {
+      id: "homepage",
+      label: "Homepage Content",
+      icon: FileText,
+      path: "/admin/homepage",
     },
   ];
 

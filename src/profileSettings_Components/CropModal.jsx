@@ -17,7 +17,7 @@ const CropModal = ({
   onSave,
   onCancel,
   cropImageRef,
-  cropContainerRef
+  cropContainerRef,
 }) => {
   if (!isOpen || !imageToCrop) return null;
 
@@ -65,12 +65,13 @@ const CropModal = ({
       <div className="w-full max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-4 px-2">
-          <h3 className="text-lg sm:text-xl font-bold text-white">Adjust Your Photo</h3>
+          <h3 className="text-lg sm:text-xl font-bold text-white">
+            Adjust Your Photo
+          </h3>
           <button
             className="text-white hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full"
             onClick={onCancel}
-            aria-label="Close crop"
-          >
+            aria-label="Close crop">
             <X size={20} />
           </button>
         </div>
@@ -85,27 +86,24 @@ const CropModal = ({
             background: "rgba(0,0,0,0.45)",
             marginBottom: 20,
           }}
-          onWheel={onWheel}
-        >
+          onWheel={onWheel}>
           {/* Overlay border */}
           <div
             className={
               cropType === "banner"
                 ? "absolute inset-0 pointer-events-none z-10 border-4 border-white/30 rounded-xl"
                 : "absolute inset-0 pointer-events-none z-10 border-4 border-white/30 rounded-full"
-            }
-          ></div>
+            }></div>
 
           <div
-            className="absolute inset-0 flex items-center justify-center cursor-move select-none"
+            className="absolute inset-0 flex items-center justify-center cursor-move select-none touch-none"
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
             onMouseLeave={onMouseUp}
             onTouchStart={onMouseDown}
             onTouchMove={onMouseMove}
-            onTouchEnd={onMouseUp}
-          >
+            onTouchEnd={onMouseUp}>
             <img
               ref={cropImageRef}
               src={imageToCrop}
@@ -172,14 +170,12 @@ const CropModal = ({
         <div className="flex gap-3 px-2">
           <button
             onClick={onCancel}
-            className="flex-1 bg-gray-700 text-white py-3 rounded-xl hover:bg-gray-600 transition-all duration-200 font-medium"
-          >
+            className="flex-1 bg-gray-700 text-white py-3 rounded-xl hover:bg-gray-600 transition-all duration-200 font-medium">
             Cancel
           </button>
           <button
             onClick={onSave}
-            className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-lg"
-          >
+            className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-medium shadow-lg">
             Save Photo
           </button>
         </div>

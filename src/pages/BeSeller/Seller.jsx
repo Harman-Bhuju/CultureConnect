@@ -1,13 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import {
-  Store,
-  Upload,
-  X,
-  Check,
-  Save,
-  Info,
-  ArrowLeft,
-} from "lucide-react";
+import { Store, Upload, X, Check, Save, Info, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -15,20 +7,21 @@ import { useAuth } from "../../context/AuthContext";
 import useNepalAddress from "../../hooks/NepalAddress";
 import API from "../../Configs/ApiEndpoints";
 
-
 // Reuse your existing components
 import EditModal from "../../profileSettings_Components/EditModal";
 import LocationForm from "../../profileSettings_Components/LocationForm";
 import CropModal from "../../profileSettings_Components/CropModal";
 const InlineLabel = ({ children }) => (
-  <label className="block text-sm font-semibold mb-2 text-gray-800">{children}</label>
+  <label className="block text-sm font-semibold mb-2 text-gray-800">
+    {children}
+  </label>
 );
 
 // --- SellerForm Component ---
 function SellerForm() {
   const { user: authUser, checkSession } = useAuth?.() || {
     user: null,
-    checkSession: async () => { }
+    checkSession: async () => {},
   };
   const navigate = useNavigate();
   const {
@@ -48,11 +41,11 @@ function SellerForm() {
     municipals: [],
     wards: [],
     selectedProvince: "",
-    setSelectedProvince: () => { },
+    setSelectedProvince: () => {},
     selectedDistrict: "",
-    setSelectedDistrict: () => { },
+    setSelectedDistrict: () => {},
     selectedMunicipal: "",
-    setSelectedMunicipal: () => { },
+    setSelectedMunicipal: () => {},
   };
 
   const [selectedWard, setSelectedWard] = useState("");
@@ -120,16 +113,21 @@ function SellerForm() {
   // ---------- Validation helpers ----------
   const validateStoreName = (name) => {
     if (!name || !name.trim()) return "Store name is required";
-    if (name.trim().length < 3) return "Store name must be at least 3 characters";
-    if (name.trim().length > 100) return "Store name must not exceed 100 characters";
-    if (!/^[a-zA-Z0-9\s&\-']+$/.test(name)) return "Only letters, numbers and & - ' allowed";
+    if (name.trim().length < 3)
+      return "Store name must be at least 3 characters";
+    if (name.trim().length > 100)
+      return "Store name must not exceed 100 characters";
+    if (!/^[a-zA-Z0-9\s&\-']+$/.test(name))
+      return "Only letters, numbers and & - ' allowed";
     return "";
   };
 
   const validateStoreDescription = (desc) => {
     if (!desc || !desc.trim()) return "Description is required";
-    if (desc.trim().length < 10) return "Description must be at least 10 characters";
-    if (desc.length > 2000) return "Description must not exceed 2000 characters";
+    if (desc.trim().length < 10)
+      return "Description must be at least 10 characters";
+    if (desc.length > 2000)
+      return "Description must not exceed 2000 characters";
     return "";
   };
 
@@ -138,16 +136,19 @@ function SellerForm() {
   const validateEsewaPhone = (phone) => {
     if (!phone || !phone.trim()) return "eSewa phone number is required";
     const phoneRegex = /^(98|97)\d{8}$/;
-    if (!phoneRegex.test(phone)) return "Please enter a valid 10-digit Nepali phone number";
+    if (!phoneRegex.test(phone))
+      return "Please enter a valid 10-digit Nepali phone number";
     return "";
   };
 
-  const validateCategory = (cat) => (cat ? "" : "Please select a primary category");
+  const validateCategory = (cat) =>
+    cat ? "" : "Please select a primary category";
 
   const validateLogo = () => (logoFile ? "" : "Store logo is required");
   const validateBanner = () => (bannerFile ? "" : "Store banner is required");
   const validateLocation = (province, district, municipal, ward) => {
-    if (!province || !district || !municipal || !ward) return "Please select full location";
+    if (!province || !district || !municipal || !ward)
+      return "Please select full location";
     return "";
   };
 
@@ -167,7 +168,9 @@ function SellerForm() {
     if (!file) return;
     const maxSizeMB = type === "banner" ? 6 : 4;
     if (file.size > maxSizeMB * 1024 * 1024) {
-      toast.error(`${type === "banner" ? "Banner" : "Logo"} must be <= ${maxSizeMB}MB`);
+      toast.error(
+        `${type === "banner" ? "Banner" : "Logo"} must be <= ${maxSizeMB}MB`,
+      );
       return;
     }
     if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
@@ -228,7 +231,17 @@ function SellerForm() {
       ctx.closePath();
       ctx.clip();
 
-      ctx.drawImage(img, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
+      ctx.drawImage(
+        img,
+        sourceX,
+        sourceY,
+        sourceSize,
+        sourceSize,
+        0,
+        0,
+        size,
+        size,
+      );
     } else {
       // banner rectangular crop
       canvas.width = 2048;
@@ -255,33 +268,49 @@ function SellerForm() {
       const sourceX = img.naturalWidth / 2 + offsetX - cropWidth / 2;
       const sourceY = img.naturalHeight / 2 + offsetY - cropHeight / 2;
 
-      ctx.drawImage(img, sourceX, sourceY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        img,
+        sourceX,
+        sourceY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      );
     }
 
-    canvas.toBlob((blob) => {
-      const file = new File([blob], `${cropType}.jpg`, { type: "image/jpeg" });
-      const url = URL.createObjectURL(blob);
+    canvas.toBlob(
+      (blob) => {
+        const file = new File([blob], `${cropType}.jpg`, {
+          type: "image/jpeg",
+        });
+        const url = URL.createObjectURL(blob);
 
-      if (cropType === "logo") {
-        setLogoPreview(url);
-        setLogoFile(file);
-        setErrors((p) => ({ ...p, logo: "" }));
-        if (logoInputRef.current) logoInputRef.current.value = "";
-      } else {
-        setBannerPreview(url);
-        setBannerFile(file);
-        setErrors((p) => ({ ...p, banner: "" }));
-        if (bannerInputRef.current) bannerInputRef.current.value = "";
-      }
+        if (cropType === "logo") {
+          setLogoPreview(url);
+          setLogoFile(file);
+          setErrors((p) => ({ ...p, logo: "" }));
+          if (logoInputRef.current) logoInputRef.current.value = "";
+        } else {
+          setBannerPreview(url);
+          setBannerFile(file);
+          setErrors((p) => ({ ...p, banner: "" }));
+          if (bannerInputRef.current) bannerInputRef.current.value = "";
+        }
 
-      setShowCropModal(false);
-      setImageToCrop(null);
-    }, "image/jpeg", 0.95);
+        setShowCropModal(false);
+        setImageToCrop(null);
+      },
+      "image/jpeg",
+      0.95,
+    );
   };
 
   // crop drag handlers
   const handleMouseDown = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     setIsDragging(true);
     setDragStart({
       x: e.clientX || e.touches?.[0]?.clientX,
@@ -290,7 +319,7 @@ function SellerForm() {
   };
   const handleMouseMove = (e) => {
     if (!isDragging) return;
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const clientX = e.clientX || e.touches?.[0]?.clientX;
     const clientY = e.clientY || e.touches?.[0]?.clientY;
     const deltaX = clientX - dragStart.x;
@@ -300,11 +329,10 @@ function SellerForm() {
   };
   const handleMouseUp = () => setIsDragging(false);
   const handleWheel = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const delta = e.deltaY * -0.01;
     setZoom((prev) => Math.min(Math.max(0.5, prev + delta * 0.5), 3));
   };
-
 
   // ----- Edit modal for location/username -----
   const openEditPopup = (field) => {
@@ -341,7 +369,12 @@ function SellerForm() {
   const isSaveDisabled = () => {
     if (!editingField) return true;
     if (editingField === "location") {
-      return !selectedProvince || !selectedDistrict || !selectedMunicipal || !selectedWard;
+      return (
+        !selectedProvince ||
+        !selectedDistrict ||
+        !selectedMunicipal ||
+        !selectedWard
+      );
     }
     if (editingField === "username") {
       return !tempValue || usernameError || usernameTakenError;
@@ -351,7 +384,12 @@ function SellerForm() {
 
   const handleSaveEdit = async () => {
     if (editingField === "location") {
-      if (!selectedProvince || !selectedDistrict || !selectedMunicipal || !selectedWard) {
+      if (
+        !selectedProvince ||
+        !selectedDistrict ||
+        !selectedMunicipal ||
+        !selectedWard
+      ) {
         toast.error("Select all location fields");
         return;
       }
@@ -379,7 +417,10 @@ function SellerForm() {
   // username suggestions refresh (optional real API)
   const refreshSuggestions = async () => {
     // placeholder: fetch suggestions from your API
-    setUsernameSuggestions([`${authUser?.name || "seller"}123`, `${authUser?.name || "seller"}_art`]);
+    setUsernameSuggestions([
+      `${authUser?.name || "seller"}123`,
+      `${authUser?.name || "seller"}_art`,
+    ]);
   };
 
   // ---------- Form submission ----------
@@ -403,10 +444,17 @@ function SellerForm() {
     const bannerErr = validateBanner();
     if (bannerErr) newErrors.banner = bannerErr;
 
-    const locErr = validateLocation(formData.province, formData.district, formData.municipality, formData.ward);
+    const locErr = validateLocation(
+      formData.province,
+      formData.district,
+      formData.municipality,
+      formData.ward,
+    );
     if (locErr) newErrors.location = locErr;
 
-    const termsErr = formData.termsAccepted ? "" : "You must accept the terms and conditions";
+    const termsErr = formData.termsAccepted
+      ? ""
+      : "You must accept the terms and conditions";
     if (termsErr) newErrors.terms = termsErr;
 
     setErrors(newErrors);
@@ -456,7 +504,7 @@ function SellerForm() {
         await checkSession();
 
         // ✅ Wait a bit more for state to update
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         // ✅ Navigate to seller profile
         console.log("Navigating to seller profile:", result.seller_id);
@@ -479,25 +527,30 @@ function SellerForm() {
         <div className="flex items-center justify-start mb-6">
           <button
             type="button"
-            onClick={() => navigate('/', { replace: true })}
+            onClick={() => navigate("/", { replace: true })}
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 shadow-sm"
-            aria-label="Go back"
-          >
+            aria-label="Go back">
             <ArrowLeft className="w-4 h-4" />
             <span className="font-medium">Back</span>
           </button>
         </div>
 
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Seller Application</h1>
-          <p className="text-gray-600 text-lg">Register your store and list products</p>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+            Seller Application
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Register your store and list products
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
           <div className="space-y-8">
             {/* Basic Info */}
             <div>
-              <InlineLabel>Store Name <span className="text-red-500">*</span></InlineLabel>
+              <InlineLabel>
+                Store Name <span className="text-red-500">*</span>
+              </InlineLabel>
               <input
                 name="storeName"
                 value={formData.storeName}
@@ -505,12 +558,16 @@ function SellerForm() {
                 className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.storeName ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"}`}
                 placeholder="Enter store name"
               />
-              {errors.storeName && <p className="text-red-500 text-sm mt-2">{errors.storeName}</p>}
+              {errors.storeName && (
+                <p className="text-red-500 text-sm mt-2">{errors.storeName}</p>
+              )}
             </div>
 
             {/* Description */}
             <div>
-              <InlineLabel>Store Description <span className="text-red-500">*</span></InlineLabel>
+              <InlineLabel>
+                Store Description <span className="text-red-500">*</span>
+              </InlineLabel>
               <textarea
                 name="storeDescription"
                 value={formData.storeDescription}
@@ -520,10 +577,20 @@ function SellerForm() {
                 placeholder="Describe your store and products..."
               />
               <div className="flex justify-between mt-2">
-                <p className="text-gray-500 text-sm">{formData.storeDescription.length < 10 ? "⚠ Minimum 10 characters" : ""}</p>
-                <p className="text-gray-500 text-sm">{formData.storeDescription.length}/2000</p>
+                <p className="text-gray-500 text-sm">
+                  {formData.storeDescription.length < 10
+                    ? "⚠ Minimum 10 characters"
+                    : ""}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  {formData.storeDescription.length}/2000
+                </p>
               </div>
-              {errors.storeDescription && <p className="text-red-500 text-sm mt-1">{errors.storeDescription}</p>}
+              {errors.storeDescription && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.storeDescription}
+                </p>
+              )}
             </div>
 
             {/* Business email / OTP removed */}
@@ -540,37 +607,49 @@ function SellerForm() {
                 }
               }}
               aria-invalid={!!errors.location}
-              className={`w-full text-left px-4 py-3.5 rounded-xl border transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200 ${errors.location
-                ? "border-red-300 bg-red-50 text-red-800"
-                : formData.province || formData.district || formData.municipality || formData.ward
-                  ? "border-gray-200 bg-gray-50 text-gray-800"
-                  : "border-dashed border-gray-300 bg-white text-gray-500"
-                }`}
-            >
+              className={`w-full text-left px-4 py-3.5 rounded-xl border transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                errors.location
+                  ? "border-red-300 bg-red-50 text-red-800"
+                  : formData.province ||
+                      formData.district ||
+                      formData.municipality ||
+                      formData.ward
+                    ? "border-gray-200 bg-gray-50 text-gray-800"
+                    : "border-dashed border-gray-300 bg-white text-gray-500"
+              }`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-semibold text-gray-700">Location</div>
+                  <div className="text-sm font-semibold text-gray-700">
+                    Location
+                  </div>
                   <div className="text-sm truncate mt-1">
-                    {formData.province || formData.district || formData.municipality || formData.ward
+                    {formData.province ||
+                    formData.district ||
+                    formData.municipality ||
+                    formData.ward
                       ? [
-                        formData.province,
-                        formData.district,
-                        formData.municipality,
-                        formData.ward,
-                      ]
-                        .filter(Boolean)
-                        .join(", ")
+                          formData.province,
+                          formData.district,
+                          formData.municipality,
+                          formData.ward,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")
                       : "Add Location (click to edit)"}
                   </div>
                 </div>
                 <div className="text-blue-600 ml-4 font-medium">Edit</div>
               </div>
             </div>
-            {errors.location && <p className="text-red-500 text-sm mt-2">{errors.location}</p>}
+            {errors.location && (
+              <p className="text-red-500 text-sm mt-2">{errors.location}</p>
+            )}
 
             {/* eSewa phone */}
             <div>
-              <InlineLabel>eSewa Phone Number <span className="text-red-500">*</span></InlineLabel>
+              <InlineLabel>
+                eSewa Phone Number <span className="text-red-500">*</span>
+              </InlineLabel>
               <input
                 name="esewaPhone"
                 value={formData.esewaPhone}
@@ -579,32 +658,45 @@ function SellerForm() {
                 placeholder="98XXXXXXXX"
                 className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.esewaPhone ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"}`}
               />
-              <p className="text-gray-500 text-sm mt-2">Payment will be sent to this eSewa account</p>
-              {errors.esewaPhone && <p className="text-red-500 text-sm mt-1">{errors.esewaPhone}</p>}
+              <p className="text-gray-500 text-sm mt-2">
+                Payment will be sent to this eSewa account
+              </p>
+              {errors.esewaPhone && (
+                <p className="text-red-500 text-sm mt-1">{errors.esewaPhone}</p>
+              )}
             </div>
 
             {/* Primary Category */}
             <div>
-              <InlineLabel>Primary Category <span className="text-red-500">*</span></InlineLabel>
+              <InlineLabel>
+                Primary Category <span className="text-red-500">*</span>
+              </InlineLabel>
               <select
                 name="primaryCategory"
                 value={formData.primaryCategory}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.primaryCategory ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"}`}
-              >
+                className={`w-full px-4 py-3.5 border-2 rounded-xl ${errors.primaryCategory ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"}`}>
                 <option value="">Select Category</option>
                 <option>Traditional Clothing</option>
                 <option>Musical Instruments</option>
                 <option>Handicraft & Decors</option>
               </select>
-              {errors.primaryCategory && <p className="text-red-500 text-sm mt-2">{errors.primaryCategory}</p>}
+              {errors.primaryCategory && (
+                <p className="text-red-500 text-sm mt-2">
+                  {errors.primaryCategory}
+                </p>
+              )}
             </div>
 
             {/* Banner Upload */}
             <div>
               <div className="mb-2">
-                <h3 className="text-lg font-bold text-gray-800">Banner image</h3>
-                <p className="text-sm text-gray-600">This image will appear across the top of your channel</p>
+                <h3 className="text-lg font-bold text-gray-800">
+                  Banner image
+                </h3>
+                <p className="text-sm text-gray-600">
+                  This image will appear across the top of your channel
+                </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-8 border border-gray-200">
                 <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -612,7 +704,11 @@ function SellerForm() {
                   <div className="flex-shrink-0">
                     {bannerPreview ? (
                       <div className="w-full md:w-80 h-44 bg-white rounded-lg overflow-hidden border-4 border-gray-200 shadow-sm">
-                        <img src={bannerPreview} alt="banner" className="w-full h-full object-cover" />
+                        <img
+                          src={bannerPreview}
+                          alt="banner"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     ) : (
                       <div className="w-full md:w-80 h-44 bg-white rounded-lg border-4 border-gray-200 flex items-center justify-center shadow-sm">
@@ -627,15 +723,18 @@ function SellerForm() {
                   {/* Upload Info */}
                   <div className="flex-1">
                     <p className="text-gray-600 text-sm mb-4">
-                      For the best results on all devices, use an image that's at least 2048 x 1152 pixels and 6MB or less.
+                      For the best results on all devices, use an image that's
+                      at least 2048 x 1152 pixels and 6MB or less.
                     </p>
                     {bannerPreview ? (
                       <>
                         <button
                           type="button"
-                          onClick={() => bannerInputRef.current && bannerInputRef.current.click()}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                        >
+                          onClick={() =>
+                            bannerInputRef.current &&
+                            bannerInputRef.current.click()
+                          }
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                           Change
                         </button>
                         <button
@@ -644,17 +743,18 @@ function SellerForm() {
                             setLogoPreview(null);
                             setLogoFile(null);
                           }}
-                          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2.5 rounded-full font-medium transition-colors"
-                        >
+                          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2.5 rounded-full font-medium transition-colors">
                           Remove
                         </button>
                       </>
                     ) : (
                       <button
                         type="button"
-                        onClick={() => bannerInputRef.current && bannerInputRef.current.click()}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                      >
+                        onClick={() =>
+                          bannerInputRef.current &&
+                          bannerInputRef.current.click()
+                        }
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                         Upload
                       </button>
                     )}
@@ -668,14 +768,20 @@ function SellerForm() {
                   </div>
                 </div>
               </div>
-              {errors.banner && <p className="text-red-500 text-sm mt-2">{errors.banner}</p>}
+              {errors.banner && (
+                <p className="text-red-500 text-sm mt-2">{errors.banner}</p>
+              )}
             </div>
 
             {/* Logo Upload */}
             <div>
               <div className="mb-2">
                 <h3 className="text-lg font-bold text-gray-800">Picture</h3>
-                <p className="text-sm text-gray-600">Your profile picture will appear where your channel is presented on CultureConnect, like next to your products and store info</p>
+                <p className="text-sm text-gray-600">
+                  Your profile picture will appear where your channel is
+                  presented on CultureConnect, like next to your products and
+                  store info
+                </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-8 border border-gray-200">
                 <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -683,10 +789,19 @@ function SellerForm() {
                   <div className="flex-shrink-0">
                     <div className="w-40 h-40 rounded-full overflow-hidden bg-white border-4 border-gray-200 flex items-center justify-center shadow-sm">
                       {logoPreview ? (
-                        <img src={logoPreview} alt="logo" className="w-full h-full object-cover" />
+                        <img
+                          src={logoPreview}
+                          alt="logo"
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center">
-                          <div className="w-8 h-10 bg-white" style={{ clipPath: 'polygon(50% 0%, 0% 40%, 30% 40%, 30% 100%, 70% 100%, 70% 40%, 100% 40%)' }}></div>
+                          <div
+                            className="w-8 h-10 bg-white"
+                            style={{
+                              clipPath:
+                                "polygon(50% 0%, 0% 40%, 30% 40%, 30% 100%, 70% 100%, 70% 40%, 100% 40%)",
+                            }}></div>
                         </div>
                       )}
                     </div>
@@ -695,16 +810,21 @@ function SellerForm() {
                   {/* Upload Info */}
                   <div className="flex-1">
                     <p className="text-gray-600 text-sm mb-4">
-                      It's recommended to use a picture that's at least 98 x 98 pixels and 4MB or less. Use a PNG or GIF (no animations) file. Make sure your picture follows the YouTube Community Guidelines.
+                      It's recommended to use a picture that's at least 98 x 98
+                      pixels and 4MB or less. Use a PNG or GIF (no animations)
+                      file. Make sure your picture follows the YouTube Community
+                      Guidelines.
                     </p>
                     <div className="flex gap-3">
                       {logoPreview ? (
                         <>
                           <button
                             type="button"
-                            onClick={() => logoInputRef.current && logoInputRef.current.click()}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                          >
+                            onClick={() =>
+                              logoInputRef.current &&
+                              logoInputRef.current.click()
+                            }
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                             Change
                           </button>
                           <button
@@ -713,17 +833,17 @@ function SellerForm() {
                               setLogoPreview(null);
                               setLogoFile(null);
                             }}
-                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2.5 rounded-full font-medium transition-colors"
-                          >
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2.5 rounded-full font-medium transition-colors">
                             Remove
                           </button>
                         </>
                       ) : (
                         <button
                           type="button"
-                          onClick={() => logoInputRef.current && logoInputRef.current.click()}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                        >
+                          onClick={() =>
+                            logoInputRef.current && logoInputRef.current.click()
+                          }
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                           Upload
                         </button>
                       )}
@@ -738,29 +858,49 @@ function SellerForm() {
                   </div>
                 </div>
               </div>
-              {errors.logo && <p className="text-red-500 text-sm mt-2">{errors.logo}</p>}
+              {errors.logo && (
+                <p className="text-red-500 text-sm mt-2">{errors.logo}</p>
+              )}
             </div>
 
             {/* Terms */}
-            <div className={`border-2 rounded-2xl p-6 ${errors.terms ? "border-red-300 bg-red-50" : "border-gray-200 bg-gradient-to-br from-slate-50 to-gray-50"}`}>
-              <h3 className="font-bold mb-4 text-lg text-gray-800 flex items-center gap-2">📋 Terms & Conditions</h3>
+            <div
+              className={`border-2 rounded-2xl p-6 ${errors.terms ? "border-red-300 bg-red-50" : "border-gray-200 bg-gradient-to-br from-slate-50 to-gray-50"}`}>
+              <h3 className="font-bold mb-4 text-lg text-gray-800 flex items-center gap-2">
+                📋 Terms & Conditions
+              </h3>
               <ul className="space-y-2 text-sm text-gray-700 mb-4">
                 <li className="p-3 bg-white rounded-lg border">
-                  • Commission: 1% per sale. Sellers should price products considering this commission.
+                  • Commission: 1% per sale. Sellers should price products
+                  considering this commission.
                 </li>
                 <li className="p-3 bg-white rounded-lg border">
-                  • Delivery: Buyers pay delivery charges, calculated automatically from the seller's location to the buyer's chosen delivery address.
+                  • Delivery: Buyers pay delivery charges, calculated
+                  automatically from the seller's location to the buyer's chosen
+                  delivery address.
                 </li>
                 <li className="p-3 bg-white rounded-lg border">
-                  • Settlement: Online payments (eSewa only) are processed within 7 business days after successful delivery.
+                  • Settlement: Online payments (eSewa only) are processed
+                  within 7 business days after successful delivery.
                 </li>
               </ul>
 
               <label className="flex items-start gap-3 cursor-pointer p-4 bg-white rounded-xl border-2 border-gray-200">
-                <input type="checkbox" name="termsAccepted" checked={formData.termsAccepted} onChange={handleInputChange} className="w-5 h-5" />
-                <span className="text-sm text-gray-700 leading-relaxed">I agree to the Terms & Conditions and confirm information is accurate</span>
+                <input
+                  type="checkbox"
+                  name="termsAccepted"
+                  checked={formData.termsAccepted}
+                  onChange={handleInputChange}
+                  className="w-5 h-5"
+                />
+                <span className="text-sm text-gray-700 leading-relaxed">
+                  I agree to the Terms & Conditions and confirm information is
+                  accurate
+                </span>
               </label>
-              {errors.terms && <p className="text-red-500 text-sm mt-3">{errors.terms}</p>}
+              {errors.terms && (
+                <p className="text-red-500 text-sm mt-3">{errors.terms}</p>
+              )}
             </div>
 
             {/* Submit */}
@@ -770,8 +910,7 @@ function SellerForm() {
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 aria-disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white font-bold py-4 rounded-xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed shadow-lg"
-              >
+                className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white font-bold py-4 rounded-xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed shadow-lg">
                 {isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">
                     <span
@@ -794,7 +933,14 @@ function SellerForm() {
 
         {/* Footer */}
         <div className="text-center mt-6">
-          <p className="text-gray-500 text-sm">Need help? Contact <a href="mailto:support@cultureconnect.com" className="text-gray-800 font-semibold">support@cultureconnect.com</a></p>
+          <p className="text-gray-500 text-sm">
+            Need help? Contact{" "}
+            <a
+              href="mailto:support@cultureconnect.com"
+              className="text-gray-800 font-semibold">
+              support@cultureconnect.com
+            </a>
+          </p>
         </div>
       </div>
 
@@ -814,7 +960,10 @@ function SellerForm() {
         onWheel={handleWheel}
         onZoomChange={setZoom}
         onSave={handleCropAndSave}
-        onCancel={() => { setShowCropModal(false); setImageToCrop(null); }}
+        onCancel={() => {
+          setShowCropModal(false);
+          setImageToCrop(null);
+        }}
         cropImageRef={cropImageRef}
         cropContainerRef={cropContainerRef}
         cropType={cropType}
@@ -830,8 +979,7 @@ function SellerForm() {
         error={usernameError}
         takenError={usernameTakenError}
         isSaveDisabled={isSaveDisabled()}
-        onOpenSuggestions={() => setSuggestionModalOpen(true)}
-      >
+        onOpenSuggestions={() => setSuggestionModalOpen(true)}>
         {editingField === "location" ? (
           <LocationForm
             provinces={provinces}
@@ -850,16 +998,25 @@ function SellerForm() {
         ) : (
           // a minimal username input when editing username
           <div>
-            <input value={tempValue} onChange={(e) => {
-              setTempValue(e.target.value);
-              setUsernameError("");
-              setUsernameTakenError("");
-            }} onKeyDown={(e) => {
-              if (e.key === "Enter" && !isSaveDisabled()) handleSaveEdit();
-              if (e.key === "Escape") handleCancelEdit();
-            }} className="w-full px-4 py-3 border-2 rounded-xl" />
-            {usernameError && <p className="text-red-500 text-sm mt-2">{usernameError}</p>}
-            {usernameTakenError && <p className="text-red-500 text-sm mt-2">{usernameTakenError}</p>}
+            <input
+              value={tempValue}
+              onChange={(e) => {
+                setTempValue(e.target.value);
+                setUsernameError("");
+                setUsernameTakenError("");
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !isSaveDisabled()) handleSaveEdit();
+                if (e.key === "Escape") handleCancelEdit();
+              }}
+              className="w-full px-4 py-3 border-2 rounded-xl"
+            />
+            {usernameError && (
+              <p className="text-red-500 text-sm mt-2">{usernameError}</p>
+            )}
+            {usernameTakenError && (
+              <p className="text-red-500 text-sm mt-2">{usernameTakenError}</p>
+            )}
           </div>
         )}
       </EditModal>

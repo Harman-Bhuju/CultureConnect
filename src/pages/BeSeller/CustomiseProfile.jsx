@@ -98,10 +98,14 @@ function CustomiseProfile() {
         setInitialData(loadedData); // Store initial data for comparison
 
         if (profile.store_logo) {
-          setProfilePreview(`${BASE_URL}/uploads/seller_img_datas/seller_logos/${profile.store_logo}`);
+          setProfilePreview(
+            `${BASE_URL}/uploads/seller_img_datas/seller_logos/${profile.store_logo}`,
+          );
         }
         if (profile.store_banner) {
-          setBannerPreview(`${BASE_URL}/uploads/seller_img_datas/seller_banners/${profile.store_banner}`);
+          setBannerPreview(
+            `${BASE_URL}/uploads/seller_img_datas/seller_banners/${profile.store_banner}`,
+          );
         }
       }
     } catch (err) {
@@ -134,11 +138,11 @@ function CustomiseProfile() {
     municipals: [],
     wards: [],
     selectedProvince: "",
-    setSelectedProvince: () => { },
+    setSelectedProvince: () => {},
     selectedDistrict: "",
-    setSelectedDistrict: () => { },
+    setSelectedDistrict: () => {},
     selectedMunicipal: "",
-    setSelectedMunicipal: () => { },
+    setSelectedMunicipal: () => {},
   };
   const [selectedWard, setSelectedWard] = useState(userData.ward);
 
@@ -148,7 +152,9 @@ function CustomiseProfile() {
 
     const maxSize = type === "banner" ? 6 * 1024 * 1024 : 4 * 1024 * 1024;
     if (file.size > maxSize) {
-      alert(`${type === "banner" ? "Banner" : "Image"} must be ${Math.round(maxSize / 1024 / 1024)}MB or less`);
+      alert(
+        `${type === "banner" ? "Banner" : "Image"} must be ${Math.round(maxSize / 1024 / 1024)}MB or less`,
+      );
       return;
     }
 
@@ -174,7 +180,7 @@ function CustomiseProfile() {
 
   // Crop handlers
   const handleMouseDown = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     setIsDragging(true);
     setDragStart({
       x: e.clientX || e.touches?.[0]?.clientX,
@@ -184,7 +190,7 @@ function CustomiseProfile() {
 
   const handleMouseMove = (e) => {
     if (!isDragging) return;
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const clientX = e.clientX || e.touches?.[0]?.clientX;
     const clientY = e.clientY || e.touches?.[0]?.clientY;
     const deltaX = clientX - dragStart.x;
@@ -196,7 +202,7 @@ function CustomiseProfile() {
   const handleMouseUp = () => setIsDragging(false);
 
   const handleWheel = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
     const delta = e.deltaY * -0.01;
     setZoom((prev) => Math.min(Math.max(0.5, prev + delta * 0.5), 3));
   };
@@ -240,16 +246,30 @@ function CustomiseProfile() {
       ctx.closePath();
       ctx.clip();
 
-      ctx.drawImage(img, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
+      ctx.drawImage(
+        img,
+        sourceX,
+        sourceY,
+        sourceSize,
+        sourceSize,
+        0,
+        0,
+        size,
+        size,
+      );
 
-      canvas.toBlob((blob) => {
-        const file = new File([blob], "profile.jpg", { type: "image/jpeg" });
-        const url = URL.createObjectURL(blob);
-        setProfilePreview(url);
-        setProfileFile(file);
-        setShowCropModal(false);
-        setImageToCrop(null);
-      }, "image/jpeg", 0.95);
+      canvas.toBlob(
+        (blob) => {
+          const file = new File([blob], "profile.jpg", { type: "image/jpeg" });
+          const url = URL.createObjectURL(blob);
+          setProfilePreview(url);
+          setProfileFile(file);
+          setShowCropModal(false);
+          setImageToCrop(null);
+        },
+        "image/jpeg",
+        0.95,
+      );
     } else {
       canvas.width = 2048;
       canvas.height = 1152;
@@ -275,16 +295,30 @@ function CustomiseProfile() {
       const sourceX = img.naturalWidth / 2 + offsetX - cropWidth / 2;
       const sourceY = img.naturalHeight / 2 + offsetY - cropHeight / 2;
 
-      ctx.drawImage(img, sourceX, sourceY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        img,
+        sourceX,
+        sourceY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      );
 
-      canvas.toBlob((blob) => {
-        const file = new File([blob], "banner.jpg", { type: "image/jpeg" });
-        const url = URL.createObjectURL(blob);
-        setBannerPreview(url);
-        setBannerFile(file);
-        setShowCropModal(false);
-        setImageToCrop(null);
-      }, "image/jpeg", 0.95);
+      canvas.toBlob(
+        (blob) => {
+          const file = new File([blob], "banner.jpg", { type: "image/jpeg" });
+          const url = URL.createObjectURL(blob);
+          setBannerPreview(url);
+          setBannerFile(file);
+          setShowCropModal(false);
+          setImageToCrop(null);
+        },
+        "image/jpeg",
+        0.95,
+      );
     }
   };
 
@@ -309,7 +343,12 @@ function CustomiseProfile() {
   const isSaveDisabled = () => {
     if (!editingField) return true;
     if (editingField === "location") {
-      return !selectedProvince || !selectedDistrict || !selectedMunicipal || !selectedWard;
+      return (
+        !selectedProvince ||
+        !selectedDistrict ||
+        !selectedMunicipal ||
+        !selectedWard
+      );
     }
     return false;
   };
@@ -317,7 +356,12 @@ function CustomiseProfile() {
   const handleSaveEdit = () => {
     // validate location when saving location
     if (editingField === "location") {
-      if (!selectedProvince || !selectedDistrict || !selectedMunicipal || !selectedWard) {
+      if (
+        !selectedProvince ||
+        !selectedDistrict ||
+        !selectedMunicipal ||
+        !selectedWard
+      ) {
         alert("Please select province, district, municipality and ward.");
         return;
       }
@@ -383,8 +427,14 @@ function CustomiseProfile() {
     }
 
     // Location
-    if (!userData.province || !userData.district || !userData.municipality || !userData.ward) {
-      newErrors.location = "Complete location (Province, District, Municipality, Ward) is required";
+    if (
+      !userData.province ||
+      !userData.district ||
+      !userData.municipality ||
+      !userData.ward
+    ) {
+      newErrors.location =
+        "Complete location (Province, District, Municipality, Ward) is required";
     }
 
     // Profile Picture & Banner - only required if not already set
@@ -403,11 +453,12 @@ function CustomiseProfile() {
   const hasChanges = () => {
     // Check if userData fields have changed
     const dataChanged = Object.keys(userData).some(
-      key => userData[key] !== initialData[key]
+      (key) => userData[key] !== initialData[key],
     );
 
     // Check if new images have been uploaded (File objects indicate new uploads)
-    const imagesChanged = (profileFile instanceof File) || (bannerFile instanceof File);
+    const imagesChanged =
+      profileFile instanceof File || bannerFile instanceof File;
 
     return dataChanged || imagesChanged;
   };
@@ -449,7 +500,9 @@ function CustomiseProfile() {
       if (!contentType || !contentType.includes("application/json")) {
         const text = await response.text();
         console.error("Non-JSON response:", text);
-        throw new Error("Server returned non-JSON response. Check server logs.");
+        throw new Error(
+          "Server returned non-JSON response. Check server logs.",
+        );
       }
 
       const result = await response.json();
@@ -495,8 +548,7 @@ function CustomiseProfile() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 shadow-sm transition-colors"
-          >
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 shadow-sm transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span className="font-medium">Back</span>
           </button>
@@ -506,14 +558,18 @@ function CustomiseProfile() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
             Profile Settings
           </h1>
-          <p className="text-gray-600 text-lg mt-2">Manage your account information</p>
+          <p className="text-gray-600 text-lg mt-2">
+            Manage your account information
+          </p>
         </div>
 
         {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
           {/* Profile Picture Section */}
           <div className="mb-10">
-            <h3 className="text-lg font-bold text-gray-800 mb-2">Profile Picture</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">
+              Profile Picture
+            </h3>
             <p className="text-sm text-gray-600 mb-6">
               Upload a profile picture that represents you
             </p>
@@ -545,14 +601,14 @@ function CustomiseProfile() {
                 {/* Upload Controls */}
                 <div className="flex-1">
                   <p className="text-gray-600 text-sm mb-4">
-                    Recommended: At least 400 x 400 pixels, 4MB or less. Use PNG or JPG format.
+                    Recommended: At least 400 x 400 pixels, 4MB or less. Use PNG
+                    or JPG format.
                   </p>
                   <div className="flex gap-3">
                     <button
                       type="button"
                       onClick={() => profileInputRef.current?.click()}
-                      className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                    >
+                      className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                       {profilePreview ? "Change" : "Upload"}
                     </button>
                   </div>
@@ -566,12 +622,16 @@ function CustomiseProfile() {
                 </div>
               </div>
             </div>
-            {errors.profile && <p className="text-red-500 text-sm mt-2">{errors.profile}</p>}
+            {errors.profile && (
+              <p className="text-red-500 text-sm mt-2">{errors.profile}</p>
+            )}
           </div>
 
           {/* Banner Section */}
           <div className="mb-10">
-            <h3 className="text-lg font-bold text-gray-800 mb-2">Banner Image</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">
+              Banner Image
+            </h3>
             <p className="text-sm text-gray-600 mb-6">
               Upload a banner image for your profile
             </p>
@@ -603,14 +663,14 @@ function CustomiseProfile() {
                 {/* Upload Controls */}
                 <div className="flex-1">
                   <p className="text-gray-600 text-sm mb-4">
-                    Recommended: 1200 x 300 pixels, 6MB or less. Use PNG or JPG format.
+                    Recommended: 1200 x 300 pixels, 6MB or less. Use PNG or JPG
+                    format.
                   </p>
                   <div className="flex gap-3">
                     <button
                       type="button"
                       onClick={() => bannerInputRef.current?.click()}
-                      className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm"
-                    >
+                      className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2.5 rounded-full font-medium transition-colors shadow-sm">
                       {bannerPreview ? "Change" : "Upload"}
                     </button>
                   </div>
@@ -624,7 +684,9 @@ function CustomiseProfile() {
                 </div>
               </div>
             </div>
-            {errors.banner && <p className="text-red-500 text-sm mt-2">{errors.banner}</p>}
+            {errors.banner && (
+              <p className="text-red-500 text-sm mt-2">{errors.banner}</p>
+            )}
           </div>
 
           {/* Seller Information */}
@@ -639,7 +701,9 @@ function CustomiseProfile() {
                 <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                   <Store className="w-5 h-5 text-gray-700" />
                 </div>
-                <p className="text-sm font-semibold text-gray-700">Store Name</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  Store Name
+                </p>
               </div>
               <input
                 type="text"
@@ -648,7 +712,9 @@ function CustomiseProfile() {
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none transition-all"
                 placeholder="Enter store name"
               />
-              {errors.storeName && <p className="text-red-500 text-sm mt-2">{errors.storeName}</p>}
+              {errors.storeName && (
+                <p className="text-red-500 text-sm mt-2">{errors.storeName}</p>
+              )}
             </div>
 
             {/* Store Description */}
@@ -657,17 +723,27 @@ function CustomiseProfile() {
                 <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                   <FileText className="w-5 h-5 text-gray-700" />
                 </div>
-                <p className="text-sm font-semibold text-gray-700">Store Description</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  Store Description
+                </p>
               </div>
               <textarea
                 value={userData.storeDescription}
-                onChange={(e) => handleFieldChange("storeDescription", e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange("storeDescription", e.target.value)
+                }
                 rows="4"
                 placeholder="Describe your store..."
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none transition-all resize-none"
               />
-              <p className="text-gray-500 text-sm mt-2">{userData.storeDescription.length}/2000 characters</p>
-              {errors.storeDescription && <p className="text-red-500 text-sm mt-2">{errors.storeDescription}</p>}
+              <p className="text-gray-500 text-sm mt-2">
+                {userData.storeDescription.length}/2000 characters
+              </p>
+              {errors.storeDescription && (
+                <p className="text-red-500 text-sm mt-2">
+                  {errors.storeDescription}
+                </p>
+              )}
             </div>
 
             {/* eSewa Phone */}
@@ -676,17 +752,23 @@ function CustomiseProfile() {
                 <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                   <DollarSign className="w-5 h-5 text-gray-700" />
                 </div>
-                <p className="text-sm font-semibold text-gray-700">eSewa Phone Number</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  eSewa Phone Number
+                </p>
               </div>
               <input
                 type="text"
                 value={userData.esewaPhone}
-                onChange={(e) => handleFieldChange("esewaPhone", e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange("esewaPhone", e.target.value)
+                }
                 maxLength="10"
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none transition-all"
                 placeholder="98XXXXXXXX"
               />
-              {errors.esewaPhone && <p className="text-red-500 text-sm mt-2">{errors.esewaPhone}</p>}
+              {errors.esewaPhone && (
+                <p className="text-red-500 text-sm mt-2">{errors.esewaPhone}</p>
+              )}
             </div>
 
             {/* Primary Category */}
@@ -695,19 +777,28 @@ function CustomiseProfile() {
                 <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                   <Package className="w-5 h-5 text-gray-700" />
                 </div>
-                <p className="text-sm font-semibold text-gray-700">Primary Category</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  Primary Category
+                </p>
               </div>
               <select
                 value={userData.primaryCategory}
-                onChange={(e) => handleFieldChange("primaryCategory", e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none transition-all"
-              >
-                <option value="" hidden>Select Category</option>
+                onChange={(e) =>
+                  handleFieldChange("primaryCategory", e.target.value)
+                }
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white focus:border-gray-400 focus:outline-none transition-all">
+                <option value="" hidden>
+                  Select Category
+                </option>
                 <option>Traditional Clothing</option>
                 <option>Musical Instruments</option>
                 <option>Handicraft & Decors</option>
               </select>
-              {errors.primaryCategory && <p className="text-red-500 text-sm mt-2">{errors.primaryCategory}</p>}
+              {errors.primaryCategory && (
+                <p className="text-red-500 text-sm mt-2">
+                  {errors.primaryCategory}
+                </p>
+              )}
             </div>
 
             {/* Location */}
@@ -718,15 +809,21 @@ function CustomiseProfile() {
                 </div>
                 <p className="text-sm font-semibold text-gray-700">Location</p>
               </div>
-              {errors.location && <p className="text-red-500 text-sm mb-2">{errors.location}</p>}
+              {errors.location && (
+                <p className="text-red-500 text-sm mb-2">{errors.location}</p>
+              )}
               <div
                 onClick={() => openEditModal("location")}
-                className="p-4 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-300 cursor-pointer transition-all flex items-center justify-between"
-              >
+                className="p-4 bg-white rounded-lg border-2 border-gray-200 hover:border-gray-300 cursor-pointer transition-all flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Current</p>
                   <p className="text-gray-800 font-medium">
-                    {[userData.province, userData.district, userData.municipality, userData.ward ? `${userData.ward}` : null]
+                    {[
+                      userData.province,
+                      userData.district,
+                      userData.municipality,
+                      userData.ward ? `${userData.ward}` : null,
+                    ]
                       .filter(Boolean)
                       .join(", ")}
                   </p>
@@ -741,8 +838,7 @@ function CustomiseProfile() {
             <button
               onClick={handleSaveAll}
               disabled={isSaving || !hasChanges()}
-              className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white py-4 rounded-xl font-semibold hover:from-gray-700 hover:to-gray-800 transition-all shadow-lg disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
+              className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white py-4 rounded-xl font-semibold hover:from-gray-700 hover:to-gray-800 transition-all shadow-lg disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2">
               {isSaving ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -788,8 +884,7 @@ function CustomiseProfile() {
           title={`Edit ${editingField === "location" ? "Location" : editingField?.charAt(0).toUpperCase() + editingField?.slice(1)}`}
           onSave={handleSaveEdit}
           onCancel={handleCancelEdit}
-          isSaveDisabled={isSaveDisabled() || isSaving}
-        >
+          isSaveDisabled={isSaveDisabled() || isSaving}>
           {editingField === "location" ? (
             <LocationForm
               provinces={provinces}
@@ -800,9 +895,21 @@ function CustomiseProfile() {
               selectedDistrict={selectedDistrict}
               selectedMunicipal={selectedMunicipal}
               selectedWard={selectedWard}
-              onProvinceChange={(v) => { setSelectedProvince(v); setSelectedDistrict(""); setSelectedMunicipal(""); setSelectedWard(""); }}
-              onDistrictChange={(v) => { setSelectedDistrict(v); setSelectedMunicipal(""); setSelectedWard(""); }}
-              onMunicipalChange={(v) => { setSelectedMunicipal(v); setSelectedWard(""); }}
+              onProvinceChange={(v) => {
+                setSelectedProvince(v);
+                setSelectedDistrict("");
+                setSelectedMunicipal("");
+                setSelectedWard("");
+              }}
+              onDistrictChange={(v) => {
+                setSelectedDistrict(v);
+                setSelectedMunicipal("");
+                setSelectedWard("");
+              }}
+              onMunicipalChange={(v) => {
+                setSelectedMunicipal(v);
+                setSelectedWard("");
+              }}
               onWardChange={(v) => setSelectedWard(v)}
               initialLocation={`${userData.province}, ${userData.district}, ${userData.municipality}, ${userData.ward}`}
             />

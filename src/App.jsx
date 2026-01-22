@@ -148,6 +148,9 @@ const AdminUserManagement = lazy(
 const AdminAnalytics = lazy(
   () => import("./AdminPage/components/AdminAnalytics"),
 );
+const AdminHomepageContent = lazy(
+  () => import("./AdminPage/components/AdminHomepageContent"),
+);
 
 
 // Home Route Wrapper
@@ -191,6 +194,7 @@ function App() {
             <Route path="teachers" element={<AdminTeacherApprovals />} />
             <Route path="users" element={<AdminUserManagement />} />
             <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="homepage" element={<AdminHomepageContent />} />
           </Route>
 
           {/* ==================== Marketplace Routes ==================== */}
