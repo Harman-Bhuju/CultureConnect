@@ -23,6 +23,7 @@ const ChangePassword = lazy(
 );
 const SetPassword = lazy(() => import("./pages/SetPassword/SetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
+const Notification = lazy(() => import("./pages/Notification/Notification"));
 
 // Learn Culture pages
 const LearnCulture = lazy(() => import("./pages/LearnCulture/LearnCulture"));
@@ -429,6 +430,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <FollowingPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notification />
               </ProtectedRoute>
             }
           />

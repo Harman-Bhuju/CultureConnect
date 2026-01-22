@@ -1,19 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  Search,
-  ShoppingCart,
-  Bell,
-  X,
-  Menu,
-  Mic,
-  MessageCircle,
-} from "lucide-react";
+import { Search, ShoppingCart, Bell, X, Menu, Mic } from "lucide-react";
 import { SidebarTrigger, useSidebar } from "../../components/ui/sidebar";
 import { useAuth } from "../../context/AuthContext";
 import CultureConnectLogo from "../../assets/logo/cultureconnect__fav.png";
 import { useNavigate } from "react-router-dom";
 import default_logo from "../../assets/default-image.jpg";
-import Message from "../../Message/Message";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -23,7 +14,6 @@ const Navbar = () => {
   const [isMobileSearch, setIsMobileSearch] = useState(false);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [isMessageOpen, setIsMessageOpen] = useState(false);
   const searchInputRef = useRef(null);
   const voiceModalRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -235,28 +225,15 @@ const Navbar = () => {
                 <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
               </button>
             )}
-            {/* Message */}
+            {/* Notifications */}
             {!isSearchOpen && (
               <button
-                onClick={() => {
-                  window.open(
-                    "https://peaky-willa-glucinic.ngrok-free.dev",
-                    "_blank",
-                    "noopener,noreferrer",
-                  );
-                }}
+                onClick={() => navigate("/notifications")}
                 className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <MessageCircle className="w-5 h-5 md:w-6 md:h-6" />
-              </button>
-            )}
-
-            {/* Notifications */}
-            {/* {!isSearchOpen && (
-              <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <Bell className="w-5 h-5 md:w-6 md:h-6" />
                 <span className="absolute top-2 right-0 bg-red-500 w-2 h-2 rounded-full"></span>
               </button>
-            )} */}
+            )}
 
             {/* User Avatar */}
             {!isSearchOpen && (
@@ -363,8 +340,6 @@ const Navbar = () => {
           `}</style>
         </div>
       )}
-      {/* Message Sidebar */}
-      <Message isOpen={isMessageOpen} onClose={() => setIsMessageOpen(false)} />
     </header>
   );
 };
