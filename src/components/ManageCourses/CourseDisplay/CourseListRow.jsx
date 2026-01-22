@@ -1,6 +1,6 @@
 import React from "react";
 import { Edit2, Trash2, AlertTriangle, Upload } from "lucide-react";
-import { BASE_URL } from "../../../Configs/ApiEndpoints";
+import API, { BASE_URL } from "../../../Configs/ApiEndpoints";
 
 const CourseListRow = ({
   course,
@@ -44,9 +44,11 @@ const CourseListRow = ({
   const isOutOfStock = course.stock === 0;
 
   // Image
-  const courseImage = course.images?.[0] || course.thumbnail;
+  const courseImage = course.images?.[0] || course.thumbnail || course.image;
   const imageUrl = courseImage
-    ? `${BASE_URL}/uploads/course_images/${courseImage}`
+    ? courseImage.startsWith("http")
+      ? courseImage
+      : `${API.COURSE_THUMBNAILS}/${courseImage}`
     : "/placeholder-image.png";
 
   const courseTitle = course.courseTitle || course.title || "Unnamed Course";

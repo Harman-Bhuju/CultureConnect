@@ -7,15 +7,25 @@ import {
   List,
   Target,
   Play,
+  Star,
 } from "lucide-react";
+import CourseReviews from "../Reviews/CourseReviews";
 
-export default function CourseContent({ course, activeTab, setActiveTab }) {
+export default function CourseContent({
+  course,
+  activeTab,
+  setActiveTab,
+  user,
+  openReviewForm,
+  openDeleteModal,
+}) {
   const tabs = [
     { id: "overview", label: "Overview", icon: BookOpen },
     { id: "curriculum", label: "Curriculum", icon: List },
     { id: "outcomes", label: "Learning Outcomes", icon: Target },
     { id: "requirements", label: "Requirements", icon: AlertCircle },
     { id: "schedule", label: "Learning Schedule", icon: Calendar },
+    { id: "reviews", label: "Reviews", icon: Star },
   ];
 
   return (
@@ -285,6 +295,16 @@ export default function CourseContent({ course, activeTab, setActiveTab }) {
                 </p>
               </div>
             )}
+          </div>
+        )}
+        {activeTab === "reviews" && (
+          <div className="animate-in fade-in duration-300">
+            <CourseReviews
+              course={course}
+              user={user}
+              openReviewForm={openReviewForm}
+              openDeleteModal={openDeleteModal}
+            />
           </div>
         )}
       </div>

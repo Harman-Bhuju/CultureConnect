@@ -37,7 +37,7 @@ export default function CourseSidebar({
         <div className="space-y-3">
           <button
             onClick={() =>
-              navigate(`/teacher/classes/edit/${teacherId}/${course.id}`)
+              navigate(`/teacher/courses/edit/${teacherId}/${course.id}`)
             }
             className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2 font-medium shadow-sm">
             <Edit className="w-4 h-4" />
@@ -54,10 +54,11 @@ export default function CourseSidebar({
           <div className="pt-2 border-t">
             <button
               onClick={course.status === "Active" ? handleDraft : handlePublish}
-              className={`w-full py-3 rounded-lg transition font-medium flex items-center justify-center gap-2 ${course.status === "Active"
+              className={`w-full py-3 rounded-lg transition font-medium flex items-center justify-center gap-2 ${
+                course.status === "Active"
                   ? "bg-yellow-50 text-yellow-700 border-2 border-yellow-200 hover:bg-yellow-100"
                   : "bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100"
-                }`}>
+              }`}>
               {course.status === "Active" ? (
                 <>
                   <Save className="w-4 h-4" />
@@ -89,10 +90,11 @@ export default function CourseSidebar({
               Status
             </span>
             <span
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${course.status === "Active"
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                course.status === "Active"
                   ? "bg-green-100 text-green-700"
                   : "bg-gray-100 text-gray-700"
-                }`}>
+              }`}>
               {course.status}
             </span>
           </div>
@@ -173,68 +175,6 @@ export default function CourseSidebar({
               {new Date(course.createdAt).toLocaleDateString()}
             </span>
           </div>
-        </div>
-      </div>
-
-      {/* Performance Insights */}
-      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-sm border border-indigo-100 p-6">
-        <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-indigo-600" />
-          Performance
-        </h3>
-
-        <div className="space-y-4">
-          {/* Revenue */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-700">Total Revenue</span>
-              <span className="text-lg font-bold text-indigo-600">
-                Rs.{course.totalRevenue.toLocaleString()}
-              </span>
-            </div>
-            <div className="w-full bg-white rounded-full h-2">
-              <div
-                className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full"
-                style={{
-                  width: `${Math.min((course.enrolled_students / course.max_students) * 100, 100)}%`,
-                }}></div>
-            </div>
-          </div>
-
-          {/* Completion Rate */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-700">Completion</span>
-              <span className="text-lg font-bold text-purple-600">
-                {course.completionRate}%
-              </span>
-            </div>
-            <div className="w-full bg-white rounded-full h-2">
-              <div
-                className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
-                style={{ width: `${course.completionRate}%` }}></div>
-            </div>
-          </div>
-
-          {/* Rating */}
-          {course.averageRating > 0 && (
-            <div className="pt-3 border-t border-indigo-200">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">Average Rating</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-yellow-600">
-                    {course.averageRating.toFixed(1)}
-                  </span>
-                  <span className="text-sm text-gray-600">/ 5.0</span>
-                </div>
-              </div>
-              {course.totalReviews > 0 && (
-                <p className="text-xs text-gray-600 mt-1">
-                  Based on {course.totalReviews} reviews
-                </p>
-              )}
-            </div>
-          )}
         </div>
       </div>
 

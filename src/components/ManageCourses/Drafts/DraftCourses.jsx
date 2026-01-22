@@ -48,7 +48,9 @@ const DraftCourses = () => {
             price: course.price,
             createdAt: course.createdAt,
             updatedAt: course.updatedAt,
-            images: course.image ? [`${API.COURSE_THUMBNAILS}/${course.image}`] : [],
+            images: course.image
+              ? [`${API.COURSE_THUMBNAILS}/${course.image}`]
+              : [],
             status: "Draft",
             duration: course.duration,
             level: course.level,
@@ -98,7 +100,7 @@ const DraftCourses = () => {
   const handleEdit = (course) => {
     // Determine ID from object or direct ID
     const id = course.id || course;
-    navigate(`/teacher/classes/edit/${teacherId}/${id}`);
+    navigate(`/teacher/courses/edit/${teacherId}/${id}`);
   };
 
   const handleView = (course) => {

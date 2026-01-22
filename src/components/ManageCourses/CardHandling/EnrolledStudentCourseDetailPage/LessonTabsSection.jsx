@@ -1,11 +1,17 @@
 import React from "react";
-import { Info, FileText, MessageSquare, Download } from "lucide-react";
+import { Info, FileText, MessageSquare, Star } from "lucide-react";
+import CourseReviews from "../Reviews/CourseReviews";
 
-export default function LessonTabsSection({ activeTab, setActiveTab, activeVideo }) {
+export default function LessonTabsSection({
+  activeTab,
+  setActiveTab,
+  activeVideo,
+}) {
   const tabs = [
     { id: "description", icon: Info, label: "Overview" },
     { id: "resources", icon: FileText, label: "Resources" },
     { id: "discussions", icon: MessageSquare, label: "Discussion" },
+    { id: "reviews", icon: Star, label: "Reviews" },
   ];
 
   return (
@@ -58,8 +64,8 @@ export default function LessonTabsSection({ activeTab, setActiveTab, activeVideo
                 No Resources Available
               </h4>
               <p className="text-sm text-gray-500 max-w-sm mx-auto">
-                Downloadable resources for this lesson haven't been uploaded yet. Check
-                back later!
+                Downloadable resources for this lesson haven't been uploaded
+                yet. Check back later!
               </p>
             </div>
           </div>
@@ -71,15 +77,32 @@ export default function LessonTabsSection({ activeTab, setActiveTab, activeVideo
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <MessageSquare className="w-8 h-8 text-blue-400" />
               </div>
-              <h4 className="font-bold text-gray-900 mb-2">Join the Discussion</h4>
+              <h4 className="font-bold text-gray-900 mb-2">
+                Join the Discussion
+              </h4>
               <p className="text-sm text-gray-600 max-w-sm mx-auto mb-4">
-                Connect with fellow students, ask questions, and share your learning
-                experience.
+                Connect with fellow students, ask questions, and share your
+                learning experience.
               </p>
               <button className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition shadow-sm">
                 Start a Discussion
               </button>
             </div>
+          </div>
+        )}
+
+        {activeTab === "reviews" && (
+          <div className="animate-in fade-in duration-300">
+            <CourseReviews
+              course={{
+                ...activeVideo?.course,
+                reviews: activeVideo?.course?.reviews || [],
+              }}
+              user={activeVideo?.user}
+              openReviewForm={activeVideo?.openReviewForm}
+              openDeleteModal={activeVideo?.openDeleteModal}
+              teacherId={activeVideo?.course?.teacher_id}
+            />
           </div>
         )}
       </div>

@@ -196,8 +196,72 @@ try {
             "bio" => $course['teacher_bio'],
             "category" => $course['teacher_category']
         ],
-        "videos" => $videos
+        "videos" => $videos,
+        "reviews" => [] // Default empty
     ];
+
+    // Fetch reviews with teacher replies
+    $reviewStmt = $conn->prepare("
+        SELECT 
+            tcr.id,
+            tcr.user_id,
+            tcr.rating,
+            tcr.comment,
+            tcr.created_at,
+            u.username,
+            u.profile_pic,
+            tcrr.id as reply_id,
+            tcrr.reply_text,
+            tcrr.created_at as reply_created_at,
+            tcrr.updated_at as reply_updated_at,
+            tcrr.teacher_id as reply_teacher_id,
+            t.teacher_name as reply_teacher_name,
+            t.profile_picture as reply_teacher_image
+        FROM teacher_course_reviews tcr
+        JOIN users u ON tcr.user_id = u.id
+        LEFT JOIN teacher_course_review_replies tcrr ON tcr.id = tcrr.review_id
+        LEFT JOIN teachers t ON tcrr.teacher_id = t.id
+        WHERE tcr.course_id = ?
+        ORDER BY tcr.created_at DESC
+    ");
+    
+    if ($reviewStmt) {
+        $reviewStmt->bind_param("i", $course_id);
+        $reviewStmt->execute();
+        $reviewResult = $reviewStmt->get_result();
+
+        $reviewsMap = [];
+        while ($review = $reviewResult->fetch_assoc()) {
+            $review_id = $review['id'];
+
+            if (!isset($reviewsMap[$review_id])) {
+                $reviewsMap[$review_id] = [
+                    'id' => (int)$review['id'],
+                    'userId' => (int)$review['user_id'],
+                    'rating' => (int)$review['rating'],
+                    'comment' => $review['comment'],
+                    'author' => $review['username'],
+                    'userImage' => $review['profile_pic'],
+                    'date' => $review['created_at'],
+                    'replies' => []
+                ];
+            }
+
+            if ($review['reply_id']) {
+                $reviewsMap[$review_id]['replies'][] = [
+                    'id' => (int)$review['reply_id'],
+                    'teacherId' => (int)$review['reply_teacher_id'],
+                    'replyText' => $review['reply_text'],
+                    'teacherName' => $review['reply_teacher_name'],
+                    'teacherImage' => $review['reply_teacher_image'],
+                    'createdAt' => $review['reply_created_at'],
+                    'updatedAt' => $review['reply_updated_at']
+                ];
+            }
+        }
+        $reviewStmt->close();
+        $response['reviews'] = array_values($reviewsMap);
+    }
 
     echo json_encode($response);
 } catch (Exception $e) {
