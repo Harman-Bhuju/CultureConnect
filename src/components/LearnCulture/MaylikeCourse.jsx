@@ -102,7 +102,13 @@ export default function MayLikeCourse() {
         observer.unobserve(observerTarget.current);
       }
     };
-  }, [isAutoLoading, isLoading, visibleCount, maxAutoLoadItems, courses.length]);
+  }, [
+    isAutoLoading,
+    isLoading,
+    visibleCount,
+    maxAutoLoadItems,
+    courses.length,
+  ]);
 
   useEffect(() => {
     const newInitialVisible = (isCollapsed ? 7 : 6) * rowsToShow;
@@ -125,7 +131,9 @@ export default function MayLikeCourse() {
       <div className="w-full py-12 px-3 sm:px-6 md:px-10 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <p className="text-red-800 font-medium">Error loading courses: {error}</p>
+            <p className="text-red-800 font-medium">
+              Error loading courses: {error}
+            </p>
             <button
               onClick={() => window.location.reload()}
               className="mt-3 text-sm text-teal-600 hover:text-teal-800 underline font-medium">
@@ -142,8 +150,9 @@ export default function MayLikeCourse() {
   }
 
   return (
-    <div className="w-full py-12 px-3 sm:px-6 md:px-10 bg-white">
-      <div className={`mx-auto ${isCollapsed ? "max-w-[1440px]" : "max-w-7xl"}`}>
+    <div className="w-full pt-12 px-3 sm:px-6 md:px-10 bg-white">
+      <div
+        className={`mx-auto ${isCollapsed ? "max-w-[1440px]" : "max-w-7xl"}`}>
         <div className="mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
             You May Also Like
@@ -154,8 +163,9 @@ export default function MayLikeCourse() {
         </div>
 
         <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ${isCollapsed ? "xl:grid-cols-5" : "xl:grid-cols-4"
-            }`}>
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ${
+            isCollapsed ? "xl:grid-cols-5" : "xl:grid-cols-4"
+          }`}>
           {courses.slice(0, visibleCount).map((course) => (
             <CourseCard
               key={course.id}
@@ -166,9 +176,11 @@ export default function MayLikeCourse() {
           ))}
         </div>
 
-        {isAutoLoading && visibleCount < courses.length && visibleCount < maxAutoLoadItems && (
-          <div ref={observerTarget} className="h-20" />
-        )}
+        {isAutoLoading &&
+          visibleCount < courses.length &&
+          visibleCount < maxAutoLoadItems && (
+            <div ref={observerTarget} className="h-20" />
+          )}
 
         {isLoading && (
           <div className="flex justify-center items-center py-12">
