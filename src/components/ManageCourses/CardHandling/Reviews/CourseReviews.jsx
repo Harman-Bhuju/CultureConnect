@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Star,
   StarHalf,
@@ -6,7 +6,11 @@ import {
   User,
   Edit,
   Trash2,
+  Reply,
+  Send,
+  X,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import API from "../../../../Configs/ApiEndpoints";
 
 const CourseReviews = ({
@@ -17,6 +21,70 @@ const CourseReviews = ({
   teacherId,
 }) => {
   const reviews = course?.reviews || [];
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState("");
+  const [replyId, setReplyId] = useState(null);
+  const [submittingReply, setSubmittingReply] = useState(false);
+
+  const isTeacher = user?.teacher_id && teacherId && parseInt(user.teacher_id) === parseInt(teacherId);
+
+  const handleReplySubmit = async (reviewId) => {
+    if (!replyText.trim()) return;
+
+    try {
+      setSubmittingReply(true);
+      const response = await fetch(API.TEACHER_REPLY_COURSE_REVIEW, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          review_id: reviewId,
+          reply_text: replyText,
+          reply_id: replyId
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Reply posted successfully");
+        setReplyingTo(null);
+        setReplyText("");
+        // Reload page to see changes (simpler than prop drilling refresh function)
+        window.location.reload();
+      } else {
+        toast.error(data.message || "Failed to post reply");
+      }
+    } catch (error) {
+      console.error("Reply error:", error);
+      toast.error("Failed to post reply");
+    } finally {
+      setSubmittingReply(false);
+    }
+  };
+
+  const handleDeleteReply = async (replyId) => {
+    if (!confirm("Are you sure you want to delete this reply?")) return;
+
+    try {
+      const response = await fetch(API.TEACHER_DELETE_COURSE_REPLY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ reply_id: replyId })
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        toast.success("Reply deleted");
+        window.location.reload();
+      } else {
+        toast.error("Failed to delete reply");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting reply");
+    }
+  };
 
   const renderStars = (rating = 0) => {
     const stars = [];
@@ -94,6 +162,8 @@ const CourseReviews = ({
         <div className="space-y-6">
           {reviews.map((review) => {
             const isMyReview = user && review.userId === user.id;
+            const myReply = review.replies?.find(r => r.teacherId === parseInt(teacherId));
+
             const avatarUrl = review.userImage
               ? review.userImage.startsWith("http")
                 ? review.userImage
@@ -103,11 +173,10 @@ const CourseReviews = ({
             return (
               <div
                 key={review.id}
-                className={`group p-6 rounded-2xl transition-all duration-300 ${
-                  isMyReview
-                    ? "bg-blue-50/50 border-2 border-blue-100 ring-4 ring-blue-50/20"
-                    : "bg-white border border-gray-50 shadow-sm"
-                }`}>
+                className={`group p-6 rounded-2xl transition-all duration-300 ${isMyReview
+                  ? "bg-blue-50/50 border-2 border-blue-100 ring-4 ring-blue-50/20"
+                  : "bg-white border border-gray-50 shadow-sm"
+                  }`}>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
                     <img
@@ -133,22 +202,54 @@ const CourseReviews = ({
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <div className="flex">{renderStars(review.rating)}</div>
-                    {isMyReview && (
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => openReviewForm(review)}
-                          className="p-1.5 text-blue-600 hover:bg-blue-100 rounded-lg transition"
-                          title="Edit review">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => openDeleteModal(review.id)}
-                          className="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition"
-                          title="Delete review">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+
+                    {/* Actions: Edit/Delete for User, Reply for Teacher */}
+                    <div className="flex gap-2">
+                      {isMyReview && (
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => openReviewForm(review)}
+                            className="p-1.5 text-blue-600 hover:bg-blue-100 rounded-lg transition"
+                            title="Edit review">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => openDeleteModal(review.id)}
+                            className="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition"
+                            title="Delete review">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+
+                      {isTeacher && (
+                        myReply ? (
+                          <button
+                            onClick={() => {
+                              setReplyingTo(replyingTo === review.id ? null : review.id);
+                              setReplyText(myReply.replyText);
+                              setReplyId(myReply.id);
+                            }}
+                            className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition flex items-center gap-1"
+                          >
+                            <Edit className="w-4 h-4" />
+                            <span className="text-xs font-semibold">Edit Reply</span>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setReplyingTo(replyingTo === review.id ? null : review.id);
+                              setReplyText("");
+                              setReplyId(null);
+                            }}
+                            className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition flex items-center gap-1"
+                          >
+                            <Reply className="w-4 h-4" />
+                            <span className="text-xs font-semibold">Reply</span>
+                          </button>
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -157,13 +258,45 @@ const CourseReviews = ({
                     {review.comment}
                   </p>
 
+                  {/* Reply Input */}
+                  {replyingTo === review.id && (
+                    <div className="mt-4 animate-in fade-in slide-in-from-top-2">
+                      <textarea
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Write your reply..."
+                        className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                        rows="3"
+                      />
+                      <div className="flex justify-end gap-2 mt-2">
+                        <button
+                          onClick={() => setReplyingTo(null)}
+                          className="px-3 py-1.5 text-gray-500 hover:text-gray-700 text-sm font-medium"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => handleReplySubmit(review.id)}
+                          disabled={submittingReply || !replyText.trim()}
+                          className="px-4 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
+                        >
+                          {submittingReply ? "Posting..." : (
+                            <>
+                              <Send className="w-3 h-3" /> Post Reply
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Teacher Replies */}
                   {review.replies && review.replies.length > 0 && (
                     <div className="mt-6 space-y-4">
                       {review.replies.map((reply) => (
                         <div
                           key={reply.id}
-                          className="bg-gray-50 rounded-xl p-4 border border-gray-100 relative">
+                          className="bg-gray-50 rounded-xl p-4 border border-gray-100 relative group/reply">
                           <div className="flex items-center gap-3 mb-2">
                             <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden border border-white">
                               {reply.teacherImage ? (
@@ -189,6 +322,15 @@ const CourseReviews = ({
                                 {formatDate(reply.createdAt)}
                               </p>
                             </div>
+
+                            {isTeacher && (
+                              <button
+                                onClick={() => handleDeleteReply(reply.id)}
+                                className="absolute top-4 right-4 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover/reply:opacity-100 transition-opacity"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            )}
                           </div>
                           <p className="text-sm text-gray-600 pl-11">
                             {reply.replyText}
@@ -209,7 +351,7 @@ const CourseReviews = ({
           </div>
           <h3 className="text-lg font-bold text-gray-900">No reviews yet</h3>
           <p className="text-gray-500 max-w-xs mx-auto mt-1">
-            Be the first to share your learning experience with others!
+            Student reviews will appear here. No reviews have been submitted yet.
           </p>
           {user && course.isEnrolled && (
             <button

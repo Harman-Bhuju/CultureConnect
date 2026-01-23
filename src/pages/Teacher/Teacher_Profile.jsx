@@ -240,7 +240,7 @@ const TeacherProfile = () => {
                     </button>
                     <div>
                       <span>
-                        {classes.length} Published Class
+                        {classes.length} Course
                         {classes.length !== 1 ? "es" : ""}
                       </span>
                     </div>

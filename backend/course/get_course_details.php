@@ -114,8 +114,8 @@ try {
     // Get enrolled students count for this course
     $enrollment_query = "
         SELECT COUNT(*) as enrolled_count
-        FROM teacher_students
-        WHERE course_id = ? AND payment_status IN ('paid', 'free')
+        FROM teacher_course_enroll
+        WHERE course_id = ?
     ";
 
     $stmt = $conn->prepare($enrollment_query);
@@ -224,7 +224,7 @@ try {
         WHERE tcr.course_id = ?
         ORDER BY tcr.created_at DESC
     ");
-    
+
     if ($reviewStmt) {
         $reviewStmt->bind_param("i", $course_id);
         $reviewStmt->execute();

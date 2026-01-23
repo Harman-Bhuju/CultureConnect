@@ -16,6 +16,7 @@ export default function CourseContent({
   activeTab,
   setActiveTab,
   user,
+  teacherId,
   openReviewForm,
   openDeleteModal,
 }) {
@@ -39,11 +40,10 @@ export default function CourseContent({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-4 border-b-2 transition whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "border-indigo-600 text-indigo-600"
-                    : "border-transparent text-gray-600 hover:text-gray-900"
-                }`}>
+                className={`flex items-center gap-2 px-4 py-4 border-b-2 transition whitespace-nowrap ${activeTab === tab.id
+                  ? "border-indigo-600 text-indigo-600"
+                  : "border-transparent text-gray-600 hover:text-gray-900"
+                  }`}>
                 <Icon className="w-4 h-4" />
                 <span className="font-medium text-sm">{tab.label}</span>
               </button>
@@ -302,6 +302,7 @@ export default function CourseContent({
             <CourseReviews
               course={course}
               user={user}
+              teacherId={teacherId}
               openReviewForm={openReviewForm}
               openDeleteModal={openDeleteModal}
             />

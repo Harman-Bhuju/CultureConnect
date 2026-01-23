@@ -123,12 +123,13 @@ const TeacherCourseDetailPage = () => {
             .sort((a, b) => a.order - b.order),
           learningOutcomes: data.course.what_you_will_learn
             ? data.course.what_you_will_learn
-                .split("\n")
-                .filter((item) => item.trim())
+              .split("\n")
+              .filter((item) => item.trim())
             : [],
           requirements: data.course.requirements
             ? data.course.requirements.split("\n").filter((item) => item.trim())
             : [],
+          reviews: data.reviews || [],
         };
 
         setCourse(transformedCourse);
@@ -265,6 +266,8 @@ const TeacherCourseDetailPage = () => {
               course={course}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
+              user={user}
+              teacherId={teacherId}
             />
           </div>
 

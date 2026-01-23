@@ -23,6 +23,7 @@ export default function CoursePlayerPage() {
   const [loading, setLoading] = useState(true);
   const [activeVideo, setActiveVideo] = useState(null);
   const [completedVideos, setCompletedVideos] = useState([]);
+  const [videoProgress, setVideoProgress] = useState({}); // Map of videoId -> timestamp
   const [activeTab, setActiveTab] = useState("description");
   const [isEnrolled, setIsEnrolled] = useState(false);
   const { user } = useAuth();
@@ -69,22 +70,25 @@ export default function CoursePlayerPage() {
     }
   };
 
+  // Fetch course data and progress
   const fetchCourseData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${API.GET_COURSE_DETAILS}?course_id=${courseId}`,
-        {
-          credentials: "include",
-        },
-      );
-      const data = await response.json();
 
-      if (data.status === "success" && data.course) {
+      // Parallel fetch for course details and progress
+      const [courseRes, progressRes] = await Promise.all([
+        fetch(`${API.GET_COURSE_DETAILS}?course_id=${courseId}`, { credentials: "include" }),
+        fetch(`${API.GET_STUDENT_PROGRESS}?course_id=${courseId}`, { credentials: "include" })
+      ]);
+
+      const courseData = await courseRes.json();
+      const progressData = await progressRes.json();
+
+      if (courseData.status === "success" && courseData.course) {
         // Transform course data
         const transformedCourse = {
-          ...data.course,
-          videos: (data.videos || [])
+          ...courseData.course,
+          videos: (courseData.videos || [])
             .map((video) => ({
               id: video.id,
               video_title: video.video_title,
@@ -95,9 +99,36 @@ export default function CoursePlayerPage() {
               order_in_course: video.order_in_course || 0,
             }))
             .sort((a, b) => a.order_in_course - b.order_in_course),
+          // Add extra fields needed for tabs
+          learningOutcomes: courseData.course.what_you_will_learn
+            ? courseData.course.what_you_will_learn.split("\n").filter((item) => item.trim())
+            : [],
+          requirements: courseData.course.requirements
+            ? courseData.course.requirements.split("\n").filter((item) => item.trim())
+            : [],
+          learningSchedule: courseData.course.learning_schedule || "",
+          hoursPerWeek: parseInt(courseData.course.hours_per_week) || 0,
+          durationWeeks: parseInt(courseData.course.duration_weeks) || 0,
+          numVideos: parseInt(courseData.course.total_videos) || 0,
+          level: courseData.course.skill_level || "Beginner",
+          language: courseData.course.language || "English",
+          reviews: courseData.reviews || [],
         };
 
         setCourse(transformedCourse);
+
+        // Set completed videos and progress
+        if (progressData.status === "success") {
+          setCompletedVideos(progressData.completed_videos || []);
+
+          const progressMap = {};
+          if (progressData.progress_data) {
+            progressData.progress_data.forEach(p => {
+              progressMap[p.video_id] = p.timestamp;
+            });
+          }
+          setVideoProgress(progressMap);
+        }
 
         // Find first video to play
         if (transformedCourse.videos.length > 0) {
@@ -115,12 +146,37 @@ export default function CoursePlayerPage() {
     }
   };
 
-  const toggleVideoCompletion = (videoId) => {
+  const toggleVideoCompletion = async (videoId) => {
+    const isCompleted = !completedVideos.includes(videoId);
+
+    // Optimistic update
     setCompletedVideos((prev) =>
-      prev.includes(videoId)
-        ? prev.filter((id) => id !== videoId)
-        : [...prev, videoId],
+      isCompleted
+        ? [...prev, videoId]
+        : prev.filter((id) => id !== videoId)
     );
+
+    try {
+      await fetch(API.MARK_VIDEO_COMPLETED, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          course_id: courseId,
+          video_id: videoId,
+          completed: isCompleted
+        })
+      });
+    } catch (error) {
+      console.error("Error updating progress:", error);
+      toast.error("Failed to save progress");
+      // Revert on error
+      setCompletedVideos((prev) =>
+        isCompleted
+          ? prev.filter((id) => id !== videoId)
+          : [...prev, videoId]
+      );
+    }
   };
 
   const calculateProgress = () => {
@@ -272,6 +328,7 @@ export default function CoursePlayerPage() {
               toggleVideoCompletion={toggleVideoCompletion}
               currentIndex={currentIndex}
               totalVideos={currentVideos.length}
+              savedTimestamp={videoProgress[activeVideo?.id] || 0}
             />
 
             {/* Lesson Tabs */}

@@ -33,9 +33,11 @@ try {
     $teacher_id = $teacher['id'];
 
     // Get POST data
-    $review_id = $_POST['review_id'] ?? null;
-    $reply_text = $_POST['reply_text'] ?? null;
-    $reply_id = $_POST['reply_id'] ?? null; // For editing
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    $review_id = $data['review_id'] ?? null;
+    $reply_text = $data['reply_text'] ?? null;
+    $reply_id = $data['reply_id'] ?? null; // For editing
 
     if (!$review_id || !is_numeric($review_id)) {
         echo json_encode(["status" => "error", "message" => "Invalid review ID"]);
@@ -116,7 +118,6 @@ try {
     } else {
         echo json_encode(["status" => "error", "message" => "Failed to save reply"]);
     }
-
 } catch (Exception $e) {
     echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 }

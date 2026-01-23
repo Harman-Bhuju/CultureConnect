@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Play, Clock, CheckCircle } from "lucide-react";
 import API from "../../../../Configs/ApiEndpoints";
 
@@ -9,24 +9,106 @@ export default function VideoPlayerSection({
   toggleVideoCompletion,
   currentIndex,
   totalVideos,
+  savedTimestamp,
 }) {
+  const videoRef = useRef(null);
+  const lastUpdateRef = useRef(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Resume video from saved timestamp
+  useEffect(() => {
+    if (videoRef.current && activeVideo) {
+      // Reset first to avoid conflict
+      videoRef.current.currentTime = 0;
+      setIsPlaying(false);
+
+      if (savedTimestamp > 0 && !completedVideos.includes(activeVideo.id)) {
+        // Only resume if not fully completed (user preference: completed -> from 0)
+        videoRef.current.currentTime = savedTimestamp;
+      }
+    }
+  }, [activeVideo?.id, savedTimestamp]);
+
+  const handleTimeUpdate = async () => {
+    if (!videoRef.current || !activeVideo) return;
+
+    const currentTime = videoRef.current.currentTime;
+    const now = Date.now();
+
+    // Throttle updates: every 5 seconds
+    if (now - lastUpdateRef.current > 5000) {
+      lastUpdateRef.current = now;
+      try {
+        await fetch(API.UPDATE_VIDEO_TIMESTAMP, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            course_id: course.id,
+            video_id: activeVideo.id,
+            timestamp: Math.floor(currentTime)
+          })
+        });
+      } catch (error) {
+        console.error("Failed to sync progress", error);
+      }
+    }
+  };
+
+  const handlePlayClick = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+      // Try to enter fullscreen
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      } else if (videoRef.current.webkitRequestFullscreen) { /* Safari */
+        videoRef.current.webkitRequestFullscreen();
+      } else if (videoRef.current.msRequestFullscreen) { /* IE11 */
+        videoRef.current.msRequestFullscreen();
+      }
+      setIsPlaying(true);
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Video Player */}
-      <div className="relative aspect-video bg-black">
+      <div className="relative aspect-video bg-black group">
         {activeVideo ? (
-          <video
-            key={activeVideo.id}
-            className="w-full h-full"
-            controls
-            autoPlay
-            poster={`${API.COURSE_THUMBNAILS}/${activeVideo.thumbnail || course.thumbnail}`}>
-            <source
-              src={`${API.COURSE_VIDEOS}/${activeVideo.video_filename || activeVideo.video_url}`}
-              type="video/mp4"
-            />
-            Your browser does not support the video tag.
-          </video>
+          <>
+            <video
+              ref={videoRef}
+              key={activeVideo.id}
+              className="w-full h-full object-contain"
+              controls
+              onTimeUpdate={handleTimeUpdate}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => {
+                setIsPlaying(false);
+                if (!completedVideos.includes(activeVideo.id)) {
+                  toggleVideoCompletion(activeVideo.id);
+                }
+              }}
+              poster={`${API.COURSE_THUMBNAILS}/${activeVideo.thumbnail || course.thumbnail}`}>
+              <source
+                src={`${API.COURSE_VIDEOS}/${activeVideo.video_filename || activeVideo.video_url}`}
+                type="video/mp4"
+              />
+              Your browser does not support the video tag.
+            </video>
+
+            {!isPlaying && (
+              <div
+                className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer hover:bg-black/50 transition-all z-10"
+                onClick={handlePlayClick}
+              >
+                <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50 shadow-xl group-hover:scale-110 transition-transform">
+                  <Play className="w-8 h-8 text-white fill-white ml-1" />
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-white bg-gradient-to-br from-gray-900 to-gray-800">
             <div className="text-center">
@@ -66,17 +148,15 @@ export default function VideoPlayerSection({
           {/* Complete Button */}
           <button
             onClick={() => toggleVideoCompletion(activeVideo?.id)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all shadow-sm whitespace-nowrap ${
-              completedVideos.includes(activeVideo?.id)
-                ? "bg-green-50 border-2 border-green-200 text-green-700 hover:bg-green-100"
-                : "bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-            }`}>
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all shadow-sm whitespace-nowrap ${completedVideos.includes(activeVideo?.id)
+              ? "bg-green-50 border-2 border-green-200 text-green-700 hover:bg-green-100"
+              : "bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+              }`}>
             <CheckCircle
-              className={`w-5 h-5 ${
-                completedVideos.includes(activeVideo?.id)
-                  ? "fill-green-600 text-white"
-                  : ""
-              }`}
+              className={`w-5 h-5 ${completedVideos.includes(activeVideo?.id)
+                ? "fill-green-600 text-white"
+                : ""
+                }`}
             />
             <span className="hidden sm:inline">
               {completedVideos.includes(activeVideo?.id)

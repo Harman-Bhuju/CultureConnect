@@ -1,5 +1,5 @@
 import React from "react";
-import { Info, FileText, MessageSquare, Star } from "lucide-react";
+import { Info, Target, AlertCircle, Calendar, Star, CheckCircle, BookOpen } from "lucide-react";
 import CourseReviews from "../Reviews/CourseReviews";
 
 export default function LessonTabsSection({
@@ -9,10 +9,13 @@ export default function LessonTabsSection({
 }) {
   const tabs = [
     { id: "description", icon: Info, label: "Overview" },
-    { id: "resources", icon: FileText, label: "Resources" },
-    { id: "discussions", icon: MessageSquare, label: "Discussion" },
+    { id: "outcomes", icon: Target, label: "Learning Outcomes" },
+    { id: "requirements", icon: AlertCircle, label: "Requirements" },
+    { id: "schedule", icon: Calendar, label: "Schedule" },
     { id: "reviews", icon: Star, label: "Reviews" },
   ];
+
+  const course = activeVideo?.course;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -23,11 +26,10 @@ export default function LessonTabsSection({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-all relative whitespace-nowrap ${
-                activeTab === tab.id
+              className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-all relative whitespace-nowrap ${activeTab === tab.id
                   ? "text-blue-600 bg-blue-50"
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-              }`}>
+                }`}>
               <tab.icon className="w-4 h-4" />
               {tab.label}
               {activeTab === tab.id && (
@@ -41,7 +43,7 @@ export default function LessonTabsSection({
       {/* Tab Content */}
       <div className="p-6">
         {activeTab === "description" && (
-          <div className="space-y-4 animate-in fade-in duration-300">
+          <div className="space-y-6 animate-in fade-in duration-300">
             <div>
               <h3 className="text-lg font-bold text-gray-900 mb-3">
                 About This Lesson
@@ -51,43 +53,131 @@ export default function LessonTabsSection({
                   "This lesson will help you understand the key concepts covered in this section of the course. Make sure to take notes and practice along with the video."}
               </p>
             </div>
-          </div>
-        )}
 
-        {activeTab === "resources" && (
-          <div className="animate-in fade-in duration-300">
-            <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-8 text-center border border-gray-100">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <FileText className="w-8 h-8 text-gray-300" />
-              </div>
-              <h4 className="font-bold text-gray-900 mb-2">
-                No Resources Available
-              </h4>
-              <p className="text-sm text-gray-500 max-w-sm mx-auto">
-                Downloadable resources for this lesson haven't been uploaded
-                yet. Check back later!
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-3">
+                Course Details
+              </h3>
+              <p className="text-gray-600 leading-relaxed whitespace-pre-wrap mb-4">
+                {course?.description}
               </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                  <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-blue-600" />
+                    Course Info
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Level:</span>
+                      <span className="font-medium capitalize">{course?.level}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Language:</span>
+                      <span className="font-medium">{course?.language}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Videos:</span>
+                      <span className="font-medium">{course?.numVideos}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        {activeTab === "discussions" && (
-          <div className="animate-in fade-in duration-300">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 text-center border border-blue-100">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <MessageSquare className="w-8 h-8 text-blue-400" />
+        {/* Learning Outcomes Tab */}
+        {activeTab === "outcomes" && (
+          <div className="animate-in fade-in duration-300 space-y-4">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              What You'll Learn
+            </h3>
+            {course?.learningOutcomes && course.learningOutcomes.length > 0 ? (
+              <div className="grid grid-cols-1 gap-3">
+                {course.learningOutcomes.map((outcome, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
+                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      {outcome}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <h4 className="font-bold text-gray-900 mb-2">
-                Join the Discussion
-              </h4>
-              <p className="text-sm text-gray-600 max-w-sm mx-auto mb-4">
-                Connect with fellow students, ask questions, and share your
-                learning experience.
-              </p>
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition shadow-sm">
-                Start a Discussion
-              </button>
-            </div>
+            ) : (
+              <p className="text-gray-500">No learning outcomes specified.</p>
+            )}
+          </div>
+        )}
+
+        {/* Requirements Tab */}
+        {activeTab === "requirements" && (
+          <div className="animate-in fade-in duration-300 space-y-4">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Requirements
+            </h3>
+            {course?.requirements && course.requirements.length > 0 ? (
+              <div className="space-y-3">
+                {course.requirements.map((req, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-4 bg-orange-50 rounded-lg border border-orange-100">
+                    <div className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">
+                      {index + 1}
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed flex-1">
+                      {req}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No specific requirements.</p>
+            )}
+          </div>
+        )}
+
+        {/* Schedule Tab */}
+        {activeTab === "schedule" && (
+          <div className="animate-in fade-in duration-300 space-y-4">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Learning Schedule
+            </h3>
+            {course?.learningSchedule ? (
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-100">
+                <div className="flex items-start gap-3 mb-4">
+                  <Calendar className="w-6 h-6 text-indigo-600 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">
+                      Recommended Study Plan
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Follow this schedule for optimal learning
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg p-4 whitespace-pre-wrap text-sm text-gray-700 leading-relaxed">
+                  {course.learningSchedule}
+                </div>
+
+                {course.hoursPerWeek > 0 && course.durationWeeks > 0 && (
+                  <div className="mt-4 p-4 bg-white rounded-lg">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Total commitment:</span>
+                      <span className="font-semibold text-gray-900">
+                        {course.durationWeeks} weeks × {course.hoursPerWeek}{" "}
+                        hours/week
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-500">No specific schedule provided.</p>
+            )}
           </div>
         )}
 
@@ -97,6 +187,9 @@ export default function LessonTabsSection({
               course={{
                 ...activeVideo?.course,
                 reviews: activeVideo?.course?.reviews || [],
+                // Ensure isEnrolled is passed down if needed by CourseReviews, 
+                // though CoursePlayerPage users are always enrolled.
+                isEnrolled: true,
               }}
               user={activeVideo?.user}
               openReviewForm={activeVideo?.openReviewForm}

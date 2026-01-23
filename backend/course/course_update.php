@@ -258,6 +258,12 @@ try {
 
     $conn->commit();
 
+    // Update teacher's total_courses count
+    $update_teacher = $conn->prepare("UPDATE teachers SET total_courses = (SELECT COUNT(*) FROM teacher_courses WHERE teacher_id = ? AND status = 'published') WHERE id = ?");
+    $update_teacher->bind_param("ii", $teacher_id, $teacher_id);
+    $update_teacher->execute();
+    $update_teacher->close();
+
     sendResponse(
         "success",
         $status === 'published' ? "Course published successfully" : "Course updated successfully",
