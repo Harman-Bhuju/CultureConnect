@@ -29,7 +29,7 @@ const CategoryPageLayout = ({
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [priceInput, setPriceInput] = useState({ min: "", max: "" }); // Local state for typing
   const [priceError, setPriceError] = useState(""); // Validation error
-  const [selectedRating, setSelectedRating] = useState(null);
+  const [selectedRatings, setSelectedRatings] = useState([]);
   const [selectedAudience, setSelectedAudience] = useState(null); // null means "All"
 
   // Pagination from API
@@ -65,7 +65,8 @@ const CategoryPageLayout = ({
 
         if (priceRange.min) params.append("min_price", priceRange.min);
         if (priceRange.max) params.append("max_price", priceRange.max);
-        if (selectedRating) params.append("min_rating", selectedRating);
+        if (selectedRatings.length > 0)
+          params.append("ratings", selectedRatings.join(","));
         if (selectedAudience) params.append("audience", selectedAudience);
 
         const response = await fetch(
@@ -94,7 +95,7 @@ const CategoryPageLayout = ({
     sortBy,
     currentPage,
     priceRange,
-    selectedRating,
+    selectedRatings,
     selectedAudience,
     itemsPerPage,
   ]);
@@ -102,7 +103,7 @@ const CategoryPageLayout = ({
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [priceRange, selectedRating, selectedAudience, sortBy]);
+  }, [priceRange, selectedRatings, selectedAudience, sortBy]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= pagination.total_pages) {
@@ -115,7 +116,7 @@ const CategoryPageLayout = ({
     setPriceRange({ min: "", max: "" });
     setPriceInput({ min: "", max: "" });
     setPriceError("");
-    setSelectedRating(null);
+    setSelectedRatings([]);
     setSelectedAudience(null);
     setCurrentPage(1);
   };
@@ -155,6 +156,25 @@ const CategoryPageLayout = ({
     }
   };
 
+  const toggleRating = (rating) => {
+    setSelectedRatings((prev) => {
+      const isSelected = prev.includes(rating);
+      let newRatings;
+      if (isSelected) {
+        newRatings = prev.filter((r) => r !== rating);
+      } else {
+        newRatings = [...prev, rating];
+      }
+
+      // Automatically sort by rating if any rating is selected
+      if (newRatings.length > 0) {
+        setSortBy("rating");
+      }
+
+      return newRatings;
+    });
+  };
+
   if (initialLoading) {
     return (
       <div className="bg-white min-h-[60vh] flex items-center justify-center">
@@ -180,11 +200,10 @@ const CategoryPageLayout = ({
                     <button
                       key={option.value || "all"}
                       onClick={() => setSelectedAudience(option.value)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                        selectedAudience === option.value
-                          ? "bg-red-600 text-white shadow-md"
-                          : "bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200"
-                      }`}>
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedAudience === option.value
+                        ? "bg-red-600 text-white shadow-md"
+                        : "bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200"
+                        }`}>
                       {option.label}
                     </button>
                   ))}
@@ -248,24 +267,21 @@ const CategoryPageLayout = ({
                 Customer Rating
               </h3>
               <div className="space-y-3">
-                {[4, 3, 2, 1].map((rating) => (
-                  <button
+                {[5, 4, 3, 2, 1].map((rating) => (
+                  <label
                     key={rating}
-                    onClick={() => {
-                      setSelectedRating(
-                        selectedRating === rating ? null : rating,
-                      );
-                    }}
-                    className="flex items-center gap-3 w-full group hover:bg-red-50 p-2 rounded-lg transition-all -ml-2">
-                    <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                        selectedRating === rating
-                          ? "bg-red-600 border-red-600"
-                          : "border-gray-300 group-hover:border-red-400"
-                      }`}>
-                      {selectedRating === rating && (
-                        <Check size={12} className="text-white" />
-                      )}
+                    className="flex items-center gap-3 w-full group hover:bg-red-50 p-2 rounded-lg transition-all -ml-2 cursor-pointer">
+                    <div className="relative flex items-center justify-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedRatings.includes(rating)}
+                        onChange={() => toggleRating(rating)}
+                        className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-red-600 checked:border-red-600 transition-all cursor-pointer"
+                      />
+                      <Check
+                        size={12}
+                        className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+                      />
                     </div>
                     <div className="flex items-center gap-1">
                       {Array.from({ length: 5 }).map((_, i) => (
@@ -281,10 +297,10 @@ const CategoryPageLayout = ({
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-gray-600 group-hover:text-red-700 font-medium">
-                      & Up
+                    <span className="text-sm text-gray-600 group-hover:text-red-700 font-medium ml-auto">
+                      {rating} Star{rating > 1 ? "s" : ""}
                     </span>
-                  </button>
+                  </label>
                 ))}
               </div>
             </div>
@@ -386,11 +402,10 @@ const CategoryPageLayout = ({
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`w-11 h-11 flex items-center justify-center rounded-full text-sm font-bold transition-all ${
-                      currentPage === page
-                        ? "bg-red-600 text-white shadow-md shadow-red-200 scale-110"
-                        : "bg-white text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200"
-                    }`}>
+                    className={`w-11 h-11 flex items-center justify-center rounded-full text-sm font-bold transition-all ${currentPage === page
+                      ? "bg-red-600 text-white shadow-md shadow-red-200 scale-110"
+                      : "bg-white text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200"
+                      }`}>
                     {page}
                   </button>
                 ))}

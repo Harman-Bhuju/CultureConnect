@@ -10,7 +10,7 @@
  * - sort (optional): 'newest', 'price-low', 'price-high', 'rating' (default: 'newest')
  * - min_price (optional): minimum price filter
  * - max_price (optional): maximum price filter
- * - min_rating (optional): minimum rating filter
+ * - ratings (optional): comma-separated list of star ratings (e.g., '4,5')
  * - page (optional): page number (default: 1)
  * - per_page (optional): items per page (default: 12)
  */
@@ -82,10 +82,20 @@ try {
     }
 
     // Add rating filter
-    if ($min_rating !== null) {
-        $base_query .= " AND p.average_rating >= ?";
-        $params[] = $min_rating;
-        $types .= "d";
+    $ratings = isset($_GET['ratings']) ? $_GET['ratings'] : '';
+    if (!empty($ratings)) {
+        $rating_list = array_map('intval', explode(',', $ratings));
+        if (!empty($rating_list)) {
+            // Create placeholders for IN clause
+            $placeholders = implode(',', array_fill(0, count($rating_list), '?'));
+            $base_query .= " AND FLOOR(p.average_rating) IN ($placeholders)";
+
+            // Add params
+            foreach ($rating_list as $rating) {
+                $params[] = $rating;
+                $types .= "i";
+            }
+        }
     }
 
     // Get total count for pagination
