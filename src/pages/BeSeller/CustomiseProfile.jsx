@@ -636,7 +636,7 @@ function CustomiseProfile() {
               <div className="flex flex-col md:flex-row gap-6 items-center">
                 {/* Banner Image Preview */}
                 <div className="flex-shrink-0">
-                  <div className="w-60 sm:w-80 h-44 rounded-lg overflow-hidden bg-white border-4 border-gray-200 flex items-center justify-center shadow-sm relative group">
+                  <div className="w-full sm:w-[28rem] h-64 rounded-lg overflow-hidden bg-white border-4 border-gray-200 flex items-center justify-center shadow-sm relative group">
                     {bannerPreview ? (
                       <>
                         <img

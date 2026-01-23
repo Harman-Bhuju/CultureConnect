@@ -703,7 +703,7 @@ function SellerForm() {
                   {/* Preview Area */}
                   <div className="flex-shrink-0">
                     {bannerPreview ? (
-                      <div className="w-full md:w-80 h-44 bg-white rounded-lg overflow-hidden border-4 border-gray-200 shadow-sm">
+                      <div className="w-full md:w-[28rem] h-64 bg-white rounded-lg overflow-hidden border-4 border-gray-200 shadow-sm">
                         <img
                           src={bannerPreview}
                           alt="banner"
@@ -711,7 +711,7 @@ function SellerForm() {
                         />
                       </div>
                     ) : (
-                      <div className="w-full md:w-80 h-44 bg-white rounded-lg border-4 border-gray-200 flex items-center justify-center shadow-sm">
+                      <div className="w-full md:w-[28rem] h-64 bg-white rounded-lg border-4 border-gray-200 flex items-center justify-center shadow-sm">
                         <div className="text-center">
                           <div className="w-16 h-16 bg-red-600 rounded-lg mx-auto mb-2"></div>
                           <div className="w-12 h-8 bg-gray-300 rounded mx-auto"></div>

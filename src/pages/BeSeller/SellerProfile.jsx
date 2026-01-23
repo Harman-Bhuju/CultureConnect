@@ -23,9 +23,6 @@ const SellerProfile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [previewTitle, setPreviewTitle] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -184,35 +181,26 @@ const SellerProfile = () => {
       <AppSidebar />
       <SidebarInset>
         <Navbar />
-        <div className="bg-gray-50 min-h-screen">
+        <div className="bg-gray-50 min-h-screen pb-12">
           {/* Banner */}
-          <div
-            className="relative w-full aspect-[1280/400] bg-slate-900 overflow-hidden cursor-pointer"
-            onClick={() => {
-              setPreviewImage(
-                `${BASE_URL}/uploads/seller_img_datas/seller_banners/${sellerData.store_banner}`,
-              );
-              setPreviewTitle("Store Banner");
-              setIsPreviewOpen(true);
-            }}>
+          <div className="relative w-full h-64 bg-gray-200">
             <img
               src={`${BASE_URL}/uploads/seller_img_datas/seller_banners/${sellerData.store_banner}`}
               alt="Store Banner"
               className="w-full h-full object-cover"
             />
-
             {/* Profile Picture */}
-            <div className="absolute bottom-0 left-6 w-32 h-32 border-4 border-white rounded-full overflow-hidden shadow-lg bg-white z-20">
+            <div className="absolute -bottom-16 left-6 w-32 h-32 border-4 border-white rounded-full overflow-hidden shadow-lg bg-white">
               <img
                 src={`${BASE_URL}/uploads/seller_img_datas/seller_logos/${sellerData.store_logo}`}
                 alt="Store Logo"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>
 
           {/* Seller Info */}
-          <div className="mt-5 px-6 md:px-12">
+          <div className="mt-20 px-6 md:px-12">
             <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800">
@@ -353,33 +341,6 @@ const SellerProfile = () => {
           </div>
         </div>
       </SidebarInset>
-
-      {/* Unified Image Preview Modal */}
-      {isPreviewOpen && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xl flex flex-col items-center justify-center p-4 md:p-10 animate-in fade-in zoom-in duration-300"
-          onClick={() => setIsPreviewOpen(false)}>
-          <div className="relative max-w-7xl w-full max-h-full flex flex-col items-center justify-center">
-            <div className="flex justify-between items-center w-full mb-4 px-2">
-              <h2 className="text-white text-lg font-medium">{previewTitle}</h2>
-              <button
-                className="text-white hover:text-gray-300 transition-colors bg-white/10 hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsPreviewOpen(false);
-                }}>
-                <span className="text-2xl font-light">×</span>
-              </button>
-            </div>
-            <img
-              src={previewImage}
-              alt={previewTitle}
-              className="max-w-full max-h-[80vh] object-contain shadow-2xl rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-        </div>
-      )}
     </SidebarProvider>
   );
 };
