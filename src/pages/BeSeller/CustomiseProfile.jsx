@@ -98,14 +98,10 @@ function CustomiseProfile() {
         setInitialData(loadedData); // Store initial data for comparison
 
         if (profile.store_logo) {
-          setProfilePreview(
-            `${API.SELLER_LOGOS}/${profile.store_logo}`,
-          );
+          setProfilePreview(`${API.SELLER_LOGOS}/${profile.store_logo}`);
         }
         if (profile.store_banner) {
-          setBannerPreview(
-            `${API.SELLER_BANNERS}/${profile.store_banner}`,
-          );
+          setBannerPreview(`${API.SELLER_BANNERS}/${profile.store_banner}`);
         }
       }
     } catch (err) {
@@ -138,11 +134,11 @@ function CustomiseProfile() {
     municipals: [],
     wards: [],
     selectedProvince: "",
-    setSelectedProvince: () => { },
+    setSelectedProvince: () => {},
     selectedDistrict: "",
-    setSelectedDistrict: () => { },
+    setSelectedDistrict: () => {},
     selectedMunicipal: "",
-    setSelectedMunicipal: () => { },
+    setSelectedMunicipal: () => {},
   };
   const [selectedWard, setSelectedWard] = useState(userData.ward);
 
@@ -271,8 +267,8 @@ function CustomiseProfile() {
         0.95,
       );
     } else {
-      canvas.width = 2048;
-      canvas.height = 1152;
+      canvas.width = 1280;
+      canvas.height = 400;
 
       const containerRect = cropContainerRef.current.getBoundingClientRect();
       const imgRect = img.getBoundingClientRect();
@@ -663,7 +659,7 @@ function CustomiseProfile() {
                 {/* Upload Controls */}
                 <div className="flex-1">
                   <p className="text-gray-600 text-sm mb-4">
-                    Recommended: 1200 x 300 pixels, 6MB or less. Use PNG or JPG
+                    Recommended: 1280 x 400 pixels, 6MB or less. Use PNG or JPG
                     format.
                   </p>
                   <div className="flex gap-3">
