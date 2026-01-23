@@ -1,11 +1,12 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { X, Trash2, AlertCircle } from "lucide-react";
 
 const DeleteReviewModal = ({ isOpen, onClose, onConfirm, isDeleting }) => {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full animate-in zoom-in duration-200">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
@@ -46,7 +47,8 @@ const DeleteReviewModal = ({ isOpen, onClose, onConfirm, isDeleting }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Star, X } from "lucide-react";
 
 const CourseReviewForm = ({
   isOpen,
   onClose,
   course,
-  editingReviewId,
   reviewRating,
   setReviewRating,
   reviewText,
@@ -17,14 +17,12 @@ const CourseReviewForm = ({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full my-8">
         {/* Header */}
         <div className="border-b px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">
-            {editingReviewId ? "Edit Your Review" : "Write a Review"}
-          </h2>
+          <h2 className="text-xl font-bold text-gray-900">Write a Review</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition">
@@ -111,16 +109,13 @@ const CourseReviewForm = ({
                 reviewText.trim().length < 10
               }
               className="flex-[2] px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-200">
-              {isSubmitting
-                ? "Submitting..."
-                : editingReviewId
-                  ? "Update Review"
-                  : "Submit Review"}
+              {isSubmitting ? "Submitting..." : "Submit Review"}
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

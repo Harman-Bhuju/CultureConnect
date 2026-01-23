@@ -43,7 +43,7 @@ export default function StudentCourseSidebar({
           {isEnrolled ? (
             <button
               onClick={() =>
-                (window.location.href = `/courses/learn/${teacherId}/${course.id}`)
+                (window.location.href = `/courses/${teacherId}/${course.id}`)
               }
               className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition active:scale-[0.98]">
               <PlayCircle className="w-5 h-5" />

@@ -26,14 +26,11 @@ const StudentCourseDetailPage = () => {
   const [hasPendingEnrollment, setHasPendingEnrollment] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Review states
+  // Review states (Only for new reviews)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [editingReview, setEditingReview] = useState(null);
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  const [reviewToDeleteId, setReviewToDeleteId] = useState(null);
 
   // Fetch course details when ID changes
   useEffect(() => {
@@ -210,22 +207,10 @@ const StudentCourseDetailPage = () => {
     navigate(-1);
   };
 
-  const openReviewForm = (review = null) => {
-    if (review) {
-      setEditingReview(review);
-      setReviewRating(review.rating);
-      setReviewText(review.comment);
-    } else {
-      setEditingReview(null);
-      setReviewRating(0);
-      setReviewText("");
-    }
+  const openReviewForm = () => {
+    setReviewRating(0);
+    setReviewText("");
     setIsReviewModalOpen(true);
-  };
-
-  const openDeleteModal = (reviewId) => {
-    setReviewToDeleteId(reviewId);
-    setIsDeleteModalOpen(true);
   };
 
   const handleSubmitReview = async (e) => {
@@ -238,9 +223,6 @@ const StudentCourseDetailPage = () => {
       formData.append("course_id", id);
       formData.append("rating", reviewRating);
       formData.append("comment", reviewText.trim());
-      if (editingReview) {
-        formData.append("review_id", editingReview.id);
-      }
 
       const response = await fetch(API.SUBMIT_COURSE_REVIEW, {
         method: "POST",
@@ -251,7 +233,7 @@ const StudentCourseDetailPage = () => {
       const data = await response.json();
 
       if (data.status === "success") {
-        toast.success(editingReview ? "Review updated!" : "Review submitted!");
+        toast.success("Review submitted!");
         setIsReviewModalOpen(false);
         fetchCourseDetails(); // Refresh
       } else {
@@ -259,35 +241,6 @@ const StudentCourseDetailPage = () => {
       }
     } catch (error) {
       console.error("Review submission error:", error);
-      toast.error("An error occurred");
-    } finally {
-      setIsSubmittingReview(false);
-    }
-  };
-
-  const handleDeleteReview = async () => {
-    if (!reviewToDeleteId) return;
-
-    try {
-      setIsSubmittingReview(true);
-      const response = await fetch(API.DELETE_COURSE_REVIEW, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ review_id: reviewToDeleteId }),
-      });
-
-      const data = await response.json();
-
-      if (data.status === "success") {
-        toast.success("Review deleted");
-        setIsDeleteModalOpen(false);
-        fetchCourseDetails(); // Refresh
-      } else {
-        toast.error(data.message || "Failed to delete review");
-      }
-    } catch (error) {
-      console.error("Delete review error:", error);
       toast.error("An error occurred");
     } finally {
       setIsSubmittingReview(false);
@@ -345,7 +298,7 @@ const StudentCourseDetailPage = () => {
               setActiveTab={setActiveTab}
               user={user}
               openReviewForm={openReviewForm}
-              openDeleteModal={openDeleteModal}
+              onRefresh={fetchCourseDetails}
             />
           </div>
 
@@ -368,20 +321,12 @@ const StudentCourseDetailPage = () => {
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         course={course}
-        editingReviewId={editingReview?.id}
         reviewRating={reviewRating}
         setReviewRating={setReviewRating}
         reviewText={reviewText}
         setReviewText={setReviewText}
         isSubmitting={isSubmittingReview}
         handleSubmitReview={handleSubmitReview}
-      />
-
-      <DeleteReviewModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteReview}
-        isDeleting={isSubmittingReview}
       />
     </div>
   );

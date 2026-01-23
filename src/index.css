@@ -197,6 +197,18 @@ html,
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 
+/* Utility to hide scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
 /* ======================================
    SCROLL-TRIGGERED REVEAL ANIMATIONS
    ====================================== */

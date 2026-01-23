@@ -28,14 +28,11 @@ export default function CoursePlayerPage() {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const { user } = useAuth();
 
-  // Review states
+  // Review states (Only for new reviews)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [editingReview, setEditingReview] = useState(null);
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  const [reviewToDeleteId, setReviewToDeleteId] = useState(null);
 
   useEffect(() => {
     checkEnrollment();
@@ -77,8 +74,12 @@ export default function CoursePlayerPage() {
 
       // Parallel fetch for course details and progress
       const [courseRes, progressRes] = await Promise.all([
-        fetch(`${API.GET_COURSE_DETAILS}?course_id=${courseId}`, { credentials: "include" }),
-        fetch(`${API.GET_STUDENT_PROGRESS}?course_id=${courseId}`, { credentials: "include" })
+        fetch(`${API.GET_COURSE_DETAILS}?course_id=${courseId}`, {
+          credentials: "include",
+        }),
+        fetch(`${API.GET_STUDENT_PROGRESS}?course_id=${courseId}`, {
+          credentials: "include",
+        }),
       ]);
 
       const courseData = await courseRes.json();
@@ -101,10 +102,14 @@ export default function CoursePlayerPage() {
             .sort((a, b) => a.order_in_course - b.order_in_course),
           // Add extra fields needed for tabs
           learningOutcomes: courseData.course.what_you_will_learn
-            ? courseData.course.what_you_will_learn.split("\n").filter((item) => item.trim())
+            ? courseData.course.what_you_will_learn
+                .split("\n")
+                .filter((item) => item.trim())
             : [],
           requirements: courseData.course.requirements
-            ? courseData.course.requirements.split("\n").filter((item) => item.trim())
+            ? courseData.course.requirements
+                .split("\n")
+                .filter((item) => item.trim())
             : [],
           learningSchedule: courseData.course.learning_schedule || "",
           hoursPerWeek: parseInt(courseData.course.hours_per_week) || 0,
@@ -123,7 +128,7 @@ export default function CoursePlayerPage() {
 
           const progressMap = {};
           if (progressData.progress_data) {
-            progressData.progress_data.forEach(p => {
+            progressData.progress_data.forEach((p) => {
               progressMap[p.video_id] = p.timestamp;
             });
           }
@@ -151,9 +156,7 @@ export default function CoursePlayerPage() {
 
     // Optimistic update
     setCompletedVideos((prev) =>
-      isCompleted
-        ? [...prev, videoId]
-        : prev.filter((id) => id !== videoId)
+      isCompleted ? [...prev, videoId] : prev.filter((id) => id !== videoId),
     );
 
     try {
@@ -164,17 +167,15 @@ export default function CoursePlayerPage() {
         body: JSON.stringify({
           course_id: courseId,
           video_id: videoId,
-          completed: isCompleted
-        })
+          completed: isCompleted,
+        }),
       });
     } catch (error) {
       console.error("Error updating progress:", error);
       toast.error("Failed to save progress");
       // Revert on error
       setCompletedVideos((prev) =>
-        isCompleted
-          ? prev.filter((id) => id !== videoId)
-          : [...prev, videoId]
+        isCompleted ? prev.filter((id) => id !== videoId) : [...prev, videoId],
       );
     }
   };
@@ -212,22 +213,10 @@ export default function CoursePlayerPage() {
     }
   };
 
-  const openReviewForm = (review = null) => {
-    if (review) {
-      setEditingReview(review);
-      setReviewRating(review.rating);
-      setReviewText(review.comment);
-    } else {
-      setEditingReview(null);
-      setReviewRating(0);
-      setReviewText("");
-    }
+  const openReviewForm = () => {
+    setReviewRating(0);
+    setReviewText("");
     setIsReviewModalOpen(true);
-  };
-
-  const openDeleteModal = (reviewId) => {
-    setReviewToDeleteId(reviewId);
-    setIsDeleteModalOpen(true);
   };
 
   const handleSubmitReview = async (e) => {
@@ -240,9 +229,6 @@ export default function CoursePlayerPage() {
       formData.append("course_id", courseId);
       formData.append("rating", reviewRating);
       formData.append("comment", reviewText.trim());
-      if (editingReview) {
-        formData.append("review_id", editingReview.id);
-      }
 
       const response = await fetch(API.SUBMIT_COURSE_REVIEW, {
         method: "POST",
@@ -253,7 +239,7 @@ export default function CoursePlayerPage() {
       const data = await response.json();
 
       if (data.status === "success") {
-        toast.success(editingReview ? "Review updated!" : "Review submitted!");
+        toast.success("Review submitted!");
         setIsReviewModalOpen(false);
         fetchCourseData(); // Refresh to show new review
       } else {
@@ -261,35 +247,6 @@ export default function CoursePlayerPage() {
       }
     } catch (error) {
       console.error("Review submission error:", error);
-      toast.error("An error occurred");
-    } finally {
-      setIsSubmittingReview(false);
-    }
-  };
-
-  const handleDeleteReview = async () => {
-    if (!reviewToDeleteId) return;
-
-    try {
-      setIsSubmittingReview(true);
-      const response = await fetch(API.DELETE_COURSE_REVIEW, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ review_id: reviewToDeleteId }),
-      });
-
-      const data = await response.json();
-
-      if (data.status === "success") {
-        toast.success("Review deleted");
-        setIsDeleteModalOpen(false);
-        fetchCourseData(); // Refresh
-      } else {
-        toast.error(data.message || "Failed to delete review");
-      }
-    } catch (error) {
-      console.error("Delete review error:", error);
       toast.error("An error occurred");
     } finally {
       setIsSubmittingReview(false);
@@ -340,8 +297,8 @@ export default function CoursePlayerPage() {
                 course: course,
                 user: user,
                 openReviewForm,
-                openDeleteModal,
               }}
+              onRefresh={fetchCourseData}
             />
 
             {/* Lesson Navigation */}
@@ -380,20 +337,12 @@ export default function CoursePlayerPage() {
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         course={course}
-        editingReviewId={editingReview?.id}
         reviewRating={reviewRating}
         setReviewRating={setReviewRating}
         reviewText={reviewText}
         setReviewText={setReviewText}
         isSubmitting={isSubmittingReview}
         handleSubmitReview={handleSubmitReview}
-      />
-
-      <DeleteReviewModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteReview}
-        isDeleting={isSubmittingReview}
       />
     </div>
   );

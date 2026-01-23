@@ -1,6 +1,6 @@
 import React from "react";
-import { ArrowLeft, Home, Trophy, BarChart3 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, Trophy, BarChart3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CoursePlayerHeader({
   course,
@@ -10,6 +10,7 @@ export default function CoursePlayerHeader({
   completedVideos,
   totalVideos,
 }) {
+  const navigate = useNavigate();
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,12 +18,14 @@ export default function CoursePlayerHeader({
         <div className="h-16 flex items-center justify-between">
           {/* Left: Back Button & Course Title */}
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <Link
-              to={`/courses/${teacherId}/${courseId}`}
+            <button
+              onClick={() => {
+                navigate(-1);
+              }}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 flex-shrink-0"
               title="Back to Course Details">
               <ArrowLeft className="w-5 h-5" />
-            </Link>
+            </button>
             <div className="h-6 w-px bg-gray-200 flex-shrink-0"></div>
             <div className="min-w-0">
               <h1 className="text-sm font-bold text-gray-900 truncate">
@@ -57,12 +60,6 @@ export default function CoursePlayerHeader({
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-xs font-semibold">Enrolled</span>
             </div>
-            <Link
-              to="/"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600"
-              title="Back to Home">
-              <Home className="w-5 h-5" />
-            </Link>
           </div>
         </div>
 

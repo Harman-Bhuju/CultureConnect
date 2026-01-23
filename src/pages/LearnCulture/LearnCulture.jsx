@@ -81,21 +81,7 @@ const LearnCulture = () => {
                 </div>
                 <CourseSwiper />
               </div>
-
-              {/* Cards Arranged Section */}
-              <div className="px-4 md:px-8">
-                <div className="bg-gray-50/50 rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm p-8">
-                  <div className="mb-10 sm:text-left text-center">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                      Curated Collections
-                    </h2>
-                    <p className="text-gray-500">
-                      Handpicked masterpieces to inspire your journey
-                    </p>
-                  </div>
-                  <CardsArranged />
-                </div>
-              </div>
+             
               <MayLikeCourse />
             </div>
           ) : (

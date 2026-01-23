@@ -18,7 +18,7 @@ export default function CourseContent({
   user,
   teacherId,
   openReviewForm,
-  openDeleteModal,
+  onRefresh,
 }) {
   const tabs = [
     { id: "overview", label: "Overview", icon: BookOpen },
@@ -32,23 +32,40 @@ export default function CourseContent({
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
       {/* Tabs */}
-      <div className="border-b border-gray-200 px-6">
-        <div className="flex overflow-x-auto scrollbar-hide">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-4 border-b-2 transition whitespace-nowrap ${activeTab === tab.id
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-gray-600 hover:text-gray-900"
+      {/* Tabs */}
+      <div className="border-b border-gray-200">
+        <div className="px-6">
+          <div className="flex overflow-x-auto scrollbar-hide gap-8">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`group relative flex items-center gap-2 py-4 px-1 transition-all whitespace-nowrap outline-none ${
+                    isActive
+                      ? "text-indigo-600"
+                      : "text-gray-500 hover:text-gray-900"
                   }`}>
-                <Icon className="w-4 h-4" />
-                <span className="font-medium text-sm">{tab.label}</span>
-              </button>
-            );
-          })}
+                  <Icon
+                    className={`w-4 h-4 transition-colors ${isActive ? "text-indigo-600" : "text-gray-400 group-hover:text-gray-600"}`}
+                  />
+                  <span className="font-medium text-sm">{tab.label}</span>
+
+                  {/* Active Indicator */}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-t-full shadow-[0_-2px_6px_rgba(79,70,229,0.3)]" />
+                  )}
+
+                  {/* Hover Indicator (Subtle) */}
+                  {!isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-200 rounded-t-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -304,7 +321,7 @@ export default function CourseContent({
               user={user}
               teacherId={teacherId}
               openReviewForm={openReviewForm}
-              openDeleteModal={openDeleteModal}
+              onRefresh={onRefresh}
             />
           </div>
         )}

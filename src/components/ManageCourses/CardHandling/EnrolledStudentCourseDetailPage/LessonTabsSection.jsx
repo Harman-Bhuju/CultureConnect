@@ -1,11 +1,20 @@
 import React from "react";
-import { Info, Target, AlertCircle, Calendar, Star, CheckCircle, BookOpen } from "lucide-react";
+import {
+  Info,
+  Target,
+  AlertCircle,
+  Calendar,
+  Star,
+  CheckCircle,
+  BookOpen,
+} from "lucide-react";
 import CourseReviews from "../Reviews/CourseReviews";
 
 export default function LessonTabsSection({
   activeTab,
   setActiveTab,
   activeVideo,
+  onRefresh,
 }) {
   const tabs = [
     { id: "description", icon: Info, label: "Overview" },
@@ -20,23 +29,38 @@ export default function LessonTabsSection({
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Tabs Header */}
+      {/* Tabs Header */}
       <div className="border-b border-gray-100">
-        <div className="flex overflow-x-auto scrollbar-hide">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-all relative whitespace-nowrap ${activeTab === tab.id
-                  ? "text-blue-600 bg-blue-50"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                }`}>
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-              {activeTab === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></div>
-              )}
-            </button>
-          ))}
+        <div className="px-6">
+          <div className="flex overflow-x-auto scrollbar-hide gap-6">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`group relative flex items-center gap-2 py-4 px-2 font-medium text-sm transition-all whitespace-nowrap outline-none ${
+                    isActive
+                      ? "text-blue-600"
+                      : "text-gray-500 hover:text-gray-800"
+                  }`}>
+                  <tab.icon
+                    className={`w-4 h-4 transition-colors ${isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"}`}
+                  />
+                  {tab.label}
+
+                  {isActive && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-t-full shadow-[0_-2px_6px_rgba(37,99,235,0.3)]"></div>
+                  )}
+
+                  {/* Hover Indicator (Subtle) */}
+                  {!isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-200 rounded-t-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -71,7 +95,9 @@ export default function LessonTabsSection({
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Level:</span>
-                      <span className="font-medium capitalize">{course?.level}</span>
+                      <span className="font-medium capitalize">
+                        {course?.level}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Language:</span>
@@ -187,14 +213,14 @@ export default function LessonTabsSection({
               course={{
                 ...activeVideo?.course,
                 reviews: activeVideo?.course?.reviews || [],
-                // Ensure isEnrolled is passed down if needed by CourseReviews, 
+                // Ensure isEnrolled is passed down if needed by CourseReviews,
                 // though CoursePlayerPage users are always enrolled.
                 isEnrolled: true,
               }}
               user={activeVideo?.user}
               openReviewForm={activeVideo?.openReviewForm}
-              openDeleteModal={activeVideo?.openDeleteModal}
               teacherId={activeVideo?.course?.teacher_id}
+              onRefresh={onRefresh}
             />
           </div>
         )}
