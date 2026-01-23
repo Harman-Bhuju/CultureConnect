@@ -8,8 +8,10 @@ import {
   Target,
   Play,
   Star,
+  Users,
 } from "lucide-react";
 import CourseReviews from "../Reviews/CourseReviews";
+import RecentEnrollments from "../../Analytics/Chart and Enrollments/RecentEnrollments";
 
 export default function CourseContent({
   course,
@@ -18,11 +20,14 @@ export default function CourseContent({
   user,
   teacherId,
   openReviewForm,
-  onRefresh,
+  openDeleteModal,
+  enrollments = [],
+  enrollmentsLoading = false,
 }) {
   const tabs = [
     { id: "overview", label: "Overview", icon: BookOpen },
     { id: "curriculum", label: "Curriculum", icon: List },
+    { id: "students", label: "Students", icon: Users },
     { id: "outcomes", label: "Learning Outcomes", icon: Target },
     { id: "requirements", label: "Requirements", icon: AlertCircle },
     { id: "schedule", label: "Learning Schedule", icon: Calendar },
@@ -202,6 +207,17 @@ export default function CourseContent({
                 <p className="text-gray-600">No curriculum available</p>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Students Tab */}
+        {activeTab === "students" && (
+          <div className="animate-in fade-in duration-300">
+            <RecentEnrollments
+              selectedPeriod="Until now"
+              enrollments={enrollments}
+              loading={enrollmentsLoading}
+            />
           </div>
         )}
 
