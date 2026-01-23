@@ -633,10 +633,10 @@ function CustomiseProfile() {
             </p>
 
             <div className="bg-gray-50 rounded-xl p-8 border border-gray-200">
-              <div className="flex flex-col md:flex-row gap-6 items-center">
-                {/* Banner Image Preview */}
-                <div className="flex-shrink-0">
-                  <div className="w-full sm:w-[28rem] h-64 rounded-lg overflow-hidden bg-white border-4 border-gray-200 flex items-center justify-center shadow-sm relative group">
+              <div className="flex flex-col gap-6">
+                {/* Banner Image Preview - Full Width */}
+                <div className="w-full">
+                  <div className="w-full h-64 rounded-lg overflow-hidden bg-white border-4 border-gray-200 flex items-center justify-center shadow-sm relative group">
                     {bannerPreview ? (
                       <>
                         <img
@@ -644,7 +644,7 @@ function CustomiseProfile() {
                           alt="Banner"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                        <div className="absolute inset-0bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
                           <Camera className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       </>
