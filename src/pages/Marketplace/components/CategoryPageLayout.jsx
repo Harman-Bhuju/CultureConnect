@@ -6,7 +6,9 @@ import {
   Star,
   Check,
   Loader2,
+  Search,
 } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Card from "../../../components/cardLayout/Card";
 import API from "../../../Configs/ApiEndpoints";
 
@@ -16,6 +18,7 @@ const CategoryPageLayout = ({
   description,
   showAudienceFilter = false,
 }) => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -49,6 +52,10 @@ const CategoryPageLayout = ({
     { value: "girl", label: "Girls" },
   ];
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchQuery = queryParams.get("q") || "";
+
   // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
@@ -63,6 +70,7 @@ const CategoryPageLayout = ({
           per_page: itemsPerPage,
         });
 
+        if (searchQuery) params.append("q", searchQuery);
         if (priceRange.min) params.append("min_price", priceRange.min);
         if (priceRange.max) params.append("max_price", priceRange.max);
         if (selectedRatings.length > 0)
@@ -98,12 +106,13 @@ const CategoryPageLayout = ({
     selectedRatings,
     selectedAudience,
     itemsPerPage,
+    searchQuery,
   ]);
 
-  // Reset to page 1 when filters change
+  // Reset to page 1 when filters or search change
   useEffect(() => {
     setCurrentPage(1);
-  }, [priceRange, selectedRatings, selectedAudience, sortBy]);
+  }, [priceRange, selectedRatings, selectedAudience, sortBy, searchQuery]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= pagination.total_pages) {
@@ -183,12 +192,37 @@ const CategoryPageLayout = ({
     );
   }
 
+  const hasActiveFilters =
+    priceRange.min !== "" ||
+    priceRange.max !== "" ||
+    selectedRatings.length > 0 ||
+    selectedAudience !== null;
+
   return (
     <div className="bg-gray-100">
       <div className="max-w-[1440px] mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        {/* Sidebar Header with Clear All */}
+        <div className="flex justify-between items-center mb-6 lg:hidden">
+          <h2 className="text-lg font-bold">Filters</h2>
+          {hasActiveFilters && (
+            <button onClick={clearAllFilters} className="text-red-600 text-sm font-bold">Clear All</button>
+          )}
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Sidebar - Refined & Aesthetic */}
           <aside className="hidden lg:block w-72 flex-shrink-0 space-y-8 self-start sticky top-24 pr-4">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Filtering</h2>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAllFilters}
+                  className="text-[10px] font-bold text-red-600 hover:text-red-700 uppercase tracking-tighter"
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
             {/* Audience Filter - Only for cultural-clothes */}
             {showAudienceFilter && (
               <div>
@@ -254,11 +288,24 @@ const CategoryPageLayout = ({
               {priceError && (
                 <p className="text-xs text-red-500 mt-2">{priceError}</p>
               )}
-              <button
-                onClick={applyPriceFilter}
-                className="mt-3 w-full py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-                Apply Price
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={applyPriceFilter}
+                  className="mt-3 flex-1 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+                  Apply
+                </button>
+                {(priceRange.min || priceRange.max || priceInput.min || priceInput.max) && (
+                  <button
+                    onClick={() => {
+                      setPriceInput({ min: "", max: "" });
+                      setPriceRange({ min: "", max: "" });
+                      setPriceError("");
+                    }}
+                    className="mt-3 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                    Clear
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Rating Filter */}
@@ -369,18 +416,48 @@ const CategoryPageLayout = ({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-32">
-                  <h3 className="text-gray-900 font-medium text-xl mb-2">
-                    No matching products
+                <div className="text-center py-32 bg-white rounded-3xl shadow-sm border border-gray-100">
+                  <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Search className="text-gray-300 w-10 h-10" />
+                  </div>
+                  <h3 className="text-gray-900 font-bold text-2xl mb-3">
+                    {searchQuery ? `"${searchQuery}" not found` : "No results match your criteria"}
                   </h3>
-                  <p className="text-gray-500 mb-8">
-                    Adjust your filters to discover more cultural treasures.
+                  <p className="text-gray-500 mb-10 max-w-md mx-auto leading-relaxed">
+                    We couldn't find any products matching your current search or filters.
+                    Try adjusting your selection to find what you're looking for.
                   </p>
-                  <button
-                    onClick={clearAllFilters}
-                    className="px-8 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-shadow shadow-lg shadow-red-200 font-medium">
-                    Clear All Filters
-                  </button>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    {searchQuery && (
+                      <button
+                        onClick={() => {
+                          const params = new URLSearchParams(location.search);
+                          params.delete("q");
+                          navigate(`${location.pathname}?${params.toString()}`);
+                        }}
+                        className="px-8 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all font-bold shadow-lg shadow-red-100 active:scale-95"
+                      >
+                        Clear Search Query
+                      </button>
+                    )}
+                    {hasActiveFilters && (
+                      <button
+                        onClick={clearAllFilters}
+                        className="px-8 py-3 bg-white border-2 border-gray-800 text-gray-800 rounded-full hover:bg-gray-50 transition-all font-bold active:scale-95"
+                      >
+                        Reset All Filters
+                      </button>
+                    )}
+                    {!searchQuery && !hasActiveFilters && (
+                      <button
+                        onClick={() => navigate('/marketplace')}
+                        className="px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-black transition-all font-bold active:scale-95"
+                      >
+                        Go to Shop
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
