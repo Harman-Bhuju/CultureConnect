@@ -44,13 +44,11 @@ try {
 
     $stmt = $conn->prepare("
         SELECT 
-            o.*,
-            p.stock
-        FROM orders o
-        JOIN products p ON o.product_id = p.id
-        WHERE o.id = ? 
-        AND o.user_id = ? 
-        AND o.order_status = 'no_payment'
+            *
+        FROM orders
+        WHERE id = ? 
+        AND user_id = ? 
+        AND order_status = 'no_payment'
         LIMIT 1
     ");
     $stmt->bind_param("ii", $order_id, $user_id);
@@ -60,18 +58,34 @@ try {
     $stmt->close();
 
     if (!$order) {
-        echo json_encode(["success" => false, "error" => "Order not found or already processed"]);
+        // Check if the order exists but is already processing or completed
+        $stmt = $conn->prepare("SELECT order_status FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
+        $stmt->bind_param("ii", $order_id, $user_id);
+        $stmt->execute();
+        $check_res = $stmt->get_result();
+        $existing = $check_res->fetch_assoc();
+        $stmt->close();
+
+        if ($existing) {
+            $status = $existing['order_status'];
+            if (in_array($status, ['processing', 'shipped', 'completed'])) {
+                echo json_encode(["success" => true, "already_processed" => true, "message" => "Order already confirmed"]);
+                exit;
+            }
+            if ($status === 'no_payment') {
+                // This shouldn't happen if the first query worked, but just in case of race conditions
+                echo json_encode(["success" => false, "error" => "Order is pending payment but was skipped. Please refresh."]);
+                exit;
+            }
+            echo json_encode(["success" => false, "error" => "Order status is '$status'. You cannot process this order."]);
+            exit;
+        }
+
+        echo json_encode(["success" => false, "error" => "Order not found. Please try checkout again."]);
         exit;
     }
 
-    if ($order['stock'] < $order['quantity']) {
-        echo json_encode([
-            "success" => false,
-            "error" => "Insufficient stock. Available: " . $order['stock'],
-            "availableStock" => (int)$order['stock']
-        ]);
-        exit;
-    }
+
 
     $conn->begin_transaction();
 

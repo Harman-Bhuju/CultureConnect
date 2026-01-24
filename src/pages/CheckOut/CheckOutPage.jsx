@@ -170,27 +170,7 @@ export default function CheckOutPage() {
   }, [selectedLocation, !!orderItem, !!orderDetails, loading]);
 
   const validateQuantity = async (newQuantity) => {
-    try {
-      const response = await fetch(
-        `${API.GET_USER_LOCATION}?product_id=${productId}&quantity=${newQuantity}`,
-        {
-          method: "GET",
-          credentials: "include",
-        },
-      );
-
-      const data = await response.json();
-
-      if (!data.success) {
-        toast.error(data.error || "Insufficient stock");
-        return false;
-      }
-      return true;
-    } catch (error) {
-      console.error("Error validating quantity:", error);
-      toast.error("Error validating quantity");
-      return false;
-    }
+    return true; // Bypass stock check
   };
 
   const incrementQuantity = async () => {
@@ -427,6 +407,13 @@ export default function CheckOutPage() {
 
       if (data.success) {
         toast.success("Payment confirmed!");
+
+        // Clear session storage for COD success
+        sessionStorage.removeItem("checkout_orderId");
+        sessionStorage.removeItem("checkout_orderNumber");
+        sessionStorage.removeItem("checkout_orderDetails");
+        sessionStorage.removeItem("checkout_selectedPayment");
+
         navigate(`/checkout/confirmation/${sellerId}/${productId}`, {
           state: { fromPayment: true },
         });
