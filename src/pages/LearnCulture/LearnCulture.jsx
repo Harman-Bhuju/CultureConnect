@@ -10,6 +10,7 @@ import "swiper/css/pagination";
 import CourseSwiper from "../../components/LearnCulture/CourseSwiper";
 import MayLikeCourse from "../../components/LearnCulture/MaylikeCourse";
 import TeacherSpotlight from "../../components/LearnCulture/TeacherSpotlight";
+import SearchBar from "../../components/Common/SearchBar";
 
 const LearnCulture = () => {
   const location = useLocation();
@@ -27,7 +28,7 @@ const LearnCulture = () => {
           {isLandingPage ? (
             <div>
               {/* Hero Section */}
-              <div className="relative overflow-hidden text-center pt-20 pb-12 px-4 mb-8">
+              <div className="relative text-center pt-20 pb-12 px-4 mb-8">
                 {/* Decorative Background Glow */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-teal-50/50 blur-[120px] rounded-full -z-10" />
 
@@ -43,20 +44,7 @@ const LearnCulture = () => {
                 </p>
 
                 {/* Search Bar */}
-                <div className="max-w-2xl mx-auto relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-teal-500/20 to-emerald-500/20 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search for dances, songs, instruments..."
-                      className="w-full pl-14 pr-6 py-5 bg-white border border-gray-100 rounded-[1.5rem] shadow-sm focus:ring-2 focus:ring-teal-500/10 focus:border-teal-200 outline-none transition-all hover:shadow-md text-lg"
-                    />
-                    <Search
-                      className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-teal-500 transition-colors"
-                      size={24}
-                    />
-                  </div>
-                </div>
+                <SearchBar variant="hero-learn" contextType="course" />
               </div>
 
 

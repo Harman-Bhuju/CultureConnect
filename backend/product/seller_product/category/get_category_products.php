@@ -33,6 +33,7 @@ try {
     }
 
     // Get optional filters
+    $search_query = isset($_GET['q']) ? trim($_GET['q']) : '';
     $audience = isset($_GET['audience']) ? trim($_GET['audience']) : '';
     $sort = isset($_GET['sort']) ? trim($_GET['sort']) : 'newest';
     $min_price = isset($_GET['min_price']) && $_GET['min_price'] !== '' ? (float)$_GET['min_price'] : null;
@@ -58,6 +59,15 @@ try {
     // Initialize params for base conditions
     $params = [$category];
     $types = "s";
+
+    // Add search filter (name or tags)
+    if (!empty($search_query)) {
+        $base_query .= " AND (p.product_name LIKE ? OR EXISTS (SELECT 1 FROM product_tags pt WHERE pt.product_id = p.id AND pt.tag LIKE ?))";
+        $searchTerm = "%$search_query%";
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+        $types .= "ss";
+    }
 
     // Add audience filter (only for cultural-clothes)
     if (!empty($audience) && $category === 'cultural-clothes') {

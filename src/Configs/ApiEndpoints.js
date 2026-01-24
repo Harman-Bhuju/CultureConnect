@@ -158,6 +158,9 @@ const API = {
   GET_STUDENT_PROGRESS: `${BASE_URL}/course/get_student_progress.php`,
   MARK_VIDEO_COMPLETED: `${BASE_URL}/course/mark_video_completed.php`,
   UPDATE_VIDEO_TIMESTAMP: `${BASE_URL}/course/update_video_timestamp.php`,
+
+  // Global Search Suggestions
+  GET_SEARCH_SUGGESTIONS: `${BASE_URL}/search/get_suggestions.php`,
 };
 
 export default API;

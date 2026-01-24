@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDown,
   ChevronLeft,
@@ -6,11 +7,13 @@ import {
   Star,
   Check,
   Loader2,
+  Search,
 } from "lucide-react";
 import CourseCard from "../../../components/cardlayout/CourseCard";
 import API from "../../../Configs/ApiEndpoints";
 
 const CourseCategoryPageLayout = ({ category, title, description }) => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -42,6 +45,10 @@ const CourseCategoryPageLayout = ({ category, title, description }) => {
     { value: "advanced", label: "Advanced" },
   ];
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchQuery = queryParams.get("q") || "";
+
   // Fetch courses from API
   useEffect(() => {
     const fetchCourses = async () => {
@@ -56,6 +63,7 @@ const CourseCategoryPageLayout = ({ category, title, description }) => {
           per_page: itemsPerPage,
         });
 
+        if (searchQuery) params.append("q", searchQuery);
         if (priceRange.min) params.append("min_price", priceRange.min);
         if (priceRange.max) params.append("max_price", priceRange.max);
         if (selectedRatings.length > 0)
@@ -91,12 +99,13 @@ const CourseCategoryPageLayout = ({ category, title, description }) => {
     selectedRatings,
     selectedLevel,
     itemsPerPage,
+    searchQuery,
   ]);
 
-  // Reset to page 1 when filters change
+  // Reset to page 1 when filters or search change
   useEffect(() => {
     setCurrentPage(1);
-  }, [priceRange, selectedRatings, selectedLevel, sortBy]);
+  }, [priceRange, selectedRatings, selectedLevel, sortBy, searchQuery]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= pagination.total_pages) {
@@ -175,12 +184,37 @@ const CourseCategoryPageLayout = ({ category, title, description }) => {
     );
   }
 
+  const hasActiveFilters =
+    priceRange.min !== "" ||
+    priceRange.max !== "" ||
+    selectedRatings.length > 0 ||
+    selectedLevel !== "all";
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-[1440px] mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        {/* Mobile Header with Clear All */}
+        <div className="flex justify-between items-center mb-6 lg:hidden">
+          <h2 className="text-lg font-bold">Filters</h2>
+          {hasActiveFilters && (
+            <button onClick={clearAllFilters} className="text-teal-600 text-sm font-bold">Clear All</button>
+          )}
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Sidebar */}
           <aside className="hidden lg:block w-72 flex-shrink-0 space-y-8 self-start sticky top-24 pr-4">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Filtering</h2>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAllFilters}
+                  className="text-[10px] font-bold text-teal-600 hover:text-teal-700 uppercase tracking-tighter"
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
             {/* Level Filter */}
             <div>
               <h3 className="font-bold text-gray-900 mb-5 text-sm uppercase tracking-wider border-l-4 border-teal-600 pl-3">
@@ -191,11 +225,10 @@ const CourseCategoryPageLayout = ({ category, title, description }) => {
                   <button
                     key={option.value}
                     onClick={() => setSelectedLevel(option.value)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      selectedLevel === option.value
-                        ? "bg-teal-600 text-white shadow-md"
-                        : "bg-white text-gray-700 hover:bg-teal-50 hover:text-teal-600 border border-gray-200"
-                    }`}>
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedLevel === option.value
+                      ? "bg-teal-600 text-white shadow-md"
+                      : "bg-white text-gray-700 hover:bg-teal-50 hover:text-teal-600 border border-gray-200"
+                      }`}>
                     {option.label}
                   </button>
                 ))}
@@ -245,11 +278,24 @@ const CourseCategoryPageLayout = ({ category, title, description }) => {
               {priceError && (
                 <p className="text-xs text-red-500 mt-2">{priceError}</p>
               )}
-              <button
-                onClick={applyPriceFilter}
-                className="mt-3 w-full py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors">
-                Apply Price
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={applyPriceFilter}
+                  className="mt-3 flex-1 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors">
+                  Apply
+                </button>
+                {(priceRange.min || priceRange.max || priceInput.min || priceInput.max) && (
+                  <button
+                    onClick={() => {
+                      setPriceInput({ min: "", max: "" });
+                      setPriceRange({ min: "", max: "" });
+                      setPriceError("");
+                    }}
+                    className="mt-3 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                    Clear
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Rating Filter */}
@@ -366,18 +412,48 @@ const CourseCategoryPageLayout = ({ category, title, description }) => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-32">
-                  <h3 className="text-gray-900 font-bold text-xl mb-2">
-                    No matching courses
+                <div className="text-center py-32 bg-white rounded-3xl shadow-sm border border-gray-100">
+                  <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Search className="text-gray-300 w-10 h-10" />
+                  </div>
+                  <h3 className="text-gray-900 font-bold text-2xl mb-3">
+                    {searchQuery ? `"${searchQuery}" not found` : "No classes match your criteria"}
                   </h3>
-                  <p className="text-gray-500 mb-8">
-                    Try adjusting your filters to find your perfect masterclass.
+                  <p className="text-gray-500 mb-10 max-w-md mx-auto leading-relaxed">
+                    We couldn't find any courses matching your current search or filters.
+                    Try adjusting your selection to discover our masterclasses.
                   </p>
-                  <button
-                    onClick={clearAllFilters}
-                    className="px-8 py-3 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition-shadow shadow-lg shadow-teal-100 font-semibold">
-                    Clear All Filters
-                  </button>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    {searchQuery && (
+                      <button
+                        onClick={() => {
+                          const params = new URLSearchParams(location.search);
+                          params.delete("q");
+                          navigate(`${location.pathname}?${params.toString()}`);
+                        }}
+                        className="px-8 py-3 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition-all font-bold shadow-lg shadow-teal-100 active:scale-95"
+                      >
+                        Clear Search Query
+                      </button>
+                    )}
+                    {hasActiveFilters && (
+                      <button
+                        onClick={clearAllFilters}
+                        className="px-8 py-3 bg-white border-2 border-gray-800 text-gray-800 rounded-full hover:bg-gray-50 transition-all font-bold active:scale-95"
+                      >
+                        Reset All Filters
+                      </button>
+                    )}
+                    {!searchQuery && !hasActiveFilters && (
+                      <button
+                        onClick={() => navigate('/learnculture')}
+                        className="px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-black transition-all font-bold active:scale-95"
+                      >
+                        Explore All Courses
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -399,11 +475,10 @@ const CourseCategoryPageLayout = ({ category, title, description }) => {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`w-11 h-11 flex items-center justify-center rounded-full text-sm font-bold transition-all ${
-                      currentPage === page
-                        ? "bg-teal-600 text-white shadow-lg shadow-teal-100 scale-110"
-                        : "bg-white text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200"
-                    }`}>
+                    className={`w-11 h-11 flex items-center justify-center rounded-full text-sm font-bold transition-all ${currentPage === page
+                      ? "bg-teal-600 text-white shadow-lg shadow-teal-100 scale-110"
+                      : "bg-white text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200"
+                      }`}>
                     {page}
                   </button>
                 ))}

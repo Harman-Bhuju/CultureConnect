@@ -9,6 +9,7 @@ import TrendingCarousel from "../../components/Carousel/TrendingCarousel";
 import MayLike from "../../components/Carousel/MayLike";
 import SellerSpotlight from "../../components/Marketplace/SellerSpotlight";
 import { Search } from "lucide-react";
+import SearchBar from "../../components/Common/SearchBar";
 
 const Marketplace = () => {
   const location = useLocation();
@@ -27,7 +28,7 @@ const Marketplace = () => {
           {isLandingPage ? (
             <div>
               {/* Hero Section */}
-              <div className="relative overflow-hidden text-center pt-20 pb-12 px-4">
+              <div className="relative text-center pt-20 pb-12 px-4">
                 {/* Subtle Decorative Background Elements */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-orange-50/50 blur-[120px] rounded-full -z-10" />
 
@@ -43,20 +44,7 @@ const Marketplace = () => {
                 </p>
 
                 {/* Search Bar Refined */}
-                <div className="max-w-2xl mx-auto relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search for clothes, instruments, art..."
-                      className="w-full pl-14 pr-6 py-5 bg-white border border-gray-100 rounded-[1.5rem] shadow-sm focus:ring-2 focus:ring-orange-500/10 focus:border-orange-200 outline-none transition-all hover:shadow-md text-lg"
-                    />
-                    <Search
-                      className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-orange-500 transition-colors"
-                      size={24}
-                    />
-                  </div>
-                </div>
+                <SearchBar variant="hero-marketplace" contextType="product" />
               </div>
 
               {/* Category Navigation */}

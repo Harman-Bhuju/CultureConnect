@@ -22,6 +22,7 @@ try {
 
     // Get optional filters
     $level = isset($_GET['level']) ? trim($_GET['level']) : '';
+    $search_query = isset($_GET['q']) ? trim($_GET['q']) : '';
     $sort = isset($_GET['sort']) ? trim($_GET['sort']) : 'newest';
     $min_price = isset($_GET['min_price']) && $_GET['min_price'] !== '' ? (float)$_GET['min_price'] : null;
     $max_price = isset($_GET['max_price']) && $_GET['max_price'] !== '' ? (float)$_GET['max_price'] : null;
@@ -44,6 +45,15 @@ try {
     $category_like = "%$category%";
     $params = [$category_param, $category_like];
     $types = "ss";
+
+    // Add search filter (title or tags)
+    if (!empty($search_query)) {
+        $base_query .= " AND (tc.course_title LIKE ? OR EXISTS (SELECT 1 FROM teacher_course_tags tct WHERE tct.course_id = tc.id AND tct.tag LIKE ?))";
+        $searchTerm = "%$search_query%";
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+        $types .= "ss";
+    }
 
     // Add level filter
     if (!empty($level) && $level !== 'all') {
