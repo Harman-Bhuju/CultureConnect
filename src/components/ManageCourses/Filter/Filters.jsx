@@ -57,19 +57,6 @@ const Filters = ({
         ))}
       </select>
 
-      {stockOptions && stockOptions.length > 0 && (
-        <select
-          value={stockFilter}
-          onChange={(e) => setStockFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
-          {stockOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      )}
-
       <div className="flex gap-2 ml-auto">
         <p className="text-gray-500 py-2">{filteredCount} courses</p>{" "}
         {/* Adapted */}

@@ -8,6 +8,7 @@ import {
   PanelLeftIcon,
   Store,
   TrendingUp,
+  FileText,
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
@@ -38,7 +39,7 @@ export default function AppSidebar({ children, ...props }) {
     name: "Guest",
     email: "guest@example.com",
     avatar: default_logo,
-    role: "user"
+    role: "user",
   };
   // Inside AppSidebar component
   let roleBasedProjects = [];
@@ -56,9 +57,7 @@ export default function AppSidebar({ children, ...props }) {
         icon: GraduationCap,
       },
     ];
-  }
-
-  else if (userData.role === "teacher" && userData.teacher_id) {
+  } else if (userData.role === "teacher" && userData.teacher_id) {
     roleBasedProjects = [
       {
         name: "Be a Seller",
@@ -71,9 +70,11 @@ export default function AppSidebar({ children, ...props }) {
         icon: GraduationCap,
       },
     ];
-  }
-
-  else if (userData.role === "seller_teacher" && userData.teacher_id && userData.seller_id) {
+  } else if (
+    userData.role === "seller_teacher" &&
+    userData.teacher_id &&
+    userData.seller_id
+  ) {
     roleBasedProjects = [
       {
         name: "Seller Profile",
@@ -86,9 +87,7 @@ export default function AppSidebar({ children, ...props }) {
         icon: GraduationCap,
       },
     ];
-  }
-
-  else if (userData.role === "user") {
+  } else if (userData.role === "user") {
     roleBasedProjects = [
       {
         name: "Be a Seller",
@@ -103,6 +102,12 @@ export default function AppSidebar({ children, ...props }) {
     ];
   }
 
+  // Always add Documentation link at the end for all users
+  roleBasedProjects.push({
+    name: "Documentation",
+    url: "/documentation",
+    icon: FileText,
+  });
 
   const data = {
     user: userData,
@@ -139,7 +144,6 @@ export default function AppSidebar({ children, ...props }) {
       },
     ],
     projects: roleBasedProjects,
-
   };
 
   return (
@@ -147,7 +151,11 @@ export default function AppSidebar({ children, ...props }) {
       <Sidebar collapsible="icon" {...props}>
         <SidebarHeader className="flex items-center justify-between">
           <TeamSwitcher teams={data.teams} />
-          {isCollapsed && <SidebarTrigger className="w-8 h-8 p-3" ><PanelLeftIcon /></SidebarTrigger>}
+          {isCollapsed && (
+            <SidebarTrigger className="w-8 h-8 p-3">
+              <PanelLeftIcon />
+            </SidebarTrigger>
+          )}
         </SidebarHeader>
 
         <SidebarContent>

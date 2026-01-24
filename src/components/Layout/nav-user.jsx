@@ -12,6 +12,10 @@ import {
   User,
   ShoppingCart,
   UserCheck,
+  Clipboard,
+  Award,
+  FileText,
+  GraduationCap,
 } from "lucide-react";
 
 import { Avatar, AvatarImage } from "../ui/avatar";
@@ -115,6 +119,12 @@ export function NavUser({ user }) {
                 className="cursor-pointer">
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Cart
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate("/mycourses")}
+                className="cursor-pointer">
+                <GraduationCap className="w-4 h-4 mr-2" />
+                My Courses
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer"

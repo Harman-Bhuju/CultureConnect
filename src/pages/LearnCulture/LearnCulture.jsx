@@ -11,6 +11,7 @@ import CourseSwiper from "../../components/LearnCulture/CourseSwiper";
 import MayLikeCourse from "../../components/LearnCulture/MaylikeCourse";
 import TeacherSpotlight from "../../components/LearnCulture/TeacherSpotlight";
 import SearchBar from "../../components/Common/SearchBar";
+import LCCategoryNav from "../../components/LearnCulture/LCCategoryNav";
 
 const LearnCulture = () => {
   const location = useLocation();
@@ -47,7 +48,6 @@ const LearnCulture = () => {
                 <SearchBar variant="hero-learn" contextType="course" />
               </div>
 
-
               {/* Category Navigation */}
               <div className="px-4 md:px-8">
                 <div className="mb-8 text-center">
@@ -61,10 +61,9 @@ const LearnCulture = () => {
                     Structured learning paths from verified cultural experts
                   </p>
                 </div>
+                <LCCategoryNav />
                 <CourseSwiper />
               </div>
-
-
 
               <div className="space-y-8 pb-20">
                 {/* Teacher Spotlight */}

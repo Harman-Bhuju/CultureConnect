@@ -31,15 +31,7 @@ const CourseManagement = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Derived filters
-  const stockOptions = [
-    // Mapped to status for courses
-    "All Status",
-    "Active",
-    "Draft",
-    "Under Review",
-    "Rejected",
-  ];
+
 
   const filteredCourses = courses
     .filter((course) => {

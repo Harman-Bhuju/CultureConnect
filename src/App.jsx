@@ -25,6 +25,9 @@ const SetPassword = lazy(() => import("./pages/SetPassword/SetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 const Notification = lazy(() => import("./pages/Notification/Notification"));
 const OurTeam = lazy(() => import("./pages/OurTeam/OurTeam"));
+const DocumentationPage = lazy(
+  () => import("./pages/Documentation/DocumentationPage"),
+);
 
 // Learn Culture pages
 const LearnCulture = lazy(() => import("./pages/LearnCulture/LearnCulture"));
@@ -132,6 +135,7 @@ const CourseCheckOutPage = lazy(
   () => import("./pages/CheckOut/CourseCheckOutPage"),
 );
 const CartPage = lazy(() => import("./pages/Cart/CartPage"));
+const MyCourses = lazy(() => import("./pages/MyCourses/MyCourses"));
 const FollowingPage = lazy(() => import("./pages/Following/FollowingPage"));
 const FollowersPage = lazy(() => import("./pages/Followers/FollowersPage"));
 
@@ -451,6 +455,15 @@ function App() {
           />
 
           <Route
+            path="/mycourses"
+            element={
+              <ProtectedRoute>
+                <MyCourses />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/following"
             element={
               <ProtectedRoute>
@@ -516,6 +529,7 @@ function App() {
 
           {/* ==================== Public Routes ==================== */}
           <Route path="/our-team" element={<OurTeam />} />
+          <Route path="/documentation" element={<DocumentationPage />} />
 
           <Route
             path="/login"

@@ -241,7 +241,7 @@ const TeacherProfile = () => {
                     <div>
                       <span>
                         {classes.length} Course
-                        {classes.length !== 1 ? "es" : ""}
+                        {classes.length !== 1 ? "s" : ""}
                       </span>
                     </div>
                   </div>

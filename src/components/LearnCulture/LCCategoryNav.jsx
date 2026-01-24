@@ -46,7 +46,7 @@ const LCCategoryNav = () => {
           <Link
             key={cat.id}
             to={cat.path}
-            className="group relative w-full sm:w-64 p-8 bg-white/40 backdrop-blur-md rounded-3xl border border-white/20 shadow-[0_8px_32px_0_rgba(20,184,166,0.07)] hover:shadow-[0_8px_32px_0_rgba(20,184,166,0.15)] transition-all duration-500 overflow-hidden">
+            className="group relative w-full sm:w-64 p-8 bg-white/40 backdrop-blur-md rounded-3xl border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] transition-all duration-500 overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
 
@@ -61,12 +61,6 @@ const LCCategoryNav = () => {
             <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700 transition-colors">
               {cat.count}
             </p>
-
-            {/* Animated Underline */}
-            <div className="absolute bottom-0 left-0 h-1.5 bg-gradient-to-r from-transparent via-teal-600/20 to-transparent w-0 group-hover:w-full transition-all duration-700 ease-in-out" />
-
-            {/* Subtle Glow */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-white/0 via-teal-100/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10" />
           </Link>
         );
       })}
