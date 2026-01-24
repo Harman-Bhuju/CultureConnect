@@ -69,15 +69,7 @@ try {
         exit;
     }
 
-    // Validate stock
-    if ($product['stock'] < $quantity) {
-        echo json_encode([
-            "success" => false,
-            "error" => "Insufficient stock. Available: " . $product['stock'],
-            "availableStock" => (int)$product['stock']
-        ]);
-        exit;
-    }
+
 
     // Check if user has complete location info
     $hasLocation = !empty($user['province']) && !empty($user['district']) &&

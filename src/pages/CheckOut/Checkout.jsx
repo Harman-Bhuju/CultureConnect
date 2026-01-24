@@ -161,11 +161,10 @@ export default function Checkout({
                             decrementQuantity();
                           }}
                           disabled={orderItem.quantity <= 1}
-                          className={`px-2 py-1 text-sm font-semibold ${
-                            orderItem.quantity <= 1
+                          className={`px-2 py-1 text-sm font-semibold ${orderItem.quantity <= 1
                               ? "text-gray-300 cursor-not-allowed"
                               : "text-black hover:text-gray-700"
-                          }`}>
+                            }`}>
                           -
                         </button>
                         <span className="text-sm font-medium px-2">
@@ -177,18 +176,11 @@ export default function Checkout({
                             e.stopPropagation();
                             incrementQuantity();
                           }}
-                          disabled={orderItem.quantity >= orderItem.stock}
-                          className={`px-2 py-1 text-sm font-semibold ${
-                            orderItem.quantity >= orderItem.stock
-                              ? "text-gray-300 cursor-not-allowed"
-                              : "text-black hover:text-gray-700"
-                          }`}>
+                          className="px-2 py-1 text-sm font-semibold text-black hover:text-gray-700">
                           +
                         </button>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        ({orderItem.stock} available)
-                      </span>
+
                     </div>
 
                     {/* Size Selector */}
@@ -206,11 +198,10 @@ export default function Checkout({
                                 e.stopPropagation();
                                 updateSize(size);
                               }}
-                              className={`px-3 py-1.5 border-2 rounded-lg text-sm font-medium transition ${
-                                orderItem.size === size
+                              className={`px-3 py-1.5 border-2 rounded-lg text-sm font-medium transition ${orderItem.size === size
                                   ? "border-black bg-black text-white"
                                   : "border-gray-300 hover:border-gray-400 text-gray-700"
-                              }`}>
+                                }`}>
                               {size}
                             </button>
                           ))}
@@ -270,11 +261,10 @@ export default function Checkout({
             <button
               onClick={handleProceedToPayment}
               disabled={!selectedLocation}
-              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${
-                selectedLocation
+              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${selectedLocation
                   ? "bg-black hover:bg-gray-800 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}>
+                }`}>
               {selectedLocation
                 ? "Proceed to Payment"
                 : "Select Location First"}

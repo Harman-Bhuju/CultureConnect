@@ -18,6 +18,19 @@ export default function ConfirmationPage({
   const [orderDetails, setOrderDetails] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Clear checkout session data on mount
+  useEffect(() => {
+    sessionStorage.removeItem("checkout_selectedLocation");
+    sessionStorage.removeItem("checkout_selectedPayment");
+    sessionStorage.removeItem("checkout_orderId");
+    sessionStorage.removeItem("checkout_orderNumber");
+    sessionStorage.removeItem("checkout_orderDetails");
+
+    // Also reset parent state if setters are provided
+    if (setSelectedPayment) setSelectedPayment(null);
+    if (setSelectedLocation) setSelectedLocation(null);
+  }, []);
+
   useEffect(() => {
     const fetchOrderDetails = async () => {
       if (!orderId) {

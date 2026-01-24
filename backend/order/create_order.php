@@ -71,14 +71,7 @@ try {
         exit;
     }
 
-    if ($product['stock'] < $quantity) {
-        echo json_encode([
-            "success" => false,
-            "error" => "Insufficient stock. Available: " . $product['stock'],
-            "availableStock" => (int)$product['stock']
-        ]);
-        exit;
-    }
+
 
     // Check if there's an existing no_payment order for this user and product
     $stmt = $conn->prepare("
