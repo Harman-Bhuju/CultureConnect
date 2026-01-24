@@ -1,29 +1,57 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Users, Award, Heart, Globe } from "lucide-react";
-const stats = [
-  {
-    icon: Users,
-    value: "2000+",
-    label: "Artisans Supported",
-  },
-  {
-    icon: Award,
-    value: "100%",
-    label: "Authentic Handcrafted",
-  },
-  {
-    icon: Heart,
-    value: "50+",
-    label: "Heritage Art Forms",
-  },
-  {
-    icon: Globe,
-    value: "Global",
-    label: "Community Reach",
-  },
-];
+import API from "../../Configs/ApiEndpoints";
 const CulturalStorySection = () => {
+  const [statsData, setStatsData] = useState({
+    total_artisans: 0,
+    total_courses: 0,
+    total_users: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch(API.GET_HOME_STATS);
+        const result = await response.json();
+        if (result.status === "success") {
+          setStatsData({
+            total_artisans: result.data.total_sellers + result.data.total_teachers,
+            total_courses: result.data.total_courses,
+            total_users: result.data.total_users,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching cultural stats:", error);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const stats = [
+    {
+      icon: Users,
+      value: statsData.total_artisans >= 1000 ? `${(statsData.total_artisans / 1000).toFixed(1)}k+` : `${statsData.total_artisans}+`,
+      label: "Artisans Supported",
+    },
+    {
+      icon: Award,
+      value: "100%",
+      label: "Authentic Handcrafted",
+    },
+    {
+      icon: Heart,
+      value: `${statsData.total_courses}+`,
+      label: "Courses Available",
+    },
+    {
+      icon: Globe,
+      value: statsData.total_users >= 1000 ? `${(statsData.total_users / 1000).toFixed(1)}k+` : `${statsData.total_users}+`,
+      label: "Community Reach",
+    },
+  ];
+
+
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10">

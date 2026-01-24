@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const BecomeExpertSection = () => {
+  const { user } = useAuth();
+  const isExpert = user?.teacher_id;
+
   return (
     <section className="pb-12 bg-gray-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
@@ -148,7 +151,7 @@ const BecomeExpertSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}>
-                <Link to={isExpert ? `/teacher-analytics/${user.teacher_id}` : "/teacher-registration"}>
+                <Link to={isExpert ? `/teacher/manageclasses/${user.teacher_id}` : "/teacher-registration"}>
                   <button className="group px-8 py-4 bg-white text-royal-blue font-bold rounded-xl hover:bg-indigo-50 transition-all shadow-xl shadow-indigo-900/20 flex items-center gap-2">
                     {isExpert ? "Go to Expert Dashboard" : "Become a Verified Expert"}
                     <ArrowRight className="group-hover:translate-x-1 transition-transform" />

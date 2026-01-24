@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const BecomeSellerSection = () => {
+  const { user } = useAuth();
+  const isSeller = user?.seller_id;
+
   return (
     <section className="pb-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
@@ -93,7 +96,7 @@ const BecomeSellerSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}>
-                <Link to={isSeller ? `/seller/analytics/${user.seller_id}` : "/seller-registration"}>
+                <Link to={isSeller ? `/seller/manageproducts/${user.seller_id}` : "/seller-registration"}>
                   <button className="group px-8 py-4 bg-heritage-red text-white font-bold rounded-xl hover:bg-red-700 transition-all shadow-xl shadow-red-900/20 flex items-center gap-2">
                     {isSeller ? "Go to Seller Dashboard" : "Start Your Seller Journey"}
                     <ArrowRight className="group-hover:translate-x-1 transition-transform" />

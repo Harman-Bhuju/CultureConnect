@@ -56,7 +56,15 @@ const HeroSection = () => {
   });
 
   const ref = useRef(null);
-  // ...
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -73,7 +81,6 @@ const HeroSection = () => {
   }, []);
 
   useEffect(() => {
-    // ...
     const nextSlide = (currentSlide + 1) % heroSlides.length;
     if (!loadedImages.has(nextSlide)) {
       const img = new Image();
