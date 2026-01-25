@@ -98,7 +98,7 @@ export default function MayLike() {
           loadMore(true);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (observerTarget.current) {
@@ -145,8 +145,7 @@ export default function MayLike() {
             <p className="text-red-800">Error loading products: {error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-            >
+              className="mt-2 text-sm text-red-600 hover:text-red-800 underline">
               Try again
             </button>
           </div>
@@ -174,21 +173,21 @@ export default function MayLike() {
   return (
     <div className="w-full py-6 px-3 sm:px-6 md:px-10 ">
       <div
-        className={`max-w-6xl ${isCollapsed ? "lg:max-w-7xl" : "lg:max-w-6xl"
-          }`}
-      >
+        className={`max-w-6xl ${
+          isCollapsed ? "lg:max-w-7xl" : "lg:max-w-6xl"
+        }`}>
         {/* Title */}
         <div className="mb-8">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 md:text-4xl mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 md:text-4xl mb-4 sm:mb-6 text-center sm:text-left">
             You May Like
           </h1>
         </div>
 
         {/* Product Grid */}
         <div
-          className={`grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-4 ${isCollapsed ? "lg:grid-cols-7" : "lg:grid-cols-6"
-            }`}
-        >
+          className={`grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6 ${
+            isCollapsed ? "lg:grid-cols-7" : "lg:grid-cols-6"
+          }`}>
           {products.slice(0, visibleCount).map((product) => (
             <Card key={product.id} product={product} />
           ))}
@@ -213,8 +212,7 @@ export default function MayLike() {
           <div className="flex justify-center mt-6">
             <button
               onClick={handleManualLoadMore}
-              className="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-900 transition"
-            >
+              className="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-900 transition">
               Load More
             </button>
           </div>

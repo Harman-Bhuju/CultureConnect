@@ -58,8 +58,9 @@ export default function TrendingCarousel() {
 
         if (validProducts.length === 0) {
           setErrorMsg(
-            `No products found for ${activeTab}${activeAudience !== "All" ? ` (${activeAudience})` : ""
-            }`
+            `No products found for ${activeTab}${
+              activeAudience !== "All" ? ` (${activeAudience})` : ""
+            }`,
           );
         }
       } else {
@@ -86,25 +87,27 @@ export default function TrendingCarousel() {
       <div className="max-w-6xl min-h-[340px]">
         {/* Header */}
         <div
-          className={`flex justify-between mb-4 md:mb-6 gap-4 ${isCollapsed
-            ? "flex-col md:flex-row items-start md:items-center"
-            : "flex-col lg:flex-row items-start lg:items-center"
-            }`}>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 md:text-3xl">
+          className={`flex justify-between mb-4 md:mb-6 gap-4 ${
+            isCollapsed
+              ? "flex-col md:flex-row items-start md:items-center"
+              : "flex-col lg:flex-row items-start lg:items-center"
+          }`}>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 md:text-3xl text-center sm:text-left">
             Trending Products
           </h1>
-          <div className="flex gap-2 sm:gap-4 md:gap-8">
+          <div className="flex overflow-x-auto gap-3 sm:gap-4 md:gap-8 pb-1 sm:pb-0 scrollbar-hide justify-center sm:justify-start">
             {tabs.map((tab) => (
               <button
                 key={tab.value}
                 onClick={() => handleTabChange(tab.value)}
-                className={`text-xs sm:text-base font-medium pb-2 px-2 sm:px-3 md:px-0 relative transition-colors ${activeTab === tab.value
-                  ? "text-red-500"
-                  : "text-gray-600 hover:text-gray-900"
-                  }`}>
+                className={`text-[11px] sm:text-base font-bold sm:font-medium pb-2 px-1 sm:px-3 whitespace-nowrap md:px-0 relative transition-colors ${
+                  activeTab === tab.value
+                    ? "text-red-600"
+                    : "text-gray-500 hover:text-gray-900"
+                }`}>
                 {tab.label}
                 {activeTab === tab.value && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />
                 )}
               </button>
             ))}
@@ -118,10 +121,11 @@ export default function TrendingCarousel() {
               <button
                 key={audience}
                 onClick={() => setActiveAudience(audience)}
-                className={`text-[10px] sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full border transition-colors whitespace-nowrap ${activeAudience === audience
-                  ? "bg-red-500 text-white border-red-500"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                  }`}>
+                className={`text-[10px] sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full border transition-colors whitespace-nowrap ${
+                  activeAudience === audience
+                    ? "bg-red-500 text-white border-red-500"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                }`}>
                 {audience}
               </button>
             ))}
@@ -149,8 +153,9 @@ export default function TrendingCarousel() {
               {/* Product Slider */}
               {products.length > 0 ? (
                 <div
-                  className={`transition-opacity duration-300 ${isLoading ? "opacity-50" : "opacity-100"
-                    }`}>
+                  className={`transition-opacity duration-300 ${
+                    isLoading ? "opacity-50" : "opacity-100"
+                  }`}>
                   <Swiper
                     onSwiper={(swiper) => (swiperRef.current = swiper)}
                     modules={[Mousewheel]}
@@ -161,9 +166,9 @@ export default function TrendingCarousel() {
                     breakpoints={{
                       1280: { slidesPerView: 6 },
                       1024: { slidesPerView: 5 },
-                      768: { slidesPerView: 5 },
-                      480: { slidesPerView: 5 },
-                      0: { slidesPerView: 4 },
+                      768: { slidesPerView: 4 },
+                      640: { slidesPerView: 3 },
+                      0: { slidesPerView: 2.2 },
                     }}>
                     {products.map((product) => (
                       <SwiperSlide key={`product-${product.id}`}>

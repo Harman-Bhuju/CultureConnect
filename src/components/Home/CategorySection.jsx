@@ -18,7 +18,7 @@ const CategoryCard = ({ category, index }) => {
         }}
         viewport={{ once: false, margin: "-100px" }}
         whileHover={{ y: -12, scale: 1.02 }}
-        className="group relative overflow-hidden h-[450px] cursor-pointer bg-gray-900 rounded-2xl">
+        className="group relative overflow-hidden h-[320px] sm:h-[380px] md:h-[450px] cursor-pointer bg-gray-900 rounded-2xl">
         {/* Background Image */}
         <div className="absolute inset-0">
           <motion.img
@@ -43,28 +43,28 @@ const CategoryCard = ({ category, index }) => {
         />
 
         {/* Content */}
-        <div className="absolute inset-0 p-8 flex flex-col justify-between text-white">
+        <div className="absolute inset-0 p-5 sm:p-6 md:p-8 flex flex-col justify-between text-white">
           {/* Top Section - Icon */}
           <div>
             <motion.div
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               transition={{ delay: index * 0.1 + 0.2, type: "spring" }}
-              className="inline-flex items-center justify-center w-14 h-14 bg-white/10 backdrop-blur-sm border border-white/20 text-3xl rounded-full">
+              className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/10 backdrop-blur-sm border border-white/20 text-2xl sm:text-3xl rounded-full">
               {category.icon}
             </motion.div>
           </div>
 
           {/* Bottom Section */}
-          <div className="space-y-4">
+          <div className="space-y-2 sm:space-y-3 md:space-y-4">
             <div>
-              <h3 className="text-3xl md:text-4xl font-bold mb-3 leading-tight group-hover:text-red-600 transition-colors duration-300">
+              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 leading-tight group-hover:text-red-600 transition-colors duration-300">
                 {category.name}
               </h3>
-              <p className="text-gray-300 leading-relaxed text-sm mb-2">
+              <p className="text-gray-300 leading-relaxed text-xs sm:text-sm mb-2 line-clamp-2 sm:line-clamp-none">
                 {category.description}
               </p>
-              <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">
                 {category.itemCount} Items Available
               </span>
             </div>
@@ -74,9 +74,9 @@ const CategoryCard = ({ category, index }) => {
               initial={{ opacity: 1, x: -10 }}
               whileInView={{ opacity: 1, x: -10 }}
               whileHover={{ opacity: 1, x: 0.5 }}
-              className="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-wider">
+              className="flex items-center gap-2 text-white font-bold text-xs sm:text-sm uppercase tracking-wider">
               Explore Collection
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
             </motion.div>
           </div>
         </div>
@@ -177,24 +177,24 @@ const CategorySection = () => {
   const dynamicCategories = getMappedCategories();
 
   return (
-    <section className="py-24 bg-gray-50 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+    <section className="py-12 sm:py-16 md:py-24 bg-gray-50 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16">
-          <span className="inline-block text-sm font-bold tracking-wider uppercase text-red-600 mb-3">
+          className="text-center mb-8 sm:mb-12 md:mb-16">
+          <span className="inline-block text-xs sm:text-sm font-bold tracking-wider uppercase text-red-600 mb-2 sm:mb-3">
             Curated Collections
           </span>
 
-          <h2 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-gray-900">
             Explore by <span className="text-red-600">Category</span>
           </h2>
 
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
             Dive deep into specific areas of cultural heritage, from hand-woven
             textiles to classical instruments.
           </p>
@@ -210,7 +210,7 @@ const CategorySection = () => {
         </motion.div>
 
         {/* Category Grid */}
-        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
           {dynamicCategories.map((category, index) => (
             <CategoryCard key={category.id} category={category} index={index} />
           ))}

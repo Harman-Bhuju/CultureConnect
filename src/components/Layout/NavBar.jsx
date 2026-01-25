@@ -67,9 +67,9 @@ const Navbar = () => {
               <img
                 src={CultureConnectLogo}
                 alt="Logo"
-                className="w-4 h-4 md:w-6 md:h-6 object-contain"
+                className="w-6 h-6 md:w-8 md:h-8 object-contain"
               />
-              <span className="text-sm md:text-[18px] font-bold text-gray-800">
+              <span className="text-sm xs:text-base md:text-[18px] font-bold text-gray-800">
                 CultureConnect
               </span>
             </div>
