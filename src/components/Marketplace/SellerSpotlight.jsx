@@ -36,7 +36,7 @@ const SellerSpotlight = () => {
 
   if (isLoading) {
     return (
-      <div className="py-8 bg-gray-50 px-3 sm:px-6 md:px-10">
+      <div className="py-6 sm:py-8 bg-gray-50 px-4 sm:px-6 md:px-10">
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
           {[1, 2, 3].map((i) => (
             <div
@@ -59,21 +59,21 @@ const SellerSpotlight = () => {
   }
 
   return (
-    <div className="py-8px-3 sm:px-6 md:px-10">
+    <div className="py-6 sm:py-8 px-4 sm:px-6 md:px-10">
       <div className="mb-4">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           Suggested Sellers
         </h2>
-        <p className="text-sm text-gray-500">Meet top artisans</p>
+        <p className="text-xs sm:text-sm text-gray-500">Meet top artisans</p>
       </div>
 
       {/* Horizontal Scroll Container */}
-      <div className="flex overflow-x-auto gap-4 pb-4 md:pb-0 scrollbar-hide snap-x">
+      <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 md:pb-0 scrollbar-hide snap-x">
         {sellers.map((seller) => (
           <Link
             key={seller.id}
             to={`/sellerprofile/${seller.id}`}
-            className="flex-shrink-0 w-[280px] md:w-[320px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 p-4 transition-shadow hover:shadow-md flex items-center gap-4">
+            className="flex-shrink-0 w-[260px] xs:w-[280px] sm:w-[320px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4 transition-shadow hover:shadow-md flex items-center gap-3 sm:gap-4">
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden bg-gray-200 shrink-0">
               <img
                 src={`${API.SELLER_LOGOS}/${seller.image}`}
@@ -90,13 +90,15 @@ const SellerSpotlight = () => {
               <h3 className="font-bold text-gray-900 truncate text-sm md:text-base">
                 {seller.name}
               </h3>
-              <p className="text-xs text-gray-500 mb-1">{seller.specialty}</p>
-              <div className="flex items-center gap-2 text-xs">
-                <span className="flex items-center gap-0.5 text-yellow-500 font-medium">
-                  <Star size={12} fill="currentColor" /> {seller.rating} Average Rating
+              <p className="text-[10px] sm:text-xs text-gray-500 mb-1 line-clamp-1">
+                {seller.specialty}
+              </p>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs">
+                <span className="flex items-center gap-0.5 text-yellow-500 font-bold whitespace-nowrap">
+                  <Star size={10} fill="currentColor" /> {seller.rating}
                 </span>
                 <span className="text-gray-300">|</span>
-                <span className="text-gray-500">
+                <span className="text-gray-500 whitespace-nowrap">
                   {seller.products} Products
                 </span>
               </div>

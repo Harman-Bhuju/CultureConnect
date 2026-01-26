@@ -7,6 +7,8 @@ import {
   Check,
   Loader2,
   Search,
+  Filter,
+  X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Card from "../../../components/cardLayout/Card";
@@ -34,6 +36,7 @@ const CategoryPageLayout = ({
   const [priceError, setPriceError] = useState(""); // Validation error
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [selectedAudience, setSelectedAudience] = useState(null); // null means "All"
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // Pagination from API
   const [pagination, setPagination] = useState({
@@ -198,188 +201,226 @@ const CategoryPageLayout = ({
     selectedRatings.length > 0 ||
     selectedAudience !== null;
 
-  return (
-    <div className="bg-gray-100">
-      <div className="max-w-[1440px] mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        {/* Sidebar Header with Clear All */}
-        <div className="flex justify-between items-center mb-6 lg:hidden">
-          <h2 className="text-lg font-bold">Filters</h2>
+  const FilterContent = ({ isMobile = false }) => (
+    <div className={`space-y-8 ${isMobile ? "p-6 bg-white" : ""}`}>
+      {!isMobile && (
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">
+            Filtering
+          </h2>
           {hasActiveFilters && (
-            <button onClick={clearAllFilters} className="text-red-600 text-sm font-bold">Clear All</button>
+            <button
+              onClick={clearAllFilters}
+              className="text-[10px] font-bold text-red-600 hover:text-red-700 uppercase tracking-tighter">
+              Clear All Filters
+            </button>
           )}
         </div>
+      )}
 
-        <div className="flex flex-col lg:flex-row gap-12">
-          {/* Sidebar - Refined & Aesthetic */}
-          <aside className="hidden lg:block w-72 flex-shrink-0 space-y-8 self-start sticky top-24 pr-4">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Filtering</h2>
-              {hasActiveFilters && (
-                <button
-                  onClick={clearAllFilters}
-                  className="text-[10px] font-bold text-red-600 hover:text-red-700 uppercase tracking-tighter"
-                >
-                  Clear All Filters
-                </button>
-              )}
-            </div>
-            {/* Audience Filter - Only for cultural-clothes */}
-            {showAudienceFilter && (
-              <div>
-                <h3 className="font-bold text-gray-900 mb-5 text-sm uppercase tracking-wider border-l-4 border-red-600 pl-3">
-                  Shop For
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {audienceOptions.map((option) => (
-                    <button
-                      key={option.value || "all"}
-                      onClick={() => setSelectedAudience(option.value)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedAudience === option.value
-                        ? "bg-red-600 text-white shadow-md"
-                        : "bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200"
-                        }`}>
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+      {/* Audience Filter - Only for cultural-clothes */}
+      {showAudienceFilter && (
+        <div>
+          <h3 className="font-bold text-gray-900 mb-5 text-sm uppercase tracking-wider border-l-4 border-red-600 pl-3">
+            Shop For
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {audienceOptions.map((option) => (
+              <button
+                key={option.value || "all"}
+                onClick={() => {
+                  setSelectedAudience(option.value);
+                  if (isMobile) setIsMobileFilterOpen(false);
+                }}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  selectedAudience === option.value
+                    ? "bg-red-600 text-white shadow-md"
+                    : "bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 border border-gray-200"
+                }`}>
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
-            {/* Price Filter */}
-            <div>
-              <h3 className="font-bold text-gray-900 mb-5 text-sm uppercase tracking-wider border-l-4 border-red-600 pl-3">
-                Price Range
-              </h3>
-              <div className="flex items-center gap-3">
+      {/* Price Filter */}
+      <div>
+        <h3 className="font-bold text-gray-900 mb-5 text-sm uppercase tracking-wider border-l-4 border-red-600 pl-3">
+          Price Range
+        </h3>
+        <div className="flex items-center gap-3">
+          <input
+            type="number"
+            placeholder="Min"
+            step="100"
+            min="0"
+            className="w-full p-3 bg-gray-50 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none transition-all placeholder-gray-400"
+            value={priceInput.min}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === "" || parseFloat(val) >= 0) {
+                setPriceInput({ ...priceInput, min: val });
+                setPriceError("");
+              }
+            }}
+            onKeyDown={handlePriceKeyDown}
+          />
+          <span className="text-gray-300 font-light">to</span>
+          <input
+            type="number"
+            placeholder="Max"
+            step="100"
+            min="0"
+            className="w-full p-3 bg-gray-50 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none transition-all placeholder-gray-400"
+            value={priceInput.max}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === "" || parseFloat(val) >= 0) {
+                setPriceInput({ ...priceInput, max: val });
+                setPriceError("");
+              }
+            }}
+            onKeyDown={handlePriceKeyDown}
+          />
+        </div>
+        {priceError && (
+          <p className="text-xs text-red-500 mt-2">{priceError}</p>
+        )}
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={() => {
+              applyPriceFilter();
+              if (isMobile) setIsMobileFilterOpen(false);
+            }}
+            className="flex-1 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
+            Apply
+          </button>
+          {(priceRange.min ||
+            priceRange.max ||
+            priceInput.min ||
+            priceInput.max) && (
+            <button
+              onClick={() => {
+                setPriceInput({ min: "", max: "" });
+                setPriceRange({ min: "", max: "" });
+                setPriceError("");
+              }}
+              className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Rating Filter */}
+      <div>
+        <h3 className="font-bold text-gray-900 mb-5 text-sm uppercase tracking-wider border-l-4 border-red-600 pl-3">
+          Customer Rating
+        </h3>
+        <div className="space-y-3">
+          {[5, 4, 3, 2, 1].map((rating) => (
+            <label
+              key={rating}
+              className="flex items-center gap-3 w-full group hover:bg-red-50 p-2 rounded-lg transition-all -ml-2 cursor-pointer">
+              <div className="relative flex items-center justify-center">
                 <input
-                  type="number"
-                  placeholder="Min"
-                  step="100"
-                  min="0"
-                  className="w-full p-3 bg-gray-50 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none transition-all placeholder-gray-400"
-                  value={priceInput.min}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === "" || parseFloat(val) >= 0) {
-                      setPriceInput({ ...priceInput, min: val });
-                      setPriceError("");
-                    }
+                  type="checkbox"
+                  checked={selectedRatings.includes(rating)}
+                  onChange={() => {
+                    toggleRating(rating);
+                    // Don't close on rating toggle for multiple selection
                   }}
-                  onKeyDown={handlePriceKeyDown}
+                  className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-red-600 checked:border-red-600 transition-all cursor-pointer"
                 />
-                <span className="text-gray-300 font-light">to</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  step="100"
-                  min="0"
-                  className="w-full p-3 bg-gray-50 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:outline-none transition-all placeholder-gray-400"
-                  value={priceInput.max}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === "" || parseFloat(val) >= 0) {
-                      setPriceInput({ ...priceInput, max: val });
-                      setPriceError("");
-                    }
-                  }}
-                  onKeyDown={handlePriceKeyDown}
+                <Check
+                  size={12}
+                  className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
                 />
               </div>
-              {priceError && (
-                <p className="text-xs text-red-500 mt-2">{priceError}</p>
-              )}
-              <div className="flex gap-2">
-                <button
-                  onClick={applyPriceFilter}
-                  className="mt-3 flex-1 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-                  Apply
-                </button>
-                {(priceRange.min || priceRange.max || priceInput.min || priceInput.max) && (
-                  <button
-                    onClick={() => {
-                      setPriceInput({ min: "", max: "" });
-                      setPriceRange({ min: "", max: "" });
-                      setPriceError("");
-                    }}
-                    className="mt-3 px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                    Clear
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Rating Filter */}
-            <div>
-              <h3 className="font-bold text-gray-900 mb-5 text-sm uppercase tracking-wider border-l-4 border-red-600 pl-3">
-                Customer Rating
-              </h3>
-              <div className="space-y-3">
-                {[5, 4, 3, 2, 1].map((rating) => (
-                  <label
-                    key={rating}
-                    className="flex items-center gap-3 w-full group hover:bg-red-50 p-2 rounded-lg transition-all -ml-2 cursor-pointer">
-                    <div className="relative flex items-center justify-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedRatings.includes(rating)}
-                        onChange={() => toggleRating(rating)}
-                        className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-red-600 checked:border-red-600 transition-all cursor-pointer"
-                      />
-                      <Check
-                        size={12}
-                        className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
-                      />
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          fill={i < rating ? "currentColor" : "none"}
-                          className={
-                            i < rating
-                              ? "text-yellow-400 drop-shadow-sm"
-                              : "text-gray-200"
-                          }
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm text-gray-600 group-hover:text-red-700 font-medium ml-auto">
-                      {rating} Star{rating > 1 ? "s" : ""}
-                    </span>
-                  </label>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    size={16}
+                    fill={i < rating ? "currentColor" : "none"}
+                    className={
+                      i < rating
+                        ? "text-yellow-400 drop-shadow-sm"
+                        : "text-gray-200"
+                    }
+                  />
                 ))}
               </div>
-            </div>
+              <span className="text-sm text-gray-600 group-hover:text-red-700 font-medium ml-auto">
+                {rating} Star{rating > 1 ? "s" : ""}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+      {isMobile && (
+        <button
+          onClick={() => setIsMobileFilterOpen(false)}
+          className="w-full py-4 bg-gray-900 text-white font-bold rounded-xl mt-4">
+          View Results
+        </button>
+      )}
+    </div>
+  );
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <div className="max-w-[1440px] mx-auto py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+          {/* Desktop Sidebar */}
+          <aside className="hidden lg:block w-72 flex-shrink-0 self-start sticky top-24 pr-4">
+            <FilterContent />
           </aside>
 
           {/* Main Content */}
           <main className="flex-1">
             {/* Category Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
-              <p className="text-gray-500">{description}</p>
+            <div className="mb-6 sm:mb-8 text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                {title}
+              </h1>
+              <p className="text-sm sm:text-base text-gray-500 mx-auto sm:mx-0 max-w-md">
+                {description}
+              </p>
             </div>
 
-            {/* Top Bar - Clean & Modern */}
-            <div className="flex flex-col sm:flex-row justify-between items-center mb-10 pb-6 border-b border-gray-100">
-              <span className="text-gray-500 font-medium tracking-wide">
-                Showing{" "}
-                <span className="text-black font-bold">
-                  {pagination.total_items}
-                </span>{" "}
-                {pagination.total_items === 1 ? "result" : "results"}
-              </span>
+            {/* Top Bar - Enhanced for Mobile */}
+            <div className="flex flex-col xs:flex-row justify-between items-center gap-4 mb-6 sm:mb-10 pb-4 sm:pb-6 border-b border-gray-100">
+              <div className="flex items-center justify-between w-full xs:w-auto gap-4">
+                <span className="text-xs sm:text-sm text-gray-500 font-medium tracking-wide">
+                  Showing{" "}
+                  <span className="text-black font-bold">
+                    {pagination.total_items}
+                  </span>{" "}
+                  {pagination.total_items === 1 ? "result" : "results"}
+                </span>
 
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-400 font-medium">
+                {/* Mobile Filter Button */}
+                <button
+                  onClick={() => setIsMobileFilterOpen(true)}
+                  className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 shadow-sm active:scale-95 transition-all">
+                  <Filter size={14} />
+                  Filters
+                  {hasActiveFilters && (
+                    <span className="w-2 h-2 bg-red-600 rounded-full" />
+                  )}
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3 w-full xs:w-auto justify-end">
+                <span className="text-[10px] sm:text-sm text-gray-400 font-medium uppercase tracking-wider">
                   Sort by:
                 </span>
-                <div className="relative group">
+                <div className="relative group flex-1 xs:flex-initial">
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none bg-gray-50 pl-4 pr-10 py-2.5 rounded-full text-sm font-semibold text-gray-900 border-none focus:ring-2 focus:ring-black cursor-pointer hover:bg-gray-100 transition-colors">
+                    className="w-full appearance-none bg-white border border-gray-200 pl-4 pr-10 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold text-gray-900 focus:ring-2 focus:ring-red-500 cursor-pointer hover:bg-gray-50 transition-colors">
                     <option value="newest">Newest Arrivals</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
@@ -408,7 +449,7 @@ const CategoryPageLayout = ({
                   </button>
                 </div>
               ) : products.length > 0 ? (
-                <div className="grid grid-cols-4 min-[540px]:grid-cols-5 md:grid-cols-6 lg:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-4">
+                <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
                   {products.map((product) => (
                     <div key={product.id} className="group">
                       <Card product={product} />
@@ -421,14 +462,17 @@ const CategoryPageLayout = ({
                     <Search className="text-gray-300 w-10 h-10" />
                   </div>
                   <h3 className="text-gray-900 font-bold text-2xl mb-3">
-                    {searchQuery ? `"${searchQuery}" not found` : "No results match your criteria"}
+                    {searchQuery
+                      ? `"${searchQuery}" not found`
+                      : "No results match your criteria"}
                   </h3>
                   <p className="text-gray-500 mb-10 max-w-md mx-auto leading-relaxed">
-                    We couldn't find any products matching your current search or filters.
-                    Try adjusting your selection to find what you're looking for.
+                    We couldn't find any products matching your current search
+                    or filters. Try adjusting your selection to find what you're
+                    looking for.
                   </p>
 
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                     {searchQuery && (
                       <button
                         onClick={() => {
@@ -436,24 +480,21 @@ const CategoryPageLayout = ({
                           params.delete("q");
                           navigate(`${location.pathname}?${params.toString()}`);
                         }}
-                        className="px-8 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all font-bold shadow-lg shadow-red-100 active:scale-95"
-                      >
+                        className="px-6 sm:px-8 py-2.5 sm:py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all text-sm font-bold shadow-lg shadow-red-100 active:scale-95">
                         Clear Search Query
                       </button>
                     )}
                     {hasActiveFilters && (
                       <button
                         onClick={clearAllFilters}
-                        className="px-8 py-3 bg-white border-2 border-gray-800 text-gray-800 rounded-full hover:bg-gray-50 transition-all font-bold active:scale-95"
-                      >
+                        className="px-6 sm:px-8 py-2.5 sm:py-3 bg-white border-2 border-gray-800 text-gray-800 rounded-full hover:bg-gray-50 transition-all text-sm font-bold active:scale-95">
                         Reset All Filters
                       </button>
                     )}
                     {!searchQuery && !hasActiveFilters && (
                       <button
-                        onClick={() => navigate('/marketplace')}
-                        className="px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-black transition-all font-bold active:scale-95"
-                      >
+                        onClick={() => navigate("/marketplace")}
+                        className="px-6 sm:px-8 py-2.5 sm:py-3 bg-gray-900 text-white rounded-full hover:bg-black transition-all text-sm font-bold active:scale-95">
                         Go to Shop
                       </button>
                     )}
@@ -462,42 +503,80 @@ const CategoryPageLayout = ({
               )}
             </div>
 
-            {/* Pagination - Red Theme */}
+            {/* Pagination - Touch Friendly */}
             {pagination.total_pages > 1 && (
-              <div className="mt-20 flex justify-center items-center gap-3">
+              <div className="mt-12 sm:mt-20 flex justify-center items-center gap-2 sm:gap-3">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={!pagination.has_prev}
-                  className="w-11 h-11 flex items-center justify-center border border-gray-200 rounded-full hover:border-red-600 hover:text-red-600 transition-all disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-400">
-                  <ChevronLeft size={20} />
+                  className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center border border-gray-200 rounded-full hover:border-red-600 hover:text-red-600 transition-all disabled:opacity-30">
+                  <ChevronLeft size={18} />
                 </button>
 
-                {Array.from(
-                  { length: pagination.total_pages },
-                  (_, i) => i + 1,
-                ).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`w-11 h-11 flex items-center justify-center rounded-full text-sm font-bold transition-all ${currentPage === page
-                      ? "bg-red-600 text-white shadow-md shadow-red-200 scale-110"
-                      : "bg-white text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200"
+                <div className="flex items-center gap-1.5 sm:gap-3">
+                  {Array.from(
+                    { length: pagination.total_pages },
+                    (_, i) => i + 1,
+                  ).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full text-xs sm:text-sm font-bold transition-all ${
+                        currentPage === page
+                          ? "bg-red-600 text-white shadow-md shadow-red-200 scale-105"
+                          : "bg-white text-gray-600 hover:bg-gray-50 border border-transparent"
                       }`}>
-                    {page}
-                  </button>
-                ))}
+                      {page}
+                    </button>
+                  ))}
+                </div>
 
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={!pagination.has_next}
-                  className="w-11 h-11 flex items-center justify-center border border-gray-200 rounded-full hover:border-red-600 hover:text-red-600 transition-all disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-400">
-                  <ChevronRight size={20} />
+                  className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center border border-gray-200 rounded-full hover:border-red-600 hover:text-red-600 transition-all disabled:opacity-30">
+                  <ChevronRight size={18} />
                 </button>
               </div>
             )}
           </main>
         </div>
       </div>
+
+      {/* Mobile Filter Modal */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-[100] lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsMobileFilterOpen(false)}
+          />
+          {/* Sliding Drawer */}
+          <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] bg-white rounded-t-[32px] overflow-y-auto">
+            <div className="sticky top-0 bg-white p-6 border-b border-gray-100 flex justify-between items-center z-10">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Filters</h2>
+                <p className="text-xs text-gray-500">Refine results</p>
+              </div>
+              <div className="flex items-center gap-4">
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-xs font-bold text-red-600">
+                    Reset
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="p-2 bg-gray-100 rounded-full">
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+            <FilterContent isMobile={true} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

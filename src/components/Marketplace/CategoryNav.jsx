@@ -56,7 +56,7 @@ const CategoryNav = () => {
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
+    <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8 sm:mb-12">
       {initialCategories.map((cat) => {
         const Icon = cat.icon;
         const realCount = counts[cat.id] ?? 0;
@@ -65,15 +65,15 @@ const CategoryNav = () => {
           <Link
             key={cat.id}
             to={cat.path}
-            className="group relative w-full sm:w-64 p-8 bg-white/40 backdrop-blur-md rounded-3xl border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] transition-all duration-500 overflow-hidden">
+            className="group relative w-full xs:w-[calc(50%-8px)] sm:w-64 p-5 sm:p-8 bg-white/40 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-white/20 shadow-[0_4px_24px_0_rgba(31,38,135,0.05)] sm:shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] transition-all duration-500 overflow-hidden">
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
 
             <div
-              className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${cat.color} group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-sm`}>
-              <Icon size={32} />
+              className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 ${cat.color} group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-sm`}>
+              <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-black transition-colors">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2 group-hover:text-black transition-colors">
               {cat.title}
             </h3>
             <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700 transition-colors">

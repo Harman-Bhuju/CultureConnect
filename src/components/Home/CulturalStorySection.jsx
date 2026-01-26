@@ -59,9 +59,9 @@ const CulturalStorySection = () => {
   ];
 
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <section className="py-12 sm:py-16 md:py-24 bg-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Left Side - Content */}
           <motion.div
             initial={{ opacity: 0, x: -100 }}
@@ -72,7 +72,7 @@ const CulturalStorySection = () => {
               bounce: 0.3,
             }}
             viewport={{ once: false, margin: "-100px" }}
-            className="space-y-8">
+            className="space-y-5 sm:space-y-6 md:space-y-8">
             {/* Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -86,16 +86,16 @@ const CulturalStorySection = () => {
 
             {/* Title */}
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-1 sm:mb-2">
                 Preserving Heritage,
               </h2>
-              <h2 className="text-4xl md:text-5xl font-bold text-red-600 leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-red-600 leading-tight">
                 Empowering Artisans
               </h2>
             </div>
 
             {/* Description */}
-            <p className="text-lg text-gray-700 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed">
               Culture Connect is more than a marketplace; it's a movement to
               revitalize fading traditions. We bridge the gap between rural
               master craftsmen and global connoisseurs, ensuring that every
@@ -120,16 +120,16 @@ const CulturalStorySection = () => {
                     }}
                     viewport={{ once: false, amount: 0.2 }}
                     whileHover={{ y: -8, scale: 1.02 }}
-                    className="group relative bg-gray-50 border border-gray-200 p-6 hover:border-red-600 transition-all duration-300 rounded-2xl">
+                    className="group relative bg-gray-50 border border-gray-200 p-4 sm:p-5 md:p-6 hover:border-red-600 transition-all duration-300 rounded-2xl">
                     {/* Icon */}
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-red-600 text-white mb-4 group-hover:scale-110 group-hover:rotate-[360deg] transition-all duration-500 rounded-full">
-                      <Icon className="w-6 h-6" />
+                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-red-600 text-white mb-3 sm:mb-4 group-hover:scale-110 group-hover:rotate-[360deg] transition-all duration-500 rounded-full">
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
 
-                    <h4 className="text-3xl md:text-4xl font-bold text-gray-900 mb-1 group-hover:text-red-600 transition-colors duration-300">
+                    <h4 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 group-hover:text-red-600 transition-colors duration-300">
                       {stat.value}
                     </h4>
-                    <p className="text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    <p className="text-[10px] sm:text-xs font-medium text-gray-600 uppercase tracking-wider">
                       {stat.label}
                     </p>
                   </motion.div>
@@ -161,7 +161,7 @@ const CulturalStorySection = () => {
                 <img
                   src="/Home-Images/about/artisan-story.jpg"
                   alt="Artisan at work"
-                  className="w-full h-[500px] object-cover"
+                  className="w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover"
                 />
                 {/* Red Accent Overlay - Added rounding */}
                 <div className="absolute inset-0 border-4 border-red-600 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
@@ -186,7 +186,7 @@ const CulturalStorySection = () => {
                 transition={{ delay: 0.4, duration: 0.6 }}
                 viewport={{ once: false }}
                 whileHover={{ scale: 1.05 }}
-                className="absolute -bottom-8 -right-8 w-56 h-56 overflow-hidden border-8 border-white shadow-2xl rounded-2xl">
+                className="absolute -bottom-4 sm:-bottom-8 -right-4 sm:-right-8 w-32 sm:w-44 md:w-56 h-32 sm:h-44 md:h-56 overflow-hidden border-4 sm:border-8 border-white shadow-2xl rounded-2xl">
                 <img
                   src="/Home-Images/about/workshop.png"
                   alt="Traditional Art"
@@ -196,19 +196,19 @@ const CulturalStorySection = () => {
                 <div className="absolute top-0 right-0 w-12 h-12 bg-red-600" />
               </motion.div>
 
-              {/* Decorative Elements */}
+              {/* Decorative Elements - Hidden on mobile */}
               <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="absolute -top-4 -left-4 w-24 h-24 border-2 border-red-600 rounded-xl"
+                className="hidden sm:block absolute -top-4 -left-4 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 border-2 border-red-600 rounded-xl"
               />
 
               <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
-                className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-gray-300 rounded-xl"
+                className="hidden sm:block absolute -bottom-4 -right-4 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 border-2 border-gray-300 rounded-xl"
               />
             </div>
           </motion.div>

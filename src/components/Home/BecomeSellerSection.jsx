@@ -9,8 +9,8 @@ const BecomeSellerSection = () => {
   const isSeller = user?.seller_id;
 
   return (
-    <section className="pb-24 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="pb-12 sm:pb-16 md:pb-24 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="relative rounded-3xl overflow-hidden bg-gray-900 shadow-2xl">
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
@@ -22,7 +22,7 @@ const BecomeSellerSection = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
           </div>
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 p-8 md:p-16 items-center">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 p-5 sm:p-8 md:p-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -100 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -32,7 +32,7 @@ const BecomeSellerSection = () => {
                 bounce: 0.2,
               }}
               viewport={{ once: false, margin: "-100px" }}
-              className="space-y-8">
+              className="space-y-5 sm:space-y-6 md:space-y-8">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -48,7 +48,7 @@ const BecomeSellerSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false }}
                 transition={{ delay: 0.3 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
                 Empower Your <br />
                 <span className="text-heritage-red">Craftsmanship</span>
               </motion.h2>
@@ -58,13 +58,13 @@ const BecomeSellerSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false }}
                 transition={{ delay: 0.4 }}
-                className="text-lg text-gray-300 max-w-lg leading-relaxed">
+                className="text-sm sm:text-base md:text-lg text-gray-300 max-w-lg leading-relaxed">
                 Join our elite community of traditional sellers. Showcase your
                 unique creations to a global audience and preserve cultural
                 heritage through sustainable commerce.
               </motion.p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-4 sm:gap-6">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9, y: 20 }}
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -123,7 +123,7 @@ const BecomeSellerSection = () => {
             </motion.div>
 
             {/* Visual Grid of Opportunities */}
-            <div className="grid grid-cols-2 gap-4 h-full min-h-[500px] [perspective:1000px]">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 h-full min-h-[280px] sm:min-h-[350px] md:min-h-[500px] [perspective:1000px]">
               <motion.div
                 initial={{ opacity: 0, rotateY: -30, scale: 0.9 }}
                 whileInView={{ opacity: 1, rotateY: 0, scale: 1 }}

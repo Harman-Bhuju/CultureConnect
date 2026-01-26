@@ -9,8 +9,8 @@ const BecomeExpertSection = () => {
   const isExpert = user?.teacher_id;
 
   return (
-    <section className="pb-12 bg-gray-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="pb-8 sm:pb-10 md:pb-12 bg-gray-50 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="relative rounded-3xl overflow-hidden bg-royal-blue shadow-2xl">
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
@@ -22,15 +22,15 @@ const BecomeExpertSection = () => {
             <div className="absolute inset-0 bg-gradient-to-l from-indigo-900 via-indigo-900/60 to-transparent" />
           </div>
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 p-8 md:p-16 items-center">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 p-5 sm:p-8 md:p-16 items-center">
             {/* Visual Grid of Experts */}
-            <div className="grid grid-cols-2 grid-rows-[auto_1fr] gap-4 h-full min-h-[500px]">
+            <div className="grid grid-cols-2 grid-rows-[auto_1fr] gap-2 sm:gap-3 md:gap-4 h-full min-h-[280px] sm:min-h-[350px] md:min-h-[500px]">
               <motion.div
                 initial={{ opacity: 0, y: 50, scale: 0.8 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: false }}
                 transition={{ duration: 0.7, type: "spring" }}
-                className="col-span-2 rounded-2xl overflow-hidden shadow-2xl border border-white/20 group relative h-64 md:h-80">
+                className="col-span-2 rounded-2xl overflow-hidden shadow-2xl border border-white/20 group relative h-36 sm:h-52 md:h-64 lg:h-80">
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10" />
                 <img
                   src="/Home-Images/experts/expert 1.png"
@@ -88,7 +88,7 @@ const BecomeExpertSection = () => {
                 bounce: 0.2,
               }}
               viewport={{ once: false, margin: "-100px" }}
-              className="lg:order-2 space-y-8">
+              className="lg:order-2 space-y-5 sm:space-y-6 md:space-y-8">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -104,7 +104,7 @@ const BecomeExpertSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false }}
                 transition={{ delay: 0.3 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
                 Share Your <br />
                 <span className="text-amber-400">Mastery</span>
               </motion.h2>
@@ -114,13 +114,13 @@ const BecomeExpertSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false }}
                 transition={{ delay: 0.4 }}
-                className="text-lg text-indigo-100 max-w-lg leading-relaxed">
+                className="text-sm sm:text-base md:text-lg text-indigo-100 max-w-lg leading-relaxed">
                 Connect with passionate learners eager to master traditional
                 arts, music, and crafts – both online and in-person. Become a
                 verified Expert and pass on your heritage.
               </motion.p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-4 sm:gap-6">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9, y: 20 }}
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}

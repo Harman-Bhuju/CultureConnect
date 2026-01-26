@@ -115,9 +115,9 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#0f1115] text-white pt-16 pb-8 px-4 border-t border-white/5">
+    <footer className="bg-[#0f1115] text-white pt-12 sm:pt-16 pb-8 px-4 sm:px-6 border-t border-white/5">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 sm:gap-12 mb-12 sm:mb-16">
           {/* Brand Section */}
           <div className="lg:col-span-2 space-y-6">
             <Link to="/" className="flex items-center gap-3 group">

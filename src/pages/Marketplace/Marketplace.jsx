@@ -29,16 +29,16 @@ const Marketplace = () => {
           {isLandingPage ? (
             <div>
               {/* Hero Section */}
-              <div className="relative text-center pt-20 pb-12 px-4">
+              <div className="relative text-center pt-12 sm:pt-20 pb-8 sm:pb-12 px-4">
                 {/* Subtle Decorative Background Elements */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-orange-50/50 blur-[120px] rounded-full -z-10" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[300px] sm:h-[400px] bg-orange-50/50 blur-[80px] sm:blur-[120px] rounded-full -z-10" />
 
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false }}
                   transition={{ duration: 0.7, type: "spring" }}
-                  className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
+                  className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-gray-900 mb-4 sm:mb-6 tracking-tight leading-tight">
                   Cultural{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-600">
                     Marketplace
@@ -49,7 +49,7 @@ const Marketplace = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false }}
                   transition={{ delay: 0.2, duration: 0.7, type: "spring" }}
-                  className="text-xl text-gray-500 max-w-2xl mx-auto mb-12 font-medium">
+                  className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto mb-8 sm:mb-12 font-medium">
                   Discover authentic handcrafted items from master artisans.
                   Support local heritage with every purchase.
                 </motion.p>
@@ -71,11 +71,11 @@ const Marketplace = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false }}
                   transition={{ duration: 0.6 }}
-                  className="mb-8 text-center">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  className="mb-8 text-center px-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 ">
                     Explore by Category
                   </h2>
-                  <p className="text-gray-500">
+                  <p className="text-sm sm:text-base text-gray-500">
                     Pick a category to find unique items
                   </p>
                 </motion.div>
