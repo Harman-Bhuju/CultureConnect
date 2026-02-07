@@ -1,6 +1,13 @@
 // src/components/Reviews.jsx
 import React from "react";
-import { Star, StarHalf, MessageCircle, Edit, Trash2, Store } from "lucide-react";
+import {
+  Star,
+  StarHalf,
+  MessageCircle,
+  Edit,
+  Trash2,
+  Store,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import API, { BASE_URL } from "../../Configs/ApiEndpoints";
 import { useNavigate } from "react-router-dom";
@@ -13,13 +20,18 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
       const filled = i <= rating;
       const isHalf = i === Math.ceil(rating) && rating % 1 !== 0;
       if (isHalf) {
-        stars.push(<StarHalf key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />);
+        stars.push(
+          <StarHalf
+            key={i}
+            className="w-5 h-5 fill-yellow-400 text-yellow-400"
+          />,
+        );
       } else {
         stars.push(
           <Star
             key={i}
             className={`w-5 h-5 ${filled ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-          />
+          />,
         );
       }
     }
@@ -40,14 +52,16 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
       return `${diffDays} days ago`;
     } else if (diffDays < 30) {
       const weeks = Math.floor(diffDays / 7);
-      return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+      return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
     } else {
       return dateString;
     }
   };
 
   const hasUserReviewed = product?.reviews?.some((r) => r.userId === user?.id);
-  const currentUserReview = product?.reviews?.find((r) => r.userId === user?.id);
+  const currentUserReview = product?.reviews?.find(
+    (r) => r.userId === user?.id,
+  );
 
   // Sort reviews by date (newest first)
   const sortedReviews = [...(product?.reviews || [])].sort((a, b) => {
@@ -56,28 +70,32 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-4xl font-bold">{product.averageRating?.toFixed(1) || '0.0'}</span>
+            <span className="text-4xl font-bold">
+              {product.averageRating?.toFixed(1) || "0.0"}
+            </span>
             <div>
-              <div className="flex">{renderStars(product.averageRating || 0)}</div>
-              <p className="text-sm text-gray-600">{product.totalReviews || 0} reviews</p>
+              <div className="flex">
+                {renderStars(product.averageRating || 0)}
+              </div>
+              <p className="text-sm text-gray-600">
+                {product.totalReviews || 0} reviews
+              </p>
             </div>
           </div>
         </div>
         {!hasUserReviewed ? (
           <button
             onClick={() => openReviewForm()}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md"
-          >
+            className="w-full md:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md">
             Write a Review
           </button>
         ) : (
           <button
             onClick={() => openReviewForm(currentUserReview)}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-md flex items-center gap-2"
-          >
+            className="w-full md:w-auto bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-md flex items-center justify-center gap-2">
             <Edit className="w-4 h-4" /> Edit Your Review
           </button>
         )}
@@ -97,8 +115,7 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
             return (
               <div
                 key={review.id}
-                className={`border-b pb-6 last:border-b-0 ${isMyReview ? "bg-blue-50/30 rounded-lg p-4 -m-4" : ""}`}
-              >
+                className={`border-b pb-6 last:border-b-0 ${isMyReview ? "bg-blue-50/30 rounded-lg p-4 -m-4" : ""}`}>
                 {/* Main Review */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
@@ -112,12 +129,18 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
                     />
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-gray-900">{review.author}</p>
+                        <p className="font-semibold text-gray-900">
+                          {review.author}
+                        </p>
                         {isMyReview && (
-                          <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">You</span>
+                          <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
+                            You
+                          </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-500">{formatDate(review.date)}</p>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(review.date)}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -127,15 +150,13 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
                         <button
                           onClick={() => openReviewForm(review)}
                           className="text-blue-600 hover:bg-blue-100 p-2 rounded-lg transition"
-                          title="Edit"
-                        >
+                          title="Edit">
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => openDeleteModal(review.id)}
                           className="text-red-600 hover:bg-red-100 p-2 rounded-lg transition"
-                          title="Delete"
-                        >
+                          title="Delete">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -146,17 +167,14 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
 
                 {/* Seller Replies */}
                 {review.replies && review.replies.length > 0 && (
-                  <div className="mt-4 ml-8 space-y-3">
+                  <div className="mt-4 ml-2 md:ml-8 space-y-3">
                     {review.replies.map((reply) => {
-
                       return (
                         <div
                           key={reply.id}
-                          className="bg-gray-50 border border-gray-200 rounded-lg p-4"
-                        >
+                          className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0">
-
                               {reply.storeLogo ? (
                                 <img
                                   src={`${BASE_URL}/uploads/seller_img_datas/seller_logos/${reply.storeLogo}`}
@@ -172,18 +190,25 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
 
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <p className="font-semibold text-gray-900 cursor-pointer" onClick={() => navigate(`/sellerprofile/${sellerId}`)}>
-                                  {reply.storeName || 'Seller'}
+                                <p
+                                  className="font-semibold text-gray-900 cursor-pointer"
+                                  onClick={() =>
+                                    navigate(`/sellerprofile/${sellerId}`)
+                                  }>
+                                  {reply.storeName || "Seller"}
                                 </p>
                                 <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
                                   Seller
                                 </span>
                                 <span className="text-xs text-gray-500">
                                   • {formatDate(reply.createdAt)}
-                                  {reply.updatedAt !== reply.createdAt && ' (edited)'}
+                                  {reply.updatedAt !== reply.createdAt &&
+                                    " (edited)"}
                                 </span>
                               </div>
-                              <p className="text-gray-700 text-sm">{reply.replyText}</p>
+                              <p className="text-gray-700 text-sm">
+                                {reply.replyText}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -198,11 +223,12 @@ const Reviews = ({ product, openReviewForm, openDeleteModal, sellerId }) => {
       ) : (
         <div className="text-center py-12">
           <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg mb-4">No reviews yet. Be the first to review!</p>
+          <p className="text-gray-500 text-lg mb-4">
+            No reviews yet. Be the first to review!
+          </p>
           <button
             onClick={() => openReviewForm()}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-bold"
-          >
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-bold">
             Write a Review
           </button>
         </div>

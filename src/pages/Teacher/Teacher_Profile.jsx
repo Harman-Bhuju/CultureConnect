@@ -208,9 +208,11 @@ const TeacherProfile = () => {
       <SidebarInset>
         <Navbar />
         <div className="bg-gray-50 pb-12">
-          {/* Profile Header */}
-          <div className="relative pt-8 px-6 md:px-12">
-            <div className="absolute top-8 left-6 w-32 h-32 border-4 border-white rounded-full overflow-hidden shadow-lg bg-white">
+          {/* Banner */}
+          <div className="relative w-full h-15 md:h-20">
+            <div className="absolute inset-0"></div>
+            {/* Profile Picture */}
+            <div className="absolute -bottom-12 md:-bottom-16 left-6 w-24 h-24 md:w-32 md:h-32 border-4 border-white rounded-full overflow-hidden shadow-lg bg-white">
               <img
                 src={`${API.TEACHER_PROFILE_PICTURES}/${teacherData.profile_picture}`}
                 alt={`${teacherData.name}'s profile`}
@@ -223,10 +225,10 @@ const TeacherProfile = () => {
           </div>
 
           {/* Teacher Info */}
-          <div className="mt-32 px-6 md:px-12">
+          <div className="mt-16 md:mt-20 px-6 md:px-12">
             <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center">
-              <div className="w-[70%]">
-                <h1 className="text-3xl font-bold text-gray-800 w-3/4">
+              <div className="w-full md:flex-1">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
                   {teacherData.name || "Unnamed Teacher"}
                 </h1>
 
@@ -270,10 +272,11 @@ const TeacherProfile = () => {
                   <button
                     onClick={handleFollowToggle}
                     disabled={followLoading}
-                    className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${isFollowing
-                      ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                      : "bg-gray-800 text-white hover:bg-gray-700"
-                      } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}>
+                    className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${
+                      isFollowing
+                        ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                        : "bg-gray-800 text-white hover:bg-gray-700"
+                    } ${followLoading ? "opacity-50 cursor-not-allowed" : ""}`}>
                     {followLoading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -312,18 +315,20 @@ const TeacherProfile = () => {
               <nav className="flex gap-8 text-gray-600">
                 <button
                   onClick={() => setActiveTab("classes")}
-                  className={`py-3 px-1 font-medium transition-colors border-b-2 ${activeTab === "classes"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent hover:text-gray-800"
-                    }`}>
+                  className={`py-3 px-1 font-medium transition-colors border-b-2 ${
+                    activeTab === "classes"
+                      ? "border-blue-600 text-blue-600"
+                      : "border-transparent hover:text-gray-800"
+                  }`}>
                   Classes
                 </button>
                 <button
                   onClick={() => setActiveTab("about")}
-                  className={`py-3 px-1 font-medium transition-colors border-b-2 ${activeTab === "about"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent hover:text-gray-800"
-                    }`}>
+                  className={`py-3 px-1 font-medium transition-colors border-b-2 ${
+                    activeTab === "about"
+                      ? "border-blue-600 text-blue-600"
+                      : "border-transparent hover:text-gray-800"
+                  }`}>
                   About
                 </button>
               </nav>
@@ -334,7 +339,7 @@ const TeacherProfile = () => {
               {activeTab === "classes" && (
                 <div>
                   {classes.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
                       {classes.map((cls) => (
                         <CourseCard
                           key={cls.id}

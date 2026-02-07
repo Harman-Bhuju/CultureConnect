@@ -31,7 +31,8 @@ const DraftCourseCard = ({ course, onEdit, onDelete, onView, onPublish }) => {
   const courseTitle = course.courseTitle || course.title || "Unnamed Course";
   const teacherName = course.teacherName || course.teacher_name || "You";
   const description = course.description || "";
-  const rating = course.averageRating || course.average_rating || course.rating || 0;
+  const rating =
+    course.averageRating || course.average_rating || course.rating || 0;
   const students = course.enrolled_students || course.totalStudents || 0;
   const stock = parseInt(course.stock || course.seats || 0);
 
@@ -66,12 +67,12 @@ const DraftCourseCard = ({ course, onEdit, onDelete, onView, onPublish }) => {
 
   return (
     <div
-      className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 h-full flex flex-col group shadow-sm cursor-pointer relative"
+      className="bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300 h-full flex flex-col group shadow-sm cursor-pointer relative"
       onClick={handleCardClick}>
       {/* TEACHER DASHBOARD OVERLAYS */}
-      <div className="absolute top-3 left-3 z-20 flex flex-col gap-1">
+      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-20 flex flex-col gap-0.5 sm:gap-1">
         {/* Draft Badge */}
-        <span className="px-2 py-1 text-xs font-semibold rounded shadow-sm backdrop-blur-md bg-gray-100/90 text-gray-700">
+        <span className="px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold rounded shadow-sm backdrop-blur-md bg-gray-100/90 text-gray-700">
           Draft
         </span>
 
@@ -88,26 +89,25 @@ const DraftCourseCard = ({ course, onEdit, onDelete, onView, onPublish }) => {
           </span>
         )}
       </div>
-
       {/* Edit/Delete/Publish Actions */}
-      <div className="absolute top-3 right-3 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-20 flex gap-1.5 sm:gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
         <button
           onClick={handlePublish}
-          className="action-button bg-green-600 p-2 rounded-full shadow-md hover:bg-green-700 transition-colors border border-green-600"
+          className="action-button bg-green-600 p-1.5 sm:p-2 rounded-full shadow-md hover:bg-green-700 transition-colors border border-green-600"
           title="Publish">
-          <Upload className="w-4 h-4 text-white" />
+          <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
         </button>
         <button
           onClick={handleEdit}
-          className="action-button bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition-colors border border-gray-100"
+          className="action-button bg-white p-1.5 sm:p-2 rounded-full shadow-md hover:bg-gray-50 transition-colors border border-gray-100"
           title="Edit">
-          <Edit2 className="w-4 h-4 text-gray-700" />
+          <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700" />
         </button>
         <button
           onClick={handleDelete}
-          className="action-button bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors border border-gray-100"
+          className="action-button bg-white p-1.5 sm:p-2 rounded-full shadow-md hover:bg-red-50 transition-colors border border-gray-100"
           title="Delete">
-          <Trash2 className="w-4 h-4 text-red-600" />
+          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
         </button>
       </div>
 
@@ -125,51 +125,65 @@ const DraftCourseCard = ({ course, onEdit, onDelete, onView, onPublish }) => {
       </div>
 
       {/* Course Content */}
-      <div className="p-5 space-y-1 flex-1 flex flex-col">
+      <div className="p-3 sm:p-4 lg:p-5 space-y-1 flex-1 flex flex-col">
         {/* Title */}
-        <h3 className="text-gray-900 text-base font-semibold leading-snug line-clamp-1">
+        <h3 className="text-gray-900 text-sm sm:text-base font-semibold leading-snug line-clamp-1">
           {courseTitle}
         </h3>
 
         {/* Instructor/Category fallback */}
-        <p className="text-gray-500 text-sm font-medium">
+        <p className="text-gray-500 text-xs sm:text-sm font-medium truncate">
           {course.category || teacherName}
         </p>
 
         {/* Description */}
-        <p className="text-gray-600 text-sm leading-relaxed line-clamp-1 flex-1">
+        <p className="hidden xs:block text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-1 flex-1">
           {description}
         </p>
 
         {/* Rating & Stock */}
         <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-900 text-sm font-bold">{rating}</span>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="text-gray-900 text-xs sm:text-sm font-bold">
+              {rating}
+            </span>
             <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  size={14}
+                  size={12}
+                  className="sm:hidden"
                   fill={i < Math.floor(rating) ? "#f59e0b" : "none"}
-                  className={
-                    i < Math.floor(rating) ? "text-amber-500" : "text-gray-300"
-                  }
+                  stroke={i < Math.floor(rating) ? "#f59e0b" : "#d1d5db"}
+                />
+              ))}
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={14}
+                  className="hidden sm:block"
+                  fill={i < Math.floor(rating) ? "#f59e0b" : "none"}
+                  stroke={i < Math.floor(rating) ? "#f59e0b" : "#d1d5db"}
                 />
               ))}
             </div>
-            <span className="text-gray-400 text-sm">({students})</span>
+            <span className="text-gray-400 text-[10px] sm:text-xs">
+              ({students})
+            </span>
           </div>
 
           {/* Stock display for manager */}
           <span
-            className={`text-xs font-semibold ${isLowStock ? "text-orange-600" : isOutOfStock ? "text-red-600" : "text-gray-500"}`}>
+            className={`text-[10px] sm:text-xs font-semibold ${isLowStock ? "text-orange-600" : isOutOfStock ? "text-red-600" : "text-gray-500"}`}>
             {stock} seats
           </span>
         </div>
 
         {/* Price */}
         <div className="flex items-baseline gap-2 pt-1">
-          <span className="text-gray-900 text-xl font-bold">{price}</span>
+          <span className="text-gray-900 text-base sm:text-lg lg:text-xl font-bold">
+            {price}
+          </span>
         </div>
       </div>
     </div>
