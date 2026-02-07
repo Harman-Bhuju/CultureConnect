@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Package, Smartphone, User, MapPin, Tag, Truck, Mail, CheckCircle } from "lucide-react";
+import {
+  Package,
+  Smartphone,
+  User,
+  MapPin,
+  Tag,
+  Truck,
+  Mail,
+  CheckCircle,
+} from "lucide-react";
 import API from "../../Configs/ApiEndpoints";
 import toast from "react-hot-toast";
 
@@ -12,7 +21,7 @@ const ProductInfo = () => {
   const fetchDeliveries = async () => {
     try {
       const response = await fetch(API.GET_SHIPPED_ORDERS, {
-        credentials: "include"
+        credentials: "include",
       });
       const data = await response.json();
       if (data.status === "success") {
@@ -41,7 +50,7 @@ const ProductInfo = () => {
       const response = await fetch(API.DELIVERY_SUCCESS_EMAIL, {
         method: "POST",
         body: formData,
-        credentials: "include"
+        credentials: "include",
       });
       const data = await response.json();
 
@@ -73,17 +82,14 @@ const ProductInfo = () => {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">
-            Shipments info
-          </h1>
+          <h1 className="text-2xl font-bold text-slate-800">Shipments info</h1>
           <p className="text-slate-500 text-sm mt-1">
             Details about shipped orders awaiting delivery
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-sm font-bold flex items-center gap-2">
-            <Package className="w-4 h-4" /> {deliveries.length} Shipments
-            Found
+            <Package className="w-4 h-4" /> {deliveries.length} Shipments Found
           </div>
         </div>
       </div>
@@ -91,8 +97,12 @@ const ProductInfo = () => {
       {deliveries.length === 0 ? (
         <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-slate-300">
           <Package className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-slate-600">No shipped orders at the moment</h3>
-          <p className="text-slate-400">All orders are either being processed or have been completed.</p>
+          <h3 className="text-lg font-bold text-slate-600">
+            No shipped orders at the moment
+          </h3>
+          <p className="text-slate-400">
+            All orders are either being processed or have been completed.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -108,7 +118,7 @@ const ProductInfo = () => {
                   <Truck className="w-3 h-3" /> {delivery.status}
                 </span>
               </div>
-              <div className="p-6 space-y-5">
+              <div className="p-4 sm:p-6 space-y-5">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-slate-800">
                     {delivery.product}
@@ -188,7 +198,8 @@ const ProductInfo = () => {
                   <button
                     onClick={() => handleDeliverySuccess(delivery.order_id)}
                     className="flex-1 py-3 bg-black text-white rounded-xl font-bold text-sm hover:bg-slate-900 transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg">
-                    <CheckCircle className="w-4 h-4 text-green-400" /> Delivery Successful
+                    <CheckCircle className="w-4 h-4 text-green-400" /> Delivery
+                    Successful
                   </button>
                 </div>
               </div>

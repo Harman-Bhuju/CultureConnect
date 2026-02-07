@@ -31,10 +31,13 @@ const AdminOverview = () => {
 
   const fetchRecentActivity = async () => {
     try {
-      const response = await fetch(`${API.GET_RECENT_ACTIVITY}?type=${recentFilter}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${API.GET_RECENT_ACTIVITY}?type=${recentFilter}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
       const result = await response.json();
       if (result.success) {
         setRecentActivity(result.data);
@@ -49,7 +52,7 @@ const AdminOverview = () => {
     try {
       const queryParams = new URLSearchParams({
         filter_type: mainFilter,
-        sub_category: subCategory !== "all" ? subCategory : ""
+        sub_category: subCategory !== "all" ? subCategory : "",
       });
 
       const response = await fetch(`${API.GET_OVERVIEW_STATS}?${queryParams}`, {
@@ -81,7 +84,7 @@ const AdminOverview = () => {
       icon: Users,
       iconBg: "bg-blue-50",
       iconColor: "text-blue-600",
-      show: true // Always show
+      show: true, // Always show
     },
     {
       id: "experts",
@@ -90,7 +93,7 @@ const AdminOverview = () => {
       icon: GraduationCap,
       iconBg: "bg-purple-50",
       iconColor: "text-purple-600",
-      show: mainFilter === "all" || mainFilter === "learn_culture"
+      show: mainFilter === "all" || mainFilter === "learn_culture",
     },
     {
       id: "courses",
@@ -99,7 +102,7 @@ const AdminOverview = () => {
       icon: PlayCircle,
       iconBg: "bg-pink-50",
       iconColor: "text-pink-600",
-      show: mainFilter === "all" || mainFilter === "learn_culture"
+      show: mainFilter === "all" || mainFilter === "learn_culture",
     },
     {
       id: "sellers",
@@ -108,7 +111,7 @@ const AdminOverview = () => {
       icon: ShoppingBag,
       iconBg: "bg-orange-50",
       iconColor: "text-orange-600",
-      show: mainFilter === "all" || mainFilter === "marketplace"
+      show: mainFilter === "all" || mainFilter === "marketplace",
     },
     {
       id: "products",
@@ -117,18 +120,20 @@ const AdminOverview = () => {
       icon: ShoppingBag,
       iconBg: "bg-green-50",
       iconColor: "text-green-600",
-      show: mainFilter === "all" || mainFilter === "marketplace"
-    }
+      show: mainFilter === "all" || mainFilter === "marketplace",
+    },
   ];
 
-  const visibleStats = allStats.filter(stat => stat.show);
+  const visibleStats = allStats.filter((stat) => stat.show);
 
   return (
     <div className="space-y-6">
       {/* Header & Filter Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
         <div>
-          <h2 className="text-xl font-bold text-gray-800">Dashboard Overview</h2>
+          <h2 className="text-xl font-bold text-gray-800">
+            Dashboard Overview
+          </h2>
           <p className="text-sm text-gray-500">Welcome back, Admin</p>
         </div>
 
@@ -138,13 +143,15 @@ const AdminOverview = () => {
             <select
               value={mainFilter}
               onChange={handleMainFilterChange}
-              className="pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 appearance-none focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer min-w-[140px]"
-            >
+              className="pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 appearance-none focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer min-w-[140px]">
               <option value="all">All Overview</option>
               <option value="marketplace">Marketplace</option>
               <option value="learn_culture">Learn Culture</option>
             </select>
-            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+            <ChevronDown
+              size={16}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+            />
           </div>
 
           {/* Sub Category Filter - Conditional */}
@@ -153,14 +160,18 @@ const AdminOverview = () => {
               <select
                 value={subCategory}
                 onChange={(e) => setSubCategory(e.target.value)}
-                className="pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 appearance-none focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer min-w-[160px]"
-              >
+                className="pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 appearance-none focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer min-w-[160px]">
                 <option value="all">All Categories</option>
-                <option value="Traditional Clothing">Traditional Clothing</option>
+                <option value="Traditional Clothing">
+                  Traditional Clothing
+                </option>
                 <option value="Musical Instruments">Musical Instruments</option>
                 <option value="Arts & Decors">Arts & Decors</option>
               </select>
-              <Filter size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+              <Filter
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+              />
             </div>
           )}
 
@@ -169,15 +180,19 @@ const AdminOverview = () => {
               <select
                 value={subCategory}
                 onChange={(e) => setSubCategory(e.target.value)}
-                className="pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 appearance-none focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer min-w-[160px]"
-              >
+                className="pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 appearance-none focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer min-w-[160px]">
                 <option value="all">All Categories</option>
                 <option value="Cultural Dances">Cultural Dances</option>
                 <option value="Cultural Singing">Cultural Singing</option>
                 <option value="Musical Instruments">Musical Instruments</option>
-                <option value="Cultural Art & Crafts">Cultural Art & Crafts</option>
+                <option value="Cultural Art & Crafts">
+                  Cultural Art & Crafts
+                </option>
               </select>
-              <Filter size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+              <Filter
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+              />
             </div>
           )}
         </div>
@@ -189,7 +204,8 @@ const AdminOverview = () => {
         </div>
       ) : (
         /* Stats Grid */
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${visibleStats.length > 4 ? '3' : visibleStats.length} gap-6`}>
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-${Math.min(visibleStats.length, 4)} gap-4 sm:gap-6`}>
           {visibleStats.map((stat) => {
             const Icon = stat.icon;
             return (
@@ -221,7 +237,7 @@ const AdminOverview = () => {
         <div className="p-6 border-b border-gray-200">
           <h3 className="text-lg font-bold text-gray-900">Quick Actions</h3>
         </div>
-        <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <button
             onClick={() => navigate("/admin/teachers")}
             className="p-6 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-all shadow-sm hover:shadow-md flex items-center gap-4">
@@ -230,7 +246,9 @@ const AdminOverview = () => {
             </div>
             <div className="text-left">
               <div className="text-base font-bold">Approve Teachers</div>
-              <div className="text-sm opacity-80 mt-0.5">View pending applications</div>
+              <div className="text-sm opacity-80 mt-0.5">
+                View pending applications
+              </div>
             </div>
           </button>
 
@@ -242,7 +260,9 @@ const AdminOverview = () => {
             </div>
             <div className="text-left">
               <div className="text-base font-bold">Manage Users</div>
-              <div className="text-sm opacity-80 mt-0.5">View all system users</div>
+              <div className="text-sm opacity-80 mt-0.5">
+                View all system users
+              </div>
             </div>
           </button>
 
@@ -254,7 +274,9 @@ const AdminOverview = () => {
             </div>
             <div className="text-left">
               <div className="text-base font-bold">Analytics Reports</div>
-              <div className="text-sm opacity-80 mt-0.5">View growth & stats</div>
+              <div className="text-sm opacity-80 mt-0.5">
+                View growth & stats
+              </div>
             </div>
           </button>
         </div>
@@ -280,17 +302,26 @@ const AdminOverview = () => {
                 timeString = `${Math.floor(diffInSeconds / 60)} min ago`;
               } else if (diffInSeconds < 86400) {
                 timeString = `${Math.floor(diffInSeconds / 3600)} hr ago`;
-              } else if (diffInSeconds < 604800) { // 7 days
+              } else if (diffInSeconds < 604800) {
+                // 7 days
                 timeString = `${Math.floor(diffInSeconds / 86400)} day ago`;
               } else {
-                timeString = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                timeString = date.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                });
               }
 
               // Avatar URL logic
               let avatarUrl = item.avatar || "";
               const defaultAvatar = `https://ui-avatars.com/api/?name=${item.name}&background=random`;
 
-              if (!avatarUrl || avatarUrl === "null" || avatarUrl === "undefined") {
+              if (
+                !avatarUrl ||
+                avatarUrl === "null" ||
+                avatarUrl === "undefined"
+              ) {
                 avatarUrl = defaultAvatar;
               } else if (
                 !avatarUrl.startsWith("http") &&
@@ -301,7 +332,9 @@ const AdminOverview = () => {
               }
 
               return (
-                <div key={index} className="p-4 hover:bg-gray-50 flex items-center gap-4 transition-colors">
+                <div
+                  key={index}
+                  className="p-4 hover:bg-gray-50 flex items-center gap-4 transition-colors">
                   <img
                     src={avatarUrl}
                     alt={item.name}
@@ -311,17 +344,25 @@ const AdminOverview = () => {
                     }}
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-gray-900 truncate">{item.name}</p>
-                    <p className="text-xs text-gray-500 truncate">{item.email}</p>
+                    <p className="text-sm font-bold text-gray-900 truncate">
+                      {item.name}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {item.email}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-400 font-medium">{timeString}</p>
+                    <p className="text-xs text-gray-400 font-medium">
+                      {timeString}
+                    </p>
                   </div>
                 </div>
               );
             })
           ) : (
-            <div className="p-8 text-center text-gray-500">No recent users found.</div>
+            <div className="p-8 text-center text-gray-500">
+              No recent users found.
+            </div>
           )}
         </div>
       </div>
