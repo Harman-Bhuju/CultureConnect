@@ -32,17 +32,17 @@ export default function PaymentPage({
   const estimatedDelivery = order.estimated_delivery_time;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 md:p-8">
       <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="grid grid-cols-3 gap-0">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
           {/* Left Section - Payment Options */}
-          <div className="col-span-2 p-8 border-r border-gray-200">
+          <div className="col-span-1 lg:col-span-2 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-gray-200">
             <ArrowLeft
               className="text-black mb-6 cursor-pointer hover:text-gray-700"
               size={24}
               onClick={() => navigate(`/checkout/${sellerId}/${productId}`)}
             />
-            <h1 className="text-3xl font-bold text-black mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-black mb-6 md:mb-8">
               Payment Method
             </h1>
 
@@ -50,26 +50,29 @@ export default function PaymentPage({
               {/* eSewa */}
               <button
                 onClick={() => setSelectedPayment("esewa")}
-                className={`w-full p-6 rounded-lg border-2 transition-all ${selectedPayment === "esewa"
+                className={`w-full p-4 md:p-6 rounded-lg border-2 transition-all ${
+                  selectedPayment === "esewa"
                     ? "border-black bg-gray-50"
                     : "border-gray-300 bg-white hover:border-gray-400"
-                  }`}>
+                }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold">eSewa</span>
-                    </div>
-                    <div className="text-left">
-                      <span className="text-black font-semibold text-lg block">
+                    <div className="w-12 h-12 md:w-16 md:h-16 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-bold text-sm md:text-base">
                         eSewa
                       </span>
-                      <span className="text-gray-600 text-sm">
+                    </div>
+                    <div className="text-left">
+                      <span className="text-black font-semibold text-base md:text-lg block">
+                        eSewa
+                      </span>
+                      <span className="text-gray-600 text-xs md:text-sm">
                         Pay securely with eSewa wallet
                       </span>
                     </div>
                   </div>
                   {selectedPayment === "esewa" && (
-                    <Check className="text-black" size={28} />
+                    <Check className="text-black" size={24} />
                   )}
                 </div>
               </button>
@@ -77,26 +80,29 @@ export default function PaymentPage({
               {/* Cash on Delivery */}
               <button
                 onClick={() => setSelectedPayment("cod")}
-                className={`w-full p-6 rounded-lg border-2 transition-all ${selectedPayment === "cod"
+                className={`w-full p-4 md:p-6 rounded-lg border-2 transition-all ${
+                  selectedPayment === "cod"
                     ? "border-black bg-gray-50"
                     : "border-gray-300 bg-white hover:border-gray-400"
-                  }`}>
+                }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gray-300 rounded-lg flex items-center justify-center">
-                      <span className="text-black font-bold text-2xl">💵</span>
+                    <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-300 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-black font-bold text-xl md:text-2xl">
+                        💵
+                      </span>
                     </div>
                     <div className="text-left">
-                      <span className="text-black font-semibold text-lg block">
+                      <span className="text-black font-semibold text-base md:text-lg block">
                         Cash on Delivery
                       </span>
-                      <span className="text-gray-600 text-sm">
+                      <span className="text-gray-600 text-xs md:text-sm">
                         Pay when you receive the order
                       </span>
                     </div>
                   </div>
                   {selectedPayment === "cod" && (
-                    <Check className="text-black" size={28} />
+                    <Check className="text-black" size={24} />
                   )}
                 </div>
               </button>
@@ -113,8 +119,8 @@ export default function PaymentPage({
           </div>
 
           {/* Right Section - Summary */}
-          <div className="bg-gray-50 p-8">
-            <h2 className="text-xl font-semibold text-black mb-6">
+          <div className="col-span-1 bg-gray-50 p-6 md:p-8">
+            <h2 className="text-lg md:text-xl font-semibold text-black mb-6">
               Order Summary
             </h2>
 
@@ -130,7 +136,7 @@ export default function PaymentPage({
               {/* Product Info */}
               <div className="bg-white rounded-lg p-4 border border-gray-200">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
                     {order.product_image ? (
                       <img
                         src={`${API.PRODUCT_IMAGES}/${order.product_image}`}
@@ -141,8 +147,10 @@ export default function PaymentPage({
                       <span className="text-2xl">📦</span>
                     )}
                   </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">{order.product_name}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">
+                      {order.product_name}
+                    </p>
                     <p className="text-xs text-gray-500">
                       Qty: {order.quantity}
                     </p>
@@ -162,7 +170,7 @@ export default function PaymentPage({
                         ) : (
                           <div className="w-4 h-4 rounded-full bg-gray-300" />
                         )}
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 truncate">
                           {order.store_name}
                         </span>
                       </div>
@@ -211,16 +219,18 @@ export default function PaymentPage({
                 <p className="text-sm text-black font-medium">
                   {estimatedDelivery
                     ? new Date(estimatedDelivery).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
                     : "Calculating..."}
                 </p>
                 <div className="mt-3 pt-3 border-t border-gray-200">
                   <p className="text-xs text-gray-500 mb-1">Delivering to:</p>
-                  <p className="text-xs text-black">{selectedLocation?.name}</p>
+                  <p className="text-xs text-black break-words">
+                    {selectedLocation?.name}
+                  </p>
                 </div>
               </div>
             </div>
@@ -228,10 +238,11 @@ export default function PaymentPage({
             <button
               onClick={handleConfirmPayment}
               disabled={!selectedPayment}
-              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${selectedPayment
+              className={`w-full font-semibold py-4 rounded-lg transition-colors mb-3 ${
+                selectedPayment
                   ? "bg-black hover:bg-gray-800 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}>
+              }`}>
               {selectedPayment
                 ? `Confirm & Pay Rs. ${total}`
                 : "Select Payment Method"}

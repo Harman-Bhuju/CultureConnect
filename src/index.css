@@ -3,6 +3,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Custom Breakpoints for enhanced responsiveness */
+  --breakpoint-xs: 480px;
+  --breakpoint-2xl: 1536px;
+
+
   /* Cultural Palette */
   --color-heritage-red: #D4145A;
   --color-royal-blue: #1E3A8A;

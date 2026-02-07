@@ -8,7 +8,7 @@ import {
   Trash2,
   Grid,
 } from "lucide-react";
-import TeacherAnalyticsStatsCard from "./TeacherAnalyticsStatsCard"; // Using specific component to avoid confusion
+import TeacherAnalyticsStatsCard from "./TeacherAnalyticsStatsCard";
 
 const TeacherAnalyticsStatsCards = ({
   selectedPeriod,
@@ -24,9 +24,9 @@ const TeacherAnalyticsStatsCards = ({
   };
 
   return (
-    <>
-      {/* Performance Stats */}
-      <div className="grid grid-cols-3 gap-6">
+    <div className="space-y-4 sm:space-y-5 lg:space-y-6">
+      {/* Performance Stats - Main metrics */}
+      <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         <TeacherAnalyticsStatsCard
           icon={DollarSign}
           iconBgColor="bg-orange-100"
@@ -52,8 +52,8 @@ const TeacherAnalyticsStatsCards = ({
         />
       </div>
 
-      {/* Course Stats */}
-      <div className="grid grid-cols-4 gap-6 mt-6">
+      {/* Course Stats - Breakdown */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         <TeacherAnalyticsStatsCard
           icon={Grid}
           iconBgColor="bg-purple-100"
@@ -64,17 +64,17 @@ const TeacherAnalyticsStatsCards = ({
 
         <TeacherAnalyticsStatsCard
           icon={Box}
-          iconBgColor="bg-green-100"
-          iconColor="text-green-600"
-          label="ACTIVE COURSES"
+          iconBgColor="bg-emerald-100"
+          iconColor="text-emerald-600"
+          label="ACTIVE"
           value={courseStats.active_courses}
         />
 
         <TeacherAnalyticsStatsCard
           icon={FileText}
-          iconBgColor="bg-yellow-100"
-          iconColor="text-yellow-600"
-          label="DRAFT COURSES"
+          iconBgColor="bg-amber-100"
+          iconColor="text-amber-600"
+          label="DRAFT"
           value={courseStats.draft_courses}
         />
 
@@ -82,11 +82,11 @@ const TeacherAnalyticsStatsCards = ({
           icon={Trash2}
           iconBgColor="bg-red-100"
           iconColor="text-red-600"
-          label="ARCHIVED/DELETED"
+          label="ARCHIVED"
           value={courseStats.deleted_courses || 0}
         />
       </div>
-    </>
+    </div>
   );
 };
 

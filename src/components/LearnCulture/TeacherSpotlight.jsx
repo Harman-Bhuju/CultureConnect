@@ -59,53 +59,98 @@ const TeacherSpotlight = () => {
   }
 
   return (
-    <div className="py-8 px-3 sm:px-6 md:px-10">
-      <div className="mb-4">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
+    <div className="py-8 sm:py-10 md:py-12 lg:py-16 px-3 sm:px-4 md:px-6 lg:px-0 max-w-7xl mx-auto">
+      {/* Header with responsive typography */}
+      <div className="mb-4 sm:mb-5 md:mb-6 text-center md:text-left px-1">
+        <h2 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 sm:mb-1">
           Suggested Instructors
         </h2>
-        <p className="text-sm text-gray-500">Learn from master practitioners</p>
+        <p className="text-xs sm:text-sm md:text-base text-gray-500">
+          Learn from master practitioners
+        </p>
       </div>
 
-      {/* Horizontal Scroll Container */}
-      <div className="flex overflow-x-auto gap-4 pb-4 md:pb-0 scrollbar-hide snap-x">
-        {teachers.map((teacher) => (
-          <Link
-            key={teacher.id}
-            to={`/teacherprofile/${teacher.id}`}
-            className="flex-shrink-0 w-[280px] md:w-[320px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 p-4 transition-shadow hover:shadow-md flex items-center gap-4 group">
-            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden bg-gray-200 shrink-0">
-              <img
-                src={`${API.TEACHER_PROFILE_PICTURES}/${teacher.profile_picture}`}
-                alt={teacher.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.src =
-                    "https://images.unsplash.com/photo-1544717305-27a734ef1904?q=80&w=2070&auto=format&fit=crop";
-                }}
-              />
-            </div>
+      {/* Enhanced Horizontal Scroll Container */}
+      <div className="relative group/scroll">
+        {/* Scroll fade indicators */}
+        <div className="hidden md:block absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none opacity-0 group-hover/scroll:opacity-100 transition-opacity" />
+        <div className="hidden md:block absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none opacity-0 group-hover/scroll:opacity-100 transition-opacity" />
 
-            <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-gray-900 truncate text-sm md:text-base group-hover:text-teal-600 transition-colors">
-                {teacher.name}
-              </h3>
-              <p className="text-xs text-gray-500 mb-1">{teacher.specialty}</p>
-
-              <div className="flex items-center gap-2 text-xs">
-                <span className="flex items-center gap-0.5 text-yellow-500 font-medium">
-                  <Star size={12} fill="currentColor" /> {teacher.rating} 
-                </span>
-                <span className="text-gray-300">|</span>
-                <span className="text-gray-500">{teacher.courses} Courses</span>
-                <span className="text-gray-300">|</span>
-                <span className="text-gray-500">
-                  {teacher.total_students.toLocaleString()} Students
-                </span>
+        <div className="flex overflow-x-auto gap-2.5 xs:gap-3 sm:gap-3.5 md:gap-4 pb-4 sm:pb-5 md:pb-4 scrollbar-hide snap-x snap-mandatory -mx-3 px-3 sm:-mx-4 sm:px-4 md:mx-0 md:px-0">
+          {teachers.map((teacher, index) => (
+            <Link
+              key={teacher.id}
+              to={`/teacherprofile/${teacher.id}`}
+              style={{ animationDelay: `${index * 60}ms` }}
+              className="flex-shrink-0 w-[200px] xs:w-[220px] sm:w-[260px] md:w-[280px] lg:w-[320px] snap-start bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100/80 p-2.5 xs:p-3 sm:p-3.5 md:p-4 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 hover:border-teal-100 flex items-center gap-2.5 xs:gap-3 sm:gap-3.5 md:gap-4 group active:scale-[0.98]">
+              {/* Profile image with enhanced sizing */}
+              <div className="w-11 h-11 xs:w-12 xs:h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 shrink-0 ring-2 ring-white shadow-sm">
+                <img
+                  src={`${API.TEACHER_PROFILE_PICTURES}/${teacher.profile_picture}`}
+                  alt={teacher.name}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  onError={(e) => {
+                    e.target.src =
+                      "https://images.unsplash.com/photo-1544717305-27a734ef1904?q=80&w=2070&auto=format&fit=crop";
+                  }}
+                />
               </div>
-            </div>
-          </Link>
-        ))}
+
+              {/* Content with fluid typography */}
+              <div className="flex-1 min-w-0 space-y-0.5 sm:space-y-1">
+                <h3 className="font-bold text-gray-900 truncate text-xs xs:text-sm sm:text-sm md:text-base group-hover:text-teal-600 transition-colors">
+                  {teacher.name}
+                </h3>
+                <p className="text-[10px] xs:text-xs sm:text-xs text-gray-500 truncate">
+                  {teacher.specialty}
+                </p>
+
+                {/* Stats row with responsive layout */}
+                <div className="flex items-center gap-1.5 sm:gap-2 text-[9px] xs:text-[10px] sm:text-xs flex-wrap">
+                  <span className="flex items-center gap-0.5 text-yellow-500 font-semibold">
+                    <Star size={10} className="sm:hidden" fill="currentColor" />
+                    <Star
+                      size={12}
+                      className="hidden sm:block"
+                      fill="currentColor"
+                    />
+                    {teacher.rating}
+                  </span>
+                  <span className="text-gray-200 hidden xs:inline">•</span>
+                  <span className="text-gray-500 hidden xs:inline">
+                    {teacher.courses} Courses
+                  </span>
+                  <span className="text-gray-200 hidden sm:inline">•</span>
+                  <span className="text-gray-500 hidden sm:inline">
+                    {teacher.total_students >= 1000
+                      ? `${(teacher.total_students / 1000).toFixed(1)}k`
+                      : teacher.total_students}{" "}
+                    Students
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile scroll hint */}
+      <div className="flex sm:hidden justify-center mt-1">
+        <div className="flex items-center gap-1 text-[10px] text-gray-400">
+          <span>Swipe for more</span>
+          <svg
+            className="w-3 h-3 animate-pulse"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M14 5l7 7m0 0l-7 7m7-7H3"
+            />
+          </svg>
+        </div>
       </div>
     </div>
   );

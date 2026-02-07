@@ -187,17 +187,17 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div>
               <h2 className="text-xl font-semibold text-gray-800">My Orders</h2>
               <p className="text-sm text-gray-500 mt-1">
                 View and manage your orders - {getPeriodLabel()}
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="relative">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="relative flex-1 min-w-[120px] sm:flex-none">
                 <select
                   value={paymentStatusFilter}
                   onChange={(e) => setPaymentStatusFilter(e.target.value)}
@@ -209,11 +209,11 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               </div>
 
-              <div className="relative">
+              <div className="relative flex-1 min-w-[120px] sm:flex-none">
                 <select
                   value={orderStatusFilter}
                   onChange={(e) => setOrderStatusFilter(e.target.value)}
-                  className="appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
+                  className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
                   <option value="all">All Status</option>
                   <option value="processing">Processing</option>
                   <option value="shipped">Shipped</option>
@@ -221,11 +221,11 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               </div>
 
-              <div className="relative">
+              <div className="relative flex-1 min-w-[120px] sm:flex-none">
                 <select
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value)}
-                  className="appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
+                  className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
                   <option value="newest">Newest First</option>
                   <option value="oldest">Oldest First</option>
                 </select>
@@ -237,30 +237,36 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
 
         {filteredOrders.length > 0 && (
           <div className="mt-6 mb-4 pt-4 border-t border-gray-200">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="text-center p-3 bg-gray-50 rounded-lg sm:bg-transparent sm:p-0">
                 <p className="text-2xl font-bold text-gray-900">
                   {filteredOrders.length}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Total Orders</p>
+                <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
+                  Total Orders
+                </p>
               </div>
-              <div className="text-center">
+              <div className="text-center p-3 bg-blue-50 rounded-lg sm:bg-transparent sm:p-0">
                 <p className="text-2xl font-bold text-blue-600">
                   {filteredOrders.reduce(
                     (sum, order) => sum + order.quantity,
                     0,
                   )}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Total Items</p>
+                <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
+                  Total Items
+                </p>
               </div>
-              <div className="text-center">
+              <div className="text-center p-3 bg-gray-50 rounded-lg sm:bg-transparent sm:p-0">
                 <p className="text-2xl font-bold text-gray-900">
                   Rs.{" "}
                   {filteredOrders
                     .reduce((sum, order) => sum + order.totalAmount, 0)
                     .toLocaleString()}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Total Amount</p>
+                <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
+                  Total Amount
+                </p>
               </div>
             </div>
           </div>
@@ -294,19 +300,30 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
                   {orders.map((order) => (
                     <div
                       key={order.id}
-                      className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow bg-white">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
-                          <img
-                            src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
-                            alt={order.productName}
-                            className="w-full h-full object-cover"
-                          />
+                      className="border border-gray-200 rounded-lg p-3 sm:p-5 hover:shadow-md transition-shadow bg-white">
+                      <div className="flex flex-col sm:flex-row items-start gap-4">
+                        <div className="flex items-center gap-4 w-full sm:w-auto">
+                          <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg flex items-center justify-center overflow-hidden border border-gray-100">
+                            <img
+                              src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
+                              alt={order.productName}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+
+                          <div className="flex-1 sm:hidden">
+                            <h3 className="text-gray-900 font-semibold text-base mb-1 line-clamp-1">
+                              {order.productName}
+                            </h3>
+                            <p className="text-lg font-bold text-orange-600">
+                              Rs. {order.totalAmount.toLocaleString()}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between">
-                            <div>
+                        <div className="flex-1 w-full">
+                          <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+                            <div className="hidden sm:block">
                               <h3 className="text-gray-900 font-semibold text-lg mb-1">
                                 {order.productName}
                               </h3>
@@ -322,14 +339,19 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
                             {order.status === "processing" && (
                               <button
                                 onClick={() => handleOpenCancelModal(order)}
-                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2">
+                                className="w-full sm:w-auto px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
                                 <XCircle className="w-4 h-4" />
-                                Cancel Order
+                                <span className="sm:hidden">
+                                  Cancel This Order
+                                </span>
+                                <span className="hidden sm:inline">
+                                  Cancel Order
+                                </span>
                               </button>
                             )}
                           </div>
 
-                          <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 mt-4">
                             <div>
                               <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
                                 <MapPin className="w-3 h-3" />
@@ -364,9 +386,9 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
                             )}
                           </div>
 
-                          <div className="grid grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
                             <div>
-                              <p className="text-xs text-gray-500 font-medium">
+                              <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
                                 Unit Price
                               </p>
                               <p className="text-sm text-gray-900">
@@ -374,23 +396,23 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
                               </p>
                             </div>
                             <div>
-                              <p className="text-xs text-gray-500 font-medium">
+                              <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
                                 Quantity
                               </p>
                               <p className="text-sm text-gray-900">
                                 {order.quantity}
                               </p>
                             </div>
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium">
-                                Delivery Charge
+                            <div className="sm:block">
+                              <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
+                                Del. Charge
                               </p>
                               <p className="text-sm text-gray-900">
                                 Rs. {order.delivery_charge}
                               </p>
                             </div>
-                            <div>
-                              <p className="text-xs text-gray-500 font-medium">
+                            <div className="col-span-1 hidden sm:block">
+                              <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
                                 Total Amount
                               </p>
                               <p className="text-lg font-bold text-gray-900">
@@ -399,7 +421,7 @@ const MyOrders = ({ recentOrders, loading, selectedPeriod, refreshOrders }) => {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 pt-3 border-t border-gray-100">
                             <span
                               className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
                               {getStatusDisplay(order.status)}

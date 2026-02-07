@@ -150,22 +150,22 @@ export default function MayLikeCourse() {
   }
 
   return (
-    <div className="w-full pt-12 px-3 sm:px-6 md:px-10 bg-white">
+    <div className="w-full pt-8 sm:pt-10 md:pt-12 lg:pt-16 pb-8 sm:pb-10 md:pb-16 lg:pb-20 px-2 xs:px-3 sm:px-4 md:px-6 bg-white">
       <div
         className={`mx-auto ${isCollapsed ? "max-w-[1440px]" : "max-w-7xl"}`}>
-        <div className="mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+        {/* Header with responsive typography */}
+        <div className="mb-6 sm:mb-8 md:mb-10 text-center md:text-left px-1">
+          <h2 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
             You May Also Like
           </h2>
-          <p className="text-gray-500 text-lg">
+          <p className="text-gray-500 text-xs sm:text-sm md:text-base lg:text-lg">
             Courses handpicked based on your interests
           </p>
         </div>
 
+        {/* Enhanced responsive grid with more granular breakpoints */}
         <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ${
-            isCollapsed ? "xl:grid-cols-5" : "xl:grid-cols-4"
-          }`}>
+          className={`grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 xs:gap-3 sm:gap-4 md:gap-5 lg:gap-6`}>
           {courses.slice(0, visibleCount).map((course) => (
             <CourseCard
               key={course.id}

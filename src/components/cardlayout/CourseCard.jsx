@@ -11,7 +11,6 @@ const CourseCard = ({ course, teacherId, teacherName }) => {
 
   const courseData = course;
 
-
   // Handle various ID formats from API or mocks
   const instructorId = teacherId;
   const courseId = courseData.id;
@@ -96,14 +95,16 @@ const CourseCard = ({ course, teacherId, teacherName }) => {
       </div>
 
       {/* Course Content */}
-      <div className="p-5 space-y-1 flex-1 flex flex-col">
+      <div className="p-3 md:p-5 space-y-1 flex-1 flex flex-col">
         {/* Title */}
-        <h3 className="text-gray-900 text-base font-semibold leading-snug line-clamp-1">
+        <h3 className="text-gray-900 text-sm md:text-base font-semibold leading-tight md:leading-snug truncate">
           {courseTitle}
         </h3>
 
         {/* Instructor */}
-        <p className="text-gray-500 text-sm font-medium">{instructorName}</p>
+        <p className="text-gray-500 text-[10px] md:text-sm font-medium truncate">
+          {instructorName}
+        </p>
 
         {/* Description */}
         <p className="text-gray-600 text-sm leading-relaxed line-clamp-1 flex-1">
@@ -111,26 +112,44 @@ const CourseCard = ({ course, teacherId, teacherName }) => {
         </p>
 
         {/* Rating */}
-        <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
-          <span className="text-gray-900 text-sm font-bold">{rating}</span>
+        <div className="flex items-center gap-1.5 md:gap-2 pt-1.5 md:pt-2 border-t border-gray-100">
+          <span className="text-gray-900 text-xs md:text-sm font-bold">
+            {rating}
+          </span>
           <div className="flex items-center gap-0.5">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
+                size={10}
+                className={`md:hidden ${
+                  i < Math.floor(rating)
+                    ? "text-amber-500 fill-amber-500"
+                    : "text-gray-300"
+                }`}
+              />
+            ))}
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
                 size={14}
-                fill={i < Math.floor(rating) ? "#f59e0b" : "none"}
-                className={
-                  i < Math.floor(rating) ? "text-amber-500" : "text-gray-300"
-                }
+                className={`hidden md:block ${
+                  i < Math.floor(rating)
+                    ? "text-amber-500 fill-amber-500"
+                    : "text-gray-300"
+                }`}
               />
             ))}
           </div>
-          <span className="text-gray-400 text-sm">({reviews} reviews)</span>
+          <span className="text-gray-400 text-[10px] md:text-sm hidden xs:inline">
+            ({reviews})
+          </span>
         </div>
 
         {/* Price */}
-        <div className="flex items-baseline gap-2 pt-1">
-          <span className="text-gray-900 text-xl font-bold">{price}</span>
+        <div className="flex items-baseline gap-2 pt-0.5 md:pt-1">
+          <span className="text-gray-900 text-base md:text-xl font-bold">
+            {price}
+          </span>
         </div>
       </div>
     </div>

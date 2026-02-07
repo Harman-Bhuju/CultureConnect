@@ -108,9 +108,9 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
             <h2 className="text-xl font-semibold text-gray-800">
               Cancelled Orders
@@ -119,12 +119,12 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
               View your cancelled orders and refund status - {getPeriodLabel()}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div className="relative flex-1 min-w-[120px] sm:flex-none">
               <select
                 value={paymentStatusFilter}
                 onChange={(e) => setPaymentStatusFilter(e.target.value)}
-                className="appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
+                className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
                 <option value="all">All</option>
                 <option value="Refunded">Refunded</option>
                 <option value="Pending">Pending</option>
@@ -133,11 +133,11 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
             </div>
 
-            <div className="relative">
+            <div className="relative flex-1 min-w-[120px] sm:flex-none">
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
+                className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
               </select>
@@ -149,27 +149,33 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
 
       {filteredOrders.length > 0 && (
         <div className="mt-6 mb-4 pt-4 border-t border-gray-200">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="text-center p-3 bg-gray-50 rounded-lg sm:bg-transparent sm:p-0">
               <p className="text-2xl font-bold text-gray-900">
                 {filteredOrders.length}
               </p>
-              <p className="text-xs text-gray-500 mt-1">Cancelled Orders</p>
+              <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
+                Cancelled Orders
+              </p>
             </div>
-            <div className="text-center">
+            <div className="text-center p-3 bg-blue-50 rounded-lg sm:bg-transparent sm:p-0">
               <p className="text-2xl font-bold text-blue-600">
                 {filteredOrders.reduce((sum, order) => sum + order.quantity, 0)}
               </p>
-              <p className="text-xs text-gray-500 mt-1">Total Items</p>
+              <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
+                Total Items
+              </p>
             </div>
-            <div className="text-center">
+            <div className="text-center p-3 bg-gray-50 rounded-lg sm:bg-transparent sm:p-0">
               <p className="text-2xl font-bold text-gray-900">
                 Rs.{" "}
                 {filteredOrders
                   .reduce((sum, order) => sum + order.totalAmount, 0)
                   .toLocaleString()}
               </p>
-              <p className="text-xs text-gray-500 mt-1">Refund Amount</p>
+              <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
+                Refund Amount
+              </p>
             </div>
           </div>
         </div>
@@ -205,19 +211,30 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
                 {orders.map((order) => (
                   <div
                     key={order.id}
-                    className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow bg-white">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
-                        <img
-                          src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
-                          alt={order.productName}
-                          className="w-full h-full object-cover"
-                        />
+                    className="border border-gray-200 rounded-lg p-3 sm:p-5 hover:shadow-md transition-shadow bg-white">
+                    <div className="flex flex-col sm:flex-row items-start gap-4">
+                      <div className="flex items-center gap-4 w-full sm:w-auto">
+                        <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg flex items-center justify-center overflow-hidden border border-gray-100">
+                          <img
+                            src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
+                            alt={order.productName}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        <div className="flex-1 sm:hidden">
+                          <h3 className="text-gray-900 font-semibold text-base mb-1 line-clamp-1">
+                            {order.productName}
+                          </h3>
+                          <p className="text-lg font-bold text-orange-600">
+                            Rs. {order.totalAmount.toLocaleString()}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="flex-1">
+                      <div className="flex-1 w-full">
                         <div className="flex items-start justify-between">
-                          <div>
+                          <div className="hidden sm:block">
                             <h3 className="text-gray-900 font-semibold text-lg mb-1">
                               {order.productName}
                             </h3>
@@ -232,32 +249,32 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 mt-4">
                           <div>
-                            <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
+                            <p className="text-xs text-gray-500 font-medium flex items-center gap-1 uppercase tracking-wider">
                               <MapPin className="w-3 h-3" />
                               Delivery Location
                             </p>
-                            <p className="text-sm text-gray-900">
+                            <p className="text-sm text-gray-900 font-medium">
                               {order.delivery_location}
                             </p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
+                            <p className="text-xs text-gray-500 font-medium flex items-center gap-1 uppercase tracking-wider">
                               <Clock className="w-3 h-3" />
                               Cancelled On
                             </p>
-                            <p className="text-sm text-gray-900">
+                            <p className="text-sm text-gray-900 font-medium">
                               {order.updatedAt}
                             </p>
                           </div>
                           {order.transaction_uuid && (
-                            <div className="col-span-2">
-                              <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
+                            <div className="sm:col-span-2">
+                              <p className="text-xs text-gray-500 font-medium flex items-center gap-1 uppercase tracking-wider">
                                 <Hash className="w-3 h-3" />
                                 Transaction UUID
                               </p>
-                              <p className="text-sm text-gray-900 font-mono">
+                              <p className="text-xs sm:text-sm text-gray-900 font-mono break-all sm:break-normal">
                                 {order.transaction_uuid}
                               </p>
                             </div>
@@ -267,51 +284,51 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
                         {(order.cancellation?.reason ||
                           order.cancellation?.description ||
                           order.cancellation?.cancelled_by) && (
-                            <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                              {order.cancellation?.cancelled_by && (
-                                <div className="mb-2 pb-2 border-b border-gray-200">
-                                  <p className="text-xs text-gray-500 font-medium">
-                                    Cancelled By
-                                  </p>
-                                  <p className="text-sm text-gray-900 mt-1 capitalize">
-                                    {order.cancellation.cancelled_by === "buyer"
-                                      ? "You (Buyer)"
-                                      : order.cancellation.cancelled_by ===
+                          <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            {order.cancellation?.cancelled_by && (
+                              <div className="mb-2 pb-2 border-b border-gray-200">
+                                <p className="text-xs text-gray-500 font-medium">
+                                  Cancelled By
+                                </p>
+                                <p className="text-sm text-gray-900 mt-1 capitalize">
+                                  {order.cancellation.cancelled_by === "buyer"
+                                    ? "You (Buyer)"
+                                    : order.cancellation.cancelled_by ===
                                         "seller"
-                                        ? "Seller"
-                                        : order.cancellation.cancelled_by}
-                                  </p>
-                                </div>
-                              )}
-                              {order.cancellation?.reason && (
-                                <div
-                                  className={
-                                    order.cancellation?.description ? "mb-2" : ""
-                                  }>
-                                  <p className="text-xs text-gray-500 font-medium">
-                                    Cancellation Reason
-                                  </p>
-                                  <p className="text-sm text-gray-900 mt-1">
-                                    {order.cancellation.reason}
-                                  </p>
-                                </div>
-                              )}
-                              {order.cancellation?.description && (
-                                <div>
-                                  <p className="text-xs text-gray-500 font-medium">
-                                    Additional Details
-                                  </p>
-                                  <p className="text-sm text-gray-700 mt-1">
-                                    {order.cancellation.description}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          )}
+                                      ? "Seller"
+                                      : order.cancellation.cancelled_by}
+                                </p>
+                              </div>
+                            )}
+                            {order.cancellation?.reason && (
+                              <div
+                                className={
+                                  order.cancellation?.description ? "mb-2" : ""
+                                }>
+                                <p className="text-xs text-gray-500 font-medium">
+                                  Cancellation Reason
+                                </p>
+                                <p className="text-sm text-gray-900 mt-1">
+                                  {order.cancellation.reason}
+                                </p>
+                              </div>
+                            )}
+                            {order.cancellation?.description && (
+                              <div>
+                                <p className="text-xs text-gray-500 font-medium">
+                                  Additional Details
+                                </p>
+                                <p className="text-sm text-gray-700 mt-1">
+                                  {order.cancellation.description}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )}
 
-                        <div className="grid grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">
+                            <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
                               Unit Price
                             </p>
                             <p className="text-sm text-gray-900">
@@ -319,23 +336,23 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
                             </p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">
+                            <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
                               Quantity
                             </p>
-                            <p className="text-sm text-gray-900">
+                            <p className="text-sm text-gray-900 font-bold sm:font-normal">
                               {order.quantity}
                             </p>
                           </div>
-                          <div>
-                            <p className="text-xs text-gray-500 font-medium">
-                              Delivery Charge
+                          <div className="sm:block">
+                            <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
+                              Del. Charge
                             </p>
                             <p className="text-sm text-gray-900">
                               Rs. {order.delivery_charge}
                             </p>
                           </div>
-                          <div>
-                            <p className="text-xs text-gray-500 font-medium">
+                          <div className="hidden sm:block">
+                            <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
                               Total Amount
                             </p>
                             <p className="text-lg font-bold text-gray-900">
@@ -344,26 +361,34 @@ const BuyerCancelledOrders = ({ cancelledOrders, loading, selectedPeriod }) => {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100">
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 pt-3 border-t border-gray-100">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300">
                             <XCircle className="w-3 h-3 mr-1" />
                             Cancelled
                           </span>
                           <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getPaymentStatusColor(order.payment_status)}`}>
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold ${getPaymentStatusColor(order.payment_status)}`}>
                             <CreditCard className="w-3 h-3 mr-1" />
                             {order.payment_status?.toLowerCase() === "refunded"
                               ? "Refunded"
-                              : order.payment_status?.toLowerCase() === "pending_refund" || (order.payment_method?.toLowerCase() !== "cod" && order.payment_status?.toLowerCase() === "pending")
+                              : order.payment_status?.toLowerCase() ===
+                                    "pending_refund" ||
+                                  (order.payment_method?.toLowerCase() !==
+                                    "cod" &&
+                                    order.payment_status?.toLowerCase() ===
+                                      "pending")
                                 ? "Refund Pending (3-7 days)"
-                                : order.payment_method?.toLowerCase() === "cod" || order.payment_status?.toLowerCase() === "no_payment"
+                                : order.payment_method?.toLowerCase() ===
+                                      "cod" ||
+                                    order.payment_status?.toLowerCase() ===
+                                      "no_payment"
                                   ? "No Payment Needed"
                                   : "Refund Failed"}
                           </span>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-[10px] sm:text-xs text-gray-500 font-medium">
                             {order.payment_method}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-[10px] sm:text-xs text-gray-500 italic">
                             Ordered at {order.orderDate}
                           </div>
                         </div>

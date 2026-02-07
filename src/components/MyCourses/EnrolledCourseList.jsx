@@ -5,7 +5,7 @@ import { BookOpen } from "lucide-react";
 const EnrolledCourseList = ({ courses, onContinue }) => (
   <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
     {/* Table Header */}
-    <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
+    <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
       <div className="col-span-1 text-xs font-semibold text-blue-900 uppercase tracking-wide">
         Image
       </div>

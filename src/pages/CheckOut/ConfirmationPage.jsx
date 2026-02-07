@@ -142,27 +142,29 @@ export default function ConfirmationPage({
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
-      <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 md:p-8">
+      <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 md:p-8">
         <div className="text-center mb-8">
-          <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Check className="text-white" size={48} />
+          <div className="w-20 h-20 md:w-24 md:h-24 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Check className="text-white" size={40} />
           </div>
 
-          <h1 className="text-3xl font-bold text-black mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-black mb-2">
             Order Placed Successfully!
           </h1>
-          <p className="text-gray-600 text-lg">Thank you for your purchase</p>
+          <p className="text-gray-600 text-base md:text-lg">
+            Thank you for your purchase
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Order Details */}
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
             <h2 className="text-lg font-semibold text-black mb-4">
               Order Details
             </h2>
 
-            <div className="space-y-3 text-black">
+            <div className="space-y-3 text-black text-sm md:text-base">
               <div className="flex justify-between">
                 <span className="text-gray-600">Order Number</span>
                 <span className="font-mono font-semibold">
@@ -208,10 +210,12 @@ export default function ConfirmationPage({
               Delivery Details
             </h2>
 
-            <div className="space-y-3 text-black">
+            <div className="space-y-3 text-black text-sm md:text-base">
               <div>
                 <p className="text-gray-600 text-sm mb-1">Delivery Address</p>
-                <p className="font-medium">{delivery_location.name}</p>
+                <p className="font-medium break-words">
+                  {delivery_location.name}
+                </p>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Delivery Fee</span>
@@ -240,9 +244,9 @@ export default function ConfirmationPage({
         <div className="bg-gray-50 rounded-lg p-6 border border-gray-200 mb-8">
           <h2 className="text-lg font-semibold text-black mb-4">Order Item</h2>
           <div className="space-y-3">
-            <div className="flex justify-between items-center text-black">
-              <div className="flex items-center gap-3">
-                <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex items-center justify-center border border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-black gap-4 sm:gap-0">
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex items-center justify-center border border-gray-200 flex-shrink-0">
                   {order.product_image ? (
                     <img
                       src={`${BASE_URL}/uploads/product_images/${order.product_image}`}
@@ -253,16 +257,22 @@ export default function ConfirmationPage({
                     <span className="text-2xl">📦</span>
                   )}
                 </div>
-                <div>
-                  <span className="text-gray-700 font-medium">
-                    {order.product_name}
-                  </span>
-                  <span className="text-gray-500 ml-2">x{order.quantity}</span>
-                  {order.size && (
-                    <span className="text-gray-500 ml-2">
-                      • Size: {order.size}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center">
+                    <span className="text-gray-700 font-medium truncate">
+                      {order.product_name}
                     </span>
-                  )}
+                    <div className="flex items-center mt-1 sm:mt-0">
+                      <span className="text-gray-500 sm:ml-2">
+                        x{order.quantity}
+                      </span>
+                      {order.size && (
+                        <span className="text-gray-500 ml-2">
+                          • Size: {order.size}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                   {order.store_name && (
                     <div className="flex items-center gap-2 mt-1">
                       {order.store_logo ? (
@@ -274,14 +284,16 @@ export default function ConfirmationPage({
                       ) : (
                         <div className="w-5 h-5 rounded-full bg-gray-300" />
                       )}
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 truncate">
                         {order.store_name}
                       </p>
                     </div>
                   )}
                 </div>
               </div>
-              <span className="font-medium">Rs. {order.subtotal}</span>
+              <span className="font-medium self-end sm:self-center">
+                Rs. {order.subtotal}
+              </span>
             </div>
 
             <div className="border-t border-gray-300 pt-3 mt-3 space-y-2">
@@ -301,7 +313,7 @@ export default function ConfirmationPage({
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <button
             onClick={handleContinueShopping}
             className="flex-1 bg-black hover:bg-gray-800 transition-colors text-white font-semibold py-4 rounded-lg">

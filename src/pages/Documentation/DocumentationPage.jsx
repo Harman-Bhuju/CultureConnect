@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import DocNavbar from "./components/DocNavbar";
 import DocFooter from "./components/DocFooter";
 import DocSidebar from "./components/DocSidebar";
-import { Menu, X } from "lucide-react";
 import { Outlet, useLocation } from "react-router-dom";
 
 const DocumentationPage = () => {
@@ -42,18 +41,12 @@ const DocumentationPage = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-body">
-      <DocNavbar />
+      <DocNavbar
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
 
       <div className="flex-1 flex flex-col lg:flex-row relative">
-        {/* Mobile Sidebar Toggle */}
-        <div className="lg:hidden fixed top-24 left-4 z-40">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 bg-royal-blue text-white rounded-md shadow-lg">
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-
         {/* Sidebar Container */}
         <div
           className={`
@@ -61,7 +54,10 @@ const DocumentationPage = () => {
             lg:translate-x-0 lg:shadow-none lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)] lg:block pt-20 lg:pt-0 
             ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
         `}>
-          <DocSidebar activeSection={activeSection} />
+          <DocSidebar
+            activeSection={activeSection}
+            setIsMobileMenuOpen={setIsMobileMenuOpen}
+          />
         </div>
 
         {/* Main Content */}

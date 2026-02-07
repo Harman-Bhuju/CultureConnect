@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Search, Mic, X } from "lucide-react";
+import { Search, Mic, X, ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import API from "../../Configs/ApiEndpoints";
 
@@ -161,52 +161,59 @@ const SearchBar = ({
       ? "orange"
       : variant === "hero-learn"
         ? "teal"
-        : "blue";
+        : "amber";
 
   return (
     <div
-      className={`relative w-full ${isHero ? "max-w-2xl mx-auto" : "max-w-xl"} ${isOpen ? "z-[100]" : "z-10"}`}
+      className={`relative w-full ${isHero ? "max-w-2xl mx-auto" : "max-w-md lg:max-w-xl"} ${isOpen ? "z-[100]" : "z-10"} transition-all duration-500`}
       ref={containerRef}>
       {/* Search Input Container */}
       <div className={`relative group ${isHero ? "z-20" : ""}`}>
         {isHero && (
           <div
-            className={`absolute -inset-1 bg-gradient-to-r from-${themeColor}-500/20 to-amber-500/20 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200`}></div>
+            className={`absolute -inset-1 bg-gradient-to-r from-${themeColor}-500/30 to-amber-500/30 rounded-[2.5rem] blur-xl opacity-20 group-hover:opacity-40 transition duration-1000 animate-pulse`}></div>
         )}
 
-        <div className="relative">
-          <input
-            ref={inputRef}
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsOpen(true)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
-            placeholder={
-              isHero
-                ? "Search for heritage, crafts, masters..."
-                : `Search ${initialCategory ? "in " + initialCategory : contextType}...`
-            }
-            className={`w-full ${isHero ? "pl-14 pr-24 py-5 rounded-[1.5rem] text-lg bg-white" : "pl-11 pr-20 py-2 rounded-full text-sm md:text-base bg-gray-50 md:bg-white"} border border-gray-100 md:border-gray-300 focus:outline-none focus:ring-2 focus:ring-${themeColor}-500/20 focus:border-${themeColor}-500 transition-all hover:shadow-md`}
-          />
+        <div
+          className={`relative flex items-center bg-white/80  ${isHero ? " md:rounded-[2rem] md:border-gray-200/50" : "rounded-full border-gray-200 "} ${isOpen ? "md:shadow-2xl md:shadow-gray-200/50 md:border-gray-300" : "md:shadow-sm"} ${isHero && isOpen ? "shadow-2xl shadow-gray-200/50 border-gray-300" : "shadow-sm"}`}>
+          <div
+            className={`flex flex-1 items-center md:px-2 ${isHero ? "py-3 md:py-4 md:px-6" : "py-2 "}`}>
+            <Search
+              className={`hidden md:block flex-shrink-0  text-gray-400 group-hover:text-${themeColor}-500 transition-colors ${isHero ? "w-5 h-5 md:w-6 md:h-6" : "w-4 h-4 md:w-5 md:h-5 cursor-pointer"}`}
+              onClick={!isHero ? () => handleSearchSubmit() : undefined}
+            />
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsOpen(true)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
+              placeholder={
+                isHero
+                  ? "Search heritage, crafts..."
+                  : `Search ${initialCategory ? "in " + initialCategory : contextType}...`
+              }
+              className={`flex-1 bg-transparent border-none px-2 placeholder:text-gray-400 ${isHero ? "text-base md:text-lg ml-3 md:ml-4" : "text-sm md:text-base ml-2 md:ml-3"}`}
+            />
+          </div>
 
-          <Search
-            className={`absolute ${isHero ? "left-5" : "left-4"} top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-${themeColor}-500 transition-colors ${isHero ? "w-6 h-6" : "w-5 h-5 cursor-pointer"}`}
-            onClick={!isHero ? () => handleSearchSubmit() : undefined}
-          />
-
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          <div className="flex items-center gap-1 pr-3 md:pr-4">
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="p-1 hover:bg-gray-100 rounded-full">
-                <X size={16} className="text-gray-400" />
+                className="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+                <X size={14} className="md:w-4 md:h-4 text-gray-400" />
               </button>
             )}
+            <div className="w-px h-5 md:h-6 bg-gray-200 mx-0.5 md:mx-1"></div>
             <button
               onClick={startVoiceSearch}
-              className={`p-3 rounded-full  ${isListening ? "text-red-500 animate-pulse " : "text-gray-400"}`}>
-              <Mic size={isHero ? 24 : 20} />
+              className={`p-1.5 md:p-2 rounded-full transition-all duration-300 ${isListening ? `bg-${themeColor}-50 text-${themeColor}-600 ring-4 ring-${themeColor}-100 scale-110` : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"}`}>
+              <Mic
+                size={isHero ? 20 : 16}
+                className="md:w-[22px] md:h-[22px]"
+              />
             </button>
           </div>
         </div>
@@ -221,25 +228,33 @@ const SearchBar = ({
               Top Recommendations
             </div>
           )}
-          <div className="max-h-[300px] overflow-y-auto">
+          <div className="max-h-[350px] overflow-y-auto py-2">
             {suggestions.map((s, i) => (
               <button
                 key={i}
                 onClick={() => handleSearchSubmit(s)}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-50 last:border-0">
-                <Search
-                  className={`text-gray-300 ${isHero ? "w-5 h-5" : "w-4 h-4"}`}
-                />
-                <div className="flex flex-col">
-                  <span
-                    className={`font-medium text-gray-900 ${isHero ? "text-base" : "text-sm"}`}>
-                    {s.text}
-                  </span>
-                  {s.category && (
-                    <span className="text-[10px] text-gray-400 uppercase font-semibold">
-                      {s.category}
+                className="w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-4 transition-all duration-200 group/item border-l-4 border-transparent hover:border-amber-500">
+                <div
+                  className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover/item:bg-amber-50 transition-colors`}>
+                  <Search
+                    className={`text-gray-400 group-hover/item:text-amber-500 transition-colors ${isHero ? "w-4.5 h-4.5" : "w-4 h-4"}`}
+                  />
+                </div>
+                <div className="flex flex-1 items-center justify-between">
+                  <div className="flex flex-col">
+                    <span
+                      className={`font-semibold text-gray-800 group-hover/item:text-gray-900 ${isHero ? "text-base" : "text-sm"}`}>
+                      {s.text}
                     </span>
-                  )}
+                    {s.category && (
+                      <span className="text-[10px] text-gray-500 uppercase font-bold tracking-tight opacity-70">
+                        {s.category.replace(/-/g, " ")}
+                      </span>
+                    )}
+                  </div>
+                  <div className="opacity-0 group-hover/item:opacity-100 transition-opacity">
+                    <ArrowLeft className="w-4 h-4 text-amber-500 rotate-180" />
+                  </div>
                 </div>
               </button>
             ))}

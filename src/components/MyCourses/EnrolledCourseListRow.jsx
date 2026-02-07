@@ -30,73 +30,135 @@ const EnrolledCourseListRow = ({ course, onContinue }) => {
     : "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800";
 
   return (
-    <div
-      onClick={handleContinue}
-      className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-blue-50 transition-colors cursor-pointer group">
-      {/* Image */}
-      <div className="col-span-1">
-        <img
-          src={imageUrl}
-          alt={courseTitle}
-          className="w-16 h-16 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
-          onError={(e) => {
-            e.target.src =
-              "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800";
-          }}
-        />
-      </div>
+    <>
+      {/* Desktop View */}
+      <div
+        onClick={handleContinue}
+        className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-blue-50 transition-colors cursor-pointer group">
+        {/* Image */}
+        <div className="col-span-1">
+          <img
+            src={imageUrl}
+            alt={courseTitle}
+            className="w-16 h-16 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
+            onError={(e) => {
+              e.target.src =
+                "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800";
+            }}
+          />
+        </div>
 
-      {/* Course Details */}
-      <div className="col-span-4">
-        <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">
-          {courseTitle}
-        </h3>
-        <p className="text-xs text-gray-500 flex items-center gap-2">
-          <span>{teacherName}</span>
-          <span className="flex items-center gap-0.5">
-            <Star size={12} fill="#f59e0b" className="text-amber-500" />
-            {rating.toFixed(1)}
-          </span>
-          <span className="text-gray-400">({reviewsCount} reviews)</span>
-        </p>
-      </div>
-
-      {/* Category */}
-      <div className="col-span-2">
-        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
-          {category}
-        </span>
-      </div>
-
-      {/* Progress */}
-      <div className="col-span-3">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>
-              {completedVideos} / {totalVideos} lessons
+        {/* Course Details */}
+        <div className="col-span-4">
+          <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">
+            {courseTitle}
+          </h3>
+          <p className="text-xs text-gray-500 flex items-center gap-2">
+            <span>{teacherName}</span>
+            <span className="flex items-center gap-0.5">
+              <Star size={12} fill="#f59e0b" className="text-amber-500" />
+              {rating.toFixed(1)}
             </span>
-            <span className="font-medium">{progress}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className={`h-2 rounded-full transition-all duration-500 ${progress === 100 ? "bg-green-500" : "bg-blue-500"
+            <span className="text-gray-400">({reviewsCount} reviews)</span>
+          </p>
+        </div>
+
+        {/* Category */}
+        <div className="col-span-2">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
+            {category}
+          </span>
+        </div>
+
+        {/* Progress */}
+        <div className="col-span-3">
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <span>
+                {completedVideos} / {totalVideos} lessons
+              </span>
+              <span className="font-medium">{progress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className={`h-2 rounded-full transition-all duration-500 ${
+                  progress === 100 ? "bg-green-500" : "bg-blue-500"
                 }`}
-              style={{ width: `${progress}%` }}
-            />
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
+        </div>
+
+        {/* Action */}
+        <div className="col-span-2 flex justify-end">
+          <button
+            onClick={handleContinue}
+            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+            <Play size={14} fill="white" />
+            {progress > 0 ? "Continue" : "Start"}
+          </button>
         </div>
       </div>
 
-      {/* Action */}
-      <div className="col-span-2 flex justify-end">
-        <button
-          onClick={handleContinue}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-          <Play size={14} fill="white" />
-          {progress > 0 ? "Continue" : "Start"}
-        </button>
+      {/* Mobile View */}
+      <div
+        onClick={handleContinue}
+        className="md:hidden flex flex-col p-4 space-y-3 cursor-pointer hover:bg-gray-50 transition-colors">
+        <div className="flex items-start gap-3">
+          <img
+            src={imageUrl}
+            alt={courseTitle}
+            className="w-16 h-16 object-cover rounded-lg shadow-sm flex-shrink-0"
+            onError={(e) => {
+              e.target.src =
+                "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800";
+            }}
+          />
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-1">
+              {courseTitle}
+            </h3>
+            <p className="text-xs text-gray-500 line-clamp-1">{teacherName}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-600">
+                {category}
+              </span>
+              <span className="flex items-center gap-0.5 text-[10px] text-gray-500">
+                <Star size={10} fill="#f59e0b" className="text-amber-500" />
+                {rating.toFixed(1)} ({reviewsCount})
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <span>Progress</span>
+              <span className="font-medium">
+                {progress}% ({completedVideos}/{totalVideos})
+              </span>
+            </div>
+            <div className="w-full bg-gray-100 rounded-full h-1.5">
+              <div
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  progress === 100 ? "bg-green-500" : "bg-blue-500"
+                }`}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={handleContinue}
+            className="w-full py-2 bg-blue-50 text-blue-600 text-sm font-semibold rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-2">
+            <Play size={14} fill="currentColor" />
+            {progress > 0 ? "Continue Learning" : "Start Learning"}
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

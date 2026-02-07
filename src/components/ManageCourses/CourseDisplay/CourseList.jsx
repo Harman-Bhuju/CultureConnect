@@ -1,6 +1,6 @@
 import React from "react";
 import CourseListRow from "./CourseListRow";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Search } from "lucide-react";
 
 const CourseList = ({
   courses,
@@ -10,30 +10,37 @@ const CourseList = ({
   onPublish,
   isDraftMode,
 }) => (
-  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-    {/* Table Header */}
-    <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-gradient-to-r from-orange-50 to-orange-100 border-b border-orange-200">
-      <div className="col-span-1 text-xs font-semibold text-orange-900 uppercase tracking-wide">
+  <div className="bg-white rounded-xl sm:rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+    {/* Table Header - Hidden on mobile */}
+    <div className="hidden lg:grid grid-cols-12 gap-4 px-4 lg:px-6 py-3 lg:py-4 bg-gradient-to-r from-orange-50 to-orange-100/80 border-b border-orange-100">
+      <div className="col-span-1 text-[10px] lg:text-xs font-semibold text-orange-800 uppercase tracking-wide">
         Image
       </div>
-      <div className="col-span-4 text-xs font-semibold text-orange-900 uppercase tracking-wide">
+      <div className="col-span-4 text-[10px] lg:text-xs font-semibold text-orange-800 uppercase tracking-wide">
         Course Details
       </div>
-      <div className="col-span-2 text-xs font-semibold text-orange-900 uppercase tracking-wide">
+      <div className="col-span-2 text-[10px] lg:text-xs font-semibold text-orange-800 uppercase tracking-wide">
         Category
       </div>
-      <div className="col-span-1 text-xs font-semibold text-orange-900 uppercase tracking-wide">
+      <div className="col-span-1 text-[10px] lg:text-xs font-semibold text-orange-800 uppercase tracking-wide">
         Price
       </div>
-      <div className="col-span-2 text-xs font-semibold text-orange-900 uppercase tracking-wide">
+      <div className="col-span-2 text-[10px] lg:text-xs font-semibold text-orange-800 uppercase tracking-wide">
         Rating
       </div>
-      <div className="col-span-1 text-xs font-semibold text-orange-900 uppercase tracking-wide">
+      <div className="col-span-1 text-[10px] lg:text-xs font-semibold text-orange-800 uppercase tracking-wide">
         Status
       </div>
-      <div className="col-span-1 text-xs font-semibold text-orange-900 uppercase tracking-wide text-right">
+      <div className="col-span-1 text-[10px] lg:text-xs font-semibold text-orange-800 uppercase tracking-wide text-right">
         Actions
       </div>
+    </div>
+
+    {/* Mobile Header */}
+    <div className="lg:hidden px-4 py-3 bg-orange-50 border-b border-orange-100">
+      <p className="text-xs font-semibold text-orange-800 uppercase tracking-wide">
+        Your Courses
+      </p>
     </div>
 
     {/* Table Body */}
@@ -53,14 +60,14 @@ const CourseList = ({
 
     {/* Empty State */}
     {courses.length === 0 && (
-      <div className="flex flex-col items-center justify-center py-16 px-4">
-        <div className="bg-gray-100 rounded-full p-6 mb-4">
-          <BookOpen className="w-12 h-12 text-gray-400" />
+      <div className="flex flex-col items-center justify-center py-12 sm:py-16 px-4">
+        <div className="bg-gray-50 rounded-full p-4 sm:p-6 mb-3 sm:mb-4">
+          <Search className="w-8 h-8 sm:w-12 sm:h-12 text-gray-300" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1.5 sm:mb-2">
           No courses found
         </h3>
-        <p className="text-sm text-gray-500 text-center max-w-sm">
+        <p className="text-xs sm:text-sm text-gray-500 text-center max-w-sm">
           Try adjusting your search or filter criteria to find what you're
           looking for.
         </p>

@@ -115,24 +115,67 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#0f1115] text-white pt-12 sm:pt-16 pb-8 px-4 sm:px-6 border-t border-white/5">
+    <footer className="bg-[#0f1115] text-white pt-10 sm:pt-16 pb-6 sm:pb-8 px-4 sm:px-6 border-t border-white/5 font-sans">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 sm:gap-12 mb-12 sm:mb-16">
-          {/* Brand Section */}
-          <div className="lg:col-span-2 space-y-6">
+        {/* Brand Section - More compact on mobile */}
+        <div className="flex flex-col items-center text-center mb-8 sm:mb-10 md:hidden">
+          <Link to="/" className="flex items-center gap-3 group mb-4">
+            <div className="w-11 h-11 bg-gradient-to-br from-white to-gray-200 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/10 transition-all duration-300 group-hover:shadow-red-600/20">
+              <img
+                src={CultureConnectLogo}
+                alt="CultureConnect"
+                className="w-7 h-7 object-contain"
+              />
+            </div>
+            <div className="flex flex-col items-start">
+              <span className="text-lg font-bold tracking-tight text-white">
+                CultureConnect
+              </span>
+              <span className="text-[9px] text-gray-500 font-semibold uppercase tracking-[0.15em]">
+                Heritage Platform
+              </span>
+            </div>
+          </Link>
+          <p className="text-gray-400 text-xs leading-relaxed max-w-[280px] mb-4">
+            Connecting you with tradition. Discover authentic artifacts & learn
+            cultural arts.
+          </p>
+          <div className="flex gap-2.5">
+            {socialLinks.map((social, index) => (
+              <a
+                key={index}
+                href={social.href || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-red-600 hover:border-red-600 transition-all duration-300 group"
+                title={social.label}>
+                <img
+                  src={social.icon}
+                  alt={social.label}
+                  className="w-4 h-4 brightness-0 invert group-hover:scale-110 transition-transform opacity-70 group-hover:opacity-100"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Links Grid - 2 columns on mobile, 4 on tablet, full on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-8 mb-8 sm:mb-16">
+          {/* Brand Section - Hidden on mobile, shown on tablet+ */}
+          <div className="hidden md:flex lg:col-span-2 space-y-6 flex-col items-start text-left">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center backdrop-blur-sm transition-all duration-300">
+              <div className="w-12 h-12 bg-gradient-to-br from-white to-gray-200 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/10 transition-all duration-300 group-hover:shadow-red-600/20">
                 <img
                   src={CultureConnectLogo}
                   alt="CultureConnect"
                   className="w-8 h-8 object-contain"
                 />
               </div>
-              <div>
-                <span className="text-xl font-bold tracking-tight block">
+              <div className="flex flex-col items-start">
+                <span className="text-xl font-bold tracking-tight text-white block">
                   CultureConnect
                 </span>
-                <span className="text-xs text-gray-500 font-medium uppercase tracking-widest">
+                <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-[0.2em]">
                   Heritage Platform
                 </span>
               </div>
@@ -144,19 +187,19 @@ export default function Footer() {
               shared heritage.
             </p>
 
-            <div className="flex gap-4 pt-2">
+            <div className="flex gap-3 pt-2">
               {socialLinks.map((social, index) => (
                 <a
                   key={index}
                   href={social.href || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-red-600 hover:border-red-600 transition-all duration-300 group"
+                  className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-red-600 hover:border-red-600 text-gray-400 hover:text-white transition-all duration-300 group"
                   title={social.label}>
                   <img
                     src={social.icon}
                     alt={social.label}
-                    className="w-5 h-5 brightness-0 invert group-hover:scale-110 transition-transform"
+                    className="w-5 h-5 brightness-0 invert group-hover:scale-110 transition-transform opacity-70 group-hover:opacity-100"
                   />
                 </a>
               ))}
@@ -165,11 +208,13 @@ export default function Footer() {
 
           {/* Links Categories */}
           {footerCategories.map((category, idx) => (
-            <div key={idx} className="space-y-6">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-white/50">
+            <div
+              key={idx}
+              className="space-y-3 sm:space-y-4 flex flex-col items-start text-left">
+              <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-white/50">
                 {category.title}
               </h4>
-              <ul className="space-y-4">
+              <ul className="space-y-2 sm:space-y-2.5 w-full">
                 {category.links.map((link, lIdx) => (
                   <li key={lIdx}>
                     {link.external ? (
@@ -177,13 +222,15 @@ export default function Footer() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-red-500 text-[15px] transition-colors flex items-center gap-1 group">
+                        className="text-gray-400 hover:text-red-500 text-[13px] sm:text-sm transition-colors flex items-center gap-1.5 group">
+                        <span className="w-1 h-1 rounded-full bg-red-600/30 group-hover:bg-red-600 transition-all duration-300"></span>
                         {link.name}
                       </a>
                     ) : (
                       <Link
                         to={link.href}
-                        className="text-gray-400 hover:text-red-500 text-[15px] transition-colors">
+                        className="text-gray-400 hover:text-red-500 text-[13px] sm:text-sm transition-colors flex items-center gap-1.5 group">
+                        <span className="w-1 h-1 rounded-full bg-red-600/30 group-hover:bg-red-600 transition-all duration-300"></span>
                         {link.name}
                       </Link>
                     )}
@@ -195,20 +242,20 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-gray-500 text-xs font-medium">
-            Copyright © {new Date().getFullYear()}{" "}
-            <span className="text-gray-300">CultureConnect</span>. All rights
+        <div className="pt-6 sm:pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-6">
+          <div className="text-gray-500 text-[10px] sm:text-xs font-medium text-center sm:text-left">
+            © {new Date().getFullYear()}{" "}
+            <span className="text-gray-400">CultureConnect</span>. All rights
             reserved.
           </div>
-          <div className="flex items-center gap-6 text-gray-500 text-xs font-medium">
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-1 rounded-full bg-red-600"></div>
-              Developed and Designed by{" "}
-              <Link to={"/documentation/team"}>
-                <span className="text-gray-300">Harshit & Harman</span>
-              </Link>
-            </div>
+          <div className="flex items-center gap-1.5 sm:gap-2 text-gray-500 text-[10px] sm:text-xs font-medium">
+            <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></div>
+            <span>By</span>
+            <Link
+              to={"/documentation/team"}
+              className="text-gray-400 hover:text-white transition-colors">
+              Harman & Harshit
+            </Link>
           </div>
         </div>
       </div>

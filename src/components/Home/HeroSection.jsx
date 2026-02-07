@@ -109,7 +109,7 @@ const HeroSection = () => {
   return (
     <div
       ref={ref}
-      className="relative min-h-[75svh] md:min-h-[80svh] lg:min-h-screen w-full overflow-hidden bg-black flex flex-col">
+      className="relative min-h-[85svh] md:min-h-[80svh] lg:min-h-screen w-full overflow-hidden bg-black flex flex-col">
       {/* Background with Parallax */}
       <motion.div style={{ scale }} className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
@@ -197,7 +197,7 @@ const HeroSection = () => {
                     Heritage • Culture • Tradition
                   </span>
                 </motion.div>
-                <div className="flex flex-col gap-16 justify-end">
+                <div className="flex flex-col gap-10 sm:gap-12 md:gap-14 lg:gap-16 justify-end">
                   <div>
                     {/* Main Title - Fully Responsive */}
                     <div className="space-y-2 sm:space-y-2 md:space-y-3 overflow-hidden">
@@ -212,7 +212,7 @@ const HeroSection = () => {
                           damping: 20,
                           delay: 0.2,
                         }}
-                        className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-light text-white tracking-tight leading-[1.1] sm:leading-[1.15]">
+                        className="text-3xl xs:text-4xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-light text-white tracking-tight leading-[1.1] sm:leading-[1.15]">
                         {firstPart}
                       </motion.h1>
                       <motion.h1
@@ -226,10 +226,10 @@ const HeroSection = () => {
                           damping: 20,
                           delay: 0.4,
                         }}
-                        className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] sm:leading-[1.15]"
+                        className="text-3xl xs:text-4xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] sm:leading-[1.15]"
                         style={{
                           color: heroSlides[currentSlide].accent,
-                          textShadow: `0 0 30px ${heroSlides[currentSlide].accent}30`,
+                          textShadow: `0 0 30px ${heroSlides[currentSlide].accent}40`,
                         }}>
                         {secondPart}
                       </motion.h1>
@@ -248,38 +248,36 @@ const HeroSection = () => {
                   </div>
                   {/* Mobile Stats - Improved Layout */}
                   <div className="flex flex-col gap-4">
-                    <div className="flex lg:hidden flex-wrap gap-4 sm:gap-5 md:gap-6 justify-center lg:justify-start pt-4 md:pt-6">
+                    <div className="flex lg:hidden flex-wrap gap-3 sm:gap-4 justify-center pt-2">
                       <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false }}
-                        transition={{ delay: 0.5, duration: 0.5 }}
-                        className="backdrop-blur-xl bg-white/5 border border-white/10 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl flex items-center gap-2">
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="backdrop-blur-md bg-white/10 border border-white/20 px-4 py-2 rounded-full flex items-center gap-2">
                         <span
-                          className="text-lg sm:text-xl md:text-2xl font-bold"
+                          className="text-sm font-bold"
                           style={{ color: heroSlides[currentSlide].accent }}>
                           {stats.total_sellers >= 1000
                             ? `${(stats.total_sellers / 1000).toFixed(1)}k+`
                             : `${stats.total_sellers}+`}
                         </span>
-                        <span className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-wider whitespace-nowrap">
+                        <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium">
                           Sellers
                         </span>
                       </motion.div>
                       <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false }}
-                        transition={{ delay: 0.6, duration: 0.5 }}
-                        className="backdrop-blur-xl bg-white/5 border border-white/10 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl flex items-center gap-2">
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="backdrop-blur-md bg-white/10 border border-white/20 px-4 py-2 rounded-full flex items-center gap-2">
                         <span
-                          className="text-lg sm:text-xl md:text-2xl font-bold"
+                          className="text-sm font-bold"
                           style={{ color: heroSlides[currentSlide].accent }}>
                           {stats.total_products >= 1000
                             ? `${(stats.total_products / 1000).toFixed(1)}k+`
                             : `${stats.total_products}+`}
                         </span>
-                        <span className="text-gray-400 text-[10px] sm:text-xs uppercase tracking-wider whitespace-nowrap">
+                        <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium">
                           Products
                         </span>
                       </motion.div>

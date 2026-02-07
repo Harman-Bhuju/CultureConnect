@@ -30,16 +30,16 @@ const LearnCulture = () => {
           {isLandingPage ? (
             <div>
               {/* Hero Section */}
-              <div className="relative text-center pt-20 pb-12 px-4 mb-8">
+              <div className="relative text-center pt-12 md:pt-20 pb-12 px-4 mb-8 overflow-hidden">
                 {/* Decorative Background Glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-teal-50/50 blur-[120px] rounded-full -z-10" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[400px] bg-teal-50/50 blur-[80px] md:blur-[120px] rounded-full -z-10" />
 
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false }}
                   transition={{ duration: 0.7, type: "spring" }}
-                  className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
+                  className="text-4xl md:text-7xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight px-2">
                   Learn{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-600">
                     Heritage
@@ -50,13 +50,14 @@ const LearnCulture = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false }}
                   transition={{ delay: 0.2, duration: 0.7, type: "spring" }}
-                  className="text-xl text-gray-500 max-w-2xl mx-auto mb-12 font-medium">
+                  className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 font-medium px-4">
                   Connect with your roots through master-led courses in
                   traditional arts, music, and dance.
                 </motion.p>
 
                 {/* Search Bar */}
                 <motion.div
+                  className="w-full max-w-md md:max-w-2xl mx-auto"
                   initial={{ opacity: 0, scale: 0.9, y: 20 }}
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}
                   viewport={{ once: false }}

@@ -102,13 +102,14 @@ const CartContent = ({
       try {
         const response = await fetch(
           `${API.GET_PRODUCT_DETAILS}?seller_id=${selectedItem.sellerId}&product_id=${selectedItem.productId}`,
-          { credentials: "include" }
+          { credentials: "include" },
         );
         const data = await response.json();
 
         if (data.success && data.product) {
           // Get sizes from the product data
-          const sizes = data.product.sizes ||
+          const sizes =
+            data.product.sizes ||
             data.product.adultSizes ||
             data.product.ageGroups ||
             data.product.childAgeGroups ||
@@ -149,7 +150,7 @@ const CartContent = ({
     <div className="grid lg:grid-cols-3 gap-6">
       {/* Cart Items Section */}
       <div className="lg:col-span-2">
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
               <ShoppingCart className="w-6 h-6 text-orange-600" />
@@ -223,51 +224,77 @@ const CartContent = ({
                     {items.map((item) => (
                       <div
                         key={item.id}
-                        className={`border-2 rounded-xl p-4 transition-all cursor-pointer ${selectedItem?.id === item.id
-                          ? "border-orange-500 bg-orange-50 shadow-md"
-                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-                          }`}
+                        className={`border-2 rounded-xl p-3 sm:p-4 transition-all cursor-pointer ${
+                          selectedItem?.id === item.id
+                            ? "border-orange-500 bg-orange-50 shadow-md"
+                            : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                        }`}
                         onClick={() => handleSelectItem(item)}>
-                        <div className="flex items-center gap-4">
-                          {/* Selection Radio */}
-                          <div className="flex-shrink-0">
-                            <div
-                              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedItem?.id === item.id
-                                ? "border-orange-500 bg-orange-500"
-                                : "border-gray-300"
+                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                          <div className="flex items-center gap-4 w-full sm:w-auto">
+                            {/* Selection Radio */}
+                            <div className="flex-shrink-0">
+                              <div
+                                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                  selectedItem?.id === item.id
+                                    ? "border-orange-500 bg-orange-500"
+                                    : "border-gray-300"
                                 }`}>
-                              {selectedItem?.id === item.id && (
-                                <div className="w-2 h-2 bg-white rounded-full"></div>
+                                {selectedItem?.id === item.id && (
+                                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Product Image */}
+                            <div className="w-20 h-20 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-100 overflow-hidden">
+                              {item.productImage ? (
+                                <img
+                                  src={`${BASE_URL}/uploads/product_images/${item.productImage}`}
+                                  alt={item.productName}
+                                  className="w-full h-full object-cover cursor-pointer"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(
+                                      `/products/${item.sellerId}/${item.productId}`,
+                                    );
+                                  }}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src =
+                                      "https://via.placeholder.com/80?text=No+Image";
+                                  }}
+                                />
+                              ) : (
+                                <Package className="w-8 h-8 text-gray-400" />
                               )}
                             </div>
-                          </div>
 
-                          {/* Product Image */}
-                          <div className="w-20 h-20 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-100 overflow-hidden">
-                            {item.productImage ? (
-                              <img
-                                src={`${BASE_URL}/uploads/product_images/${item.productImage}`}
-                                alt={item.productName}
-                                className="w-full h-full object-cover cursor-pointer"
+                            {/* Product Details (Mobile) */}
+                            <div className="sm:hidden flex-1 min-w-0">
+                              <h3
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   navigate(
                                     `/products/${item.sellerId}/${item.productId}`,
                                   );
                                 }}
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src =
-                                    "https://via.placeholder.com/80?text=No+Image";
-                                }}
-                              />
-                            ) : (
-                              <Package className="w-8 h-8 text-gray-400" />
-                            )}
+                                className="font-semibold text-gray-900 truncate cursor-pointer text-sm">
+                                {item.productName}
+                              </h3>
+                              {item.size && (
+                                <p className="text-xs text-gray-600 mt-0.5">
+                                  Size: {item.size}
+                                </p>
+                              )}
+                              <p className="text-base font-bold text-orange-600 mt-1">
+                                Rs. {item.price.toLocaleString()}
+                              </p>
+                            </div>
                           </div>
 
-                          {/* Product Details */}
-                          <div className="flex-1 min-w-0">
+                          {/* Product Details (Desktop) */}
+                          <div className="hidden sm:block flex-1 min-w-0">
                             <h3
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -294,50 +321,53 @@ const CartContent = ({
                             </p>
                           </div>
 
-                          {/* Quantity Controls */}
-                          <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                          {/* Mobile Bottom Row */}
+                          <div className="flex sm:w-auto w-full items-center justify-between sm:justify-end gap-3 mt-3 sm:mt-0 pl-9 sm:pl-0">
+                            {/* Quantity Controls */}
+                            <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateCartQuantity(item.id, -1);
+                                }}
+                                className="w-7 h-7 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-8 text-center font-semibold text-sm">
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateCartQuantity(item.id, 1);
+                                }}
+                                className="w-7 h-7 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+
+                            {/* Total */}
+                            <div className="text-right flex-shrink-0 w-24 hidden sm:block">
+                              <p className="text-xs text-gray-500">Subtotal</p>
+                              <p className="font-bold text-gray-900">
+                                Rs.{" "}
+                                {(item.price * item.quantity).toLocaleString()}
+                              </p>
+                            </div>
+
+                            {/* Remove Button */}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                updateCartQuantity(item.id, -1);
+                                removeFromCart(item.id);
+                                if (selectedItemId === item.id) {
+                                  setSelectedItemId(null);
+                                }
                               }}
-                              className="w-7 h-7 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="w-8 text-center font-semibold text-sm">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                updateCartQuantity(item.id, 1);
-                              }}
-                              className="w-7 h-7 rounded-md bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
-                              <Plus className="w-3 h-3" />
+                              className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors">
+                              <Trash2 className="w-5 h-5" />
                             </button>
                           </div>
-
-                          {/* Total */}
-                          <div className="text-right flex-shrink-0 w-24">
-                            <p className="text-xs text-gray-500">Subtotal</p>
-                            <p className="font-bold text-gray-900">
-                              Rs.{" "}
-                              {(item.price * item.quantity).toLocaleString()}
-                            </p>
-                          </div>
-
-                          {/* Remove Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeFromCart(item.id);
-                              if (selectedItemId === item.id) {
-                                setSelectedItemId(null);
-                              }
-                            }}
-                            className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 className="w-5 h-5" />
-                          </button>
                         </div>
                       </div>
                     ))}
@@ -366,7 +396,7 @@ const CartContent = ({
 
       {/* Checkout Summary */}
       <div className="lg:col-span-1">
-        <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 sticky top-24">
           <h3 className="text-lg font-bold text-gray-900 mb-4">
             Order Summary
           </h3>
@@ -413,34 +443,35 @@ const CartContent = ({
               </div>
 
               {/* Size Selection for cultural-clothes */}
-              {selectedItem.category === "cultural-clothes" && availableSizes.length > 0 && (
-                <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Select Size
-                  </label>
-                  {loadingSizes ? (
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600"></div>
-                      Loading sizes...
-                    </div>
-                  ) : (
-                    <div className="flex flex-wrap gap-2">
-                      {availableSizes.map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => setSelectedSize(size)}
-                          className={`px-3 py-1.5 text-sm font-medium rounded-lg border-2 transition-all ${selectedSize === size
-                            ? "border-orange-500 bg-orange-50 text-orange-700"
-                            : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                            }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+              {selectedItem.category === "cultural-clothes" &&
+                availableSizes.length > 0 && (
+                  <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      Select Size
+                    </label>
+                    {loadingSizes ? (
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600"></div>
+                        Loading sizes...
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {availableSizes.map((size) => (
+                          <button
+                            key={size}
+                            onClick={() => setSelectedSize(size)}
+                            className={`px-3 py-1.5 text-sm font-medium rounded-lg border-2 transition-all ${
+                              selectedSize === size
+                                ? "border-orange-500 bg-orange-50 text-orange-700"
+                                : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                            }`}>
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
               {/* Price Breakdown */}
               <div className="space-y-3 mb-4 pb-4 border-b border-gray-200">
@@ -465,9 +496,11 @@ const CartContent = ({
               {/* Checkout Button */}
               <button
                 onClick={() => {
-                  const sizeParam = selectedSize ? `&size=${encodeURIComponent(selectedSize)}` : "";
+                  const sizeParam = selectedSize
+                    ? `&size=${encodeURIComponent(selectedSize)}`
+                    : "";
                   navigate(
-                    `/checkout/${selectedItem.sellerId}/${selectedItem.productId}?qty=${selectedItem.quantity}${sizeParam}`
+                    `/checkout/${selectedItem.sellerId}/${selectedItem.productId}?qty=${selectedItem.quantity}${sizeParam}`,
                   );
                 }}
                 className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3.5 rounded-lg transition-all shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 flex items-center justify-center gap-2">

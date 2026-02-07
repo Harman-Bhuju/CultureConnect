@@ -415,7 +415,7 @@ const ProductDetailPage = () => {
         const avgRating =
           totalReviews > 0
             ? updatedReviews.reduce((acc, r) => acc + r.rating, 0) /
-            totalReviews
+              totalReviews
             : 0;
 
         setProduct({
@@ -522,24 +522,29 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <ImageGallery
-            product={product}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-            baseUrl={BASE_URL}
-          />
-          <ProductInfo
-            product={product}
-            selectedSize={selectedSize}
-            setSelectedSize={setSelectedSize}
-            quantity={quantity}
-            setQuantity={setQuantity}
-            handleAddToCart={handleAddToCart}
-            handleBuyNow={handleBuyNow}
-            sellerId={sellerId}
-          />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          <div className="order-1">
+            <ImageGallery
+              product={product}
+              selectedImage={selectedImage}
+              setSelectedImage={setSelectedImage}
+              baseUrl={BASE_URL}
+            />
+          </div>
+
+          <div className="order-2">
+            <ProductInfo
+              product={product}
+              selectedSize={selectedSize}
+              setSelectedSize={setSelectedSize}
+              quantity={quantity}
+              setQuantity={setQuantity}
+              handleAddToCart={handleAddToCart}
+              handleBuyNow={handleBuyNow}
+              sellerId={sellerId}
+            />
+          </div>
         </div>
         <Tabs
           activeTab={activeTab}

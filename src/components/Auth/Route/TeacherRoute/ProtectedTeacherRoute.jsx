@@ -10,8 +10,6 @@ const ProtectedTeacherRoute = ({ children }) => {
     return <Loading message="Verifying expert access..." />;
   }
 
-  console.log("ProtectedTeacherRoute - User:", user);
-
   if (!user) {
     return <Navigate to="/login" replace />;
   }

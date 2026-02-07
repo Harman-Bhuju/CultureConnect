@@ -34,7 +34,6 @@ const CourseManagement = () => {
 
   const priceOptions = ["All pricing", "Paid", "Free"];
 
-
   const filteredCourses = courses
     .filter((course) => {
       const matchesSearch = (course.title || course.courseTitle)
@@ -137,12 +136,12 @@ const CourseManagement = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="px-8 py-6 max-w-7xl mx-auto">
+      <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-5 md:py-6 max-w-7xl mx-auto">
         <StatsCards
           totalCourses={stats.totalCourses}
           activeCourses={stats.activeCourses}
-          draftCourses={stats.draftCourses || 0} // Ensure this prop exists in hook or mock
-          totalRevenue={stats.totalRevenue || 0} // Ensure this prop exists
+          draftCourses={stats.draftCourses || 0}
+          totalRevenue={stats.totalRevenue || 0}
         />
 
         <Filters

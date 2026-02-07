@@ -1,21 +1,34 @@
-import React, { useState, useMemo } from 'react';
-import { Filter, ChevronDown, Package, MapPin, Clock, Hash, CreditCard, CheckCircle2 } from 'lucide-react';
-import toast from 'react-hot-toast';
-import useOrders from '../../../../hooks/useOrders';
-import { BASE_URL } from '../../../../Configs/ApiEndpoints';
+import React, { useState, useMemo } from "react";
+import {
+  Filter,
+  ChevronDown,
+  Package,
+  MapPin,
+  Clock,
+  Hash,
+  CreditCard,
+  CheckCircle2,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import useOrders from "../../../../hooks/useOrders";
+import { BASE_URL } from "../../../../Configs/ApiEndpoints";
 
 const RecentOrders = ({ selectedPeriod }) => {
-  const { recentOrders: allRecentOrders, loading, updateOrderStatus } = useOrders(selectedPeriod);
+  const {
+    recentOrders: allRecentOrders,
+    loading,
+    updateOrderStatus,
+  } = useOrders(selectedPeriod);
 
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [sortOrder, setSortOrder] = useState('newest');
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState("newest");
 
   const handleMarkAsShipped = (orderNumber) => {
-    updateOrderStatus(orderNumber, 'shipped').then(success => {
+    updateOrderStatus(orderNumber, "shipped").then((success) => {
       if (success) {
-        toast.success('Order marked as shipped successfully!');
+        toast.success("Order marked as shipped successfully!");
       } else {
-        toast.error('Failed to update order status');
+        toast.error("Failed to update order status");
       }
     });
   };
@@ -23,14 +36,14 @@ const RecentOrders = ({ selectedPeriod }) => {
   const filteredOrders = useMemo(() => {
     let orders = [...allRecentOrders];
 
-    if (statusFilter !== 'all') {
-      orders = orders.filter(order => order.status === statusFilter);
+    if (statusFilter !== "all") {
+      orders = orders.filter((order) => order.status === statusFilter);
     }
 
     orders.sort((a, b) => {
       const dateA = new Date(a.orderDate);
       const dateB = new Date(b.orderDate);
-      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+      return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
     });
 
     return orders;
@@ -38,26 +51,25 @@ const RecentOrders = ({ selectedPeriod }) => {
   const formatDateLabel = (dateString, selectedPeriod) => {
     const date = new Date(dateString);
 
-    if (selectedPeriod === 'This month') {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+    if (selectedPeriod === "This month") {
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     } else {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long'
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
       });
     }
   };
   const groupedOrders = useMemo(() => {
     const groups = {};
 
-    filteredOrders.forEach(order => {
+    filteredOrders.forEach((order) => {
       const date = new Date(order.orderDate);
       const dateKey = formatDateLabel(date, selectedPeriod);
-
 
       if (!groups[dateKey]) {
         groups[dateKey] = [];
@@ -70,23 +82,23 @@ const RecentOrders = ({ selectedPeriod }) => {
 
   const getPaymentStatusColor = (status) => {
     switch (status) {
-      case 'Paid':
-        return 'bg-green-100 text-green-700';
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-700';
+      case "Paid":
+        return "bg-green-100 text-green-700";
+      case "Pending":
+        return "bg-yellow-100 text-yellow-700";
       default:
-        return 'bg-gray-100 text-gray-700';
+        return "bg-gray-100 text-gray-700";
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'processing':
-        return 'border border-orange-500 text-orange-600 bg-orange-50';
-      case 'shipped':
-        return 'bg-blue-500 text-white';
+      case "processing":
+        return "border border-orange-500 text-orange-600 bg-orange-50";
+      case "shipped":
+        return "bg-blue-500 text-white";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -96,12 +108,12 @@ const RecentOrders = ({ selectedPeriod }) => {
 
   const getPeriodLabel = () => {
     switch (selectedPeriod) {
-      case 'This month':
-        return 'this month';
-      case 'This year':
-        return 'this year';
+      case "This month":
+        return "this month";
+      case "This year":
+        return "this year";
       default:
-        return 'all time';
+        return "all time";
     }
   };
 
@@ -118,20 +130,21 @@ const RecentOrders = ({ selectedPeriod }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-800">Recent Orders</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              Recent Orders
+            </h2>
             <p className="text-sm text-gray-500 mt-1">
               Active orders (Processing & Shipped) - {getPeriodLabel()}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <div className="relative">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors"
-              >
+                className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors">
                 <option value="all">All Status</option>
                 <option value="processing">Processing</option>
                 <option value="shipped">Shipped</option>
@@ -143,8 +156,7 @@ const RecentOrders = ({ selectedPeriod }) => {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors"
-              >
+                className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition-colors">
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
               </select>
@@ -156,24 +168,29 @@ const RecentOrders = ({ selectedPeriod }) => {
 
       {filteredOrders.length > 0 && (
         <div className="mt-6 mb-4 pt-4 border-t border-gray-200">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-gray-50 rounded-lg sm:bg-transparent sm:p-0">
               <p className="text-2xl font-bold text-gray-900">
                 {filteredOrders.length}
               </p>
               <p className="text-xs text-gray-500 mt-1">Active Orders</p>
             </div>
-            <div className="text-center">
+            <div className="text-center p-4 bg-gray-50 rounded-lg sm:bg-transparent sm:p-0">
               <p className="text-2xl font-bold text-orange-600">
                 {filteredOrders.reduce((sum, order) => sum + order.quantity, 0)}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                {statusFilter === 'shipped' ? 'Items Shipped' : 'Items Processing'}
+                {statusFilter === "shipped"
+                  ? "Items Shipped"
+                  : "Items Processing"}
               </p>
             </div>
-            <div className="text-center">
+            <div className="text-center p-4 bg-gray-50 rounded-lg sm:bg-transparent sm:p-0">
               <p className="text-2xl font-bold text-gray-900">
-                Rs. {filteredOrders.reduce((sum, order) => sum + order.totalAmount, 0).toLocaleString()}
+                Rs.{" "}
+                {filteredOrders
+                  .reduce((sum, order) => sum + order.totalAmount, 0)
+                  .toLocaleString()}
               </p>
               <p className="text-xs text-gray-500 mt-1">Active Revenue</p>
             </div>
@@ -189,11 +206,11 @@ const RecentOrders = ({ selectedPeriod }) => {
             </div>
             <p className="text-gray-500 font-medium">No orders found</p>
             <p className="text-sm text-gray-400 mt-1">
-              {selectedPeriod === 'This month'
-                ? 'No active orders this month'
-                : selectedPeriod === 'This year'
-                  ? 'No active orders this year'
-                  : 'Try adjusting your filters'}
+              {selectedPeriod === "This month"
+                ? "No active orders this month"
+                : selectedPeriod === "This year"
+                  ? "No active orders this year"
+                  : "Try adjusting your filters"}
             </p>
           </div>
         ) : (
@@ -205,7 +222,7 @@ const RecentOrders = ({ selectedPeriod }) => {
                 </div>
                 <div className="flex-1 h-px bg-gray-200 ml-4"></div>
                 <div className="text-xs text-gray-500 ml-4">
-                  {orders.length} order{orders.length !== 1 ? 's' : ''}
+                  {orders.length} order{orders.length !== 1 ? "s" : ""}
                 </div>
               </div>
 
@@ -213,13 +230,14 @@ const RecentOrders = ({ selectedPeriod }) => {
                 {orders.map((order) => (
                   <div
                     key={order.order_id}
-                    className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow bg-white"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-shrink-0 w-12 h-12  rounded-lg flex items-center justify-center">
+                    className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow bg-white">
+                    <div className="flex flex-col sm:flex-row items-start gap-4">
+                      <div className="flex-shrink-0 w-full sm:w-20 h-40 sm:h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-100">
                         <img
                           src={`${BASE_URL}/uploads/product_images/${order.productImage}`}
-                          alt={order.productName} />
+                          alt={order.productName}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
@@ -236,84 +254,118 @@ const RecentOrders = ({ selectedPeriod }) => {
                               Order ID: {order.order_number}
                             </p>
                           </div>
-                          {order.status === 'processing' && (
+                          {order.status === "processing" && (
                             <button
-                              onClick={() => handleMarkAsShipped(order.order_number)}
-                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2"
-                            >
+                              onClick={() =>
+                                handleMarkAsShipped(order.order_number)
+                              }
+                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2">
                               <Package className="w-4 h-4" />
                               Mark as Shipped
                             </button>
                           )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-3 mt-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 mt-4">
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Customer Name</p>
-                            <p className="text-sm text-gray-900">{order.customerName}</p>
+                            <p className="text-xs text-gray-500 font-medium">
+                              Customer Name
+                            </p>
+                            <p className="text-sm text-gray-900">
+                              {order.customerName}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Email</p>
-                            <p className="text-sm text-gray-900">{order.customerEmail}</p>
+                            <p className="text-xs text-gray-500 font-medium">
+                              Email
+                            </p>
+                            <p className="text-sm text-gray-900 break-all">
+                              {order.customerEmail}
+                            </p>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
                               <MapPin className="w-3 h-3" />
                               Delivery Location
                             </p>
-                            <p className="text-sm text-gray-900">{order.delivery_location}</p>
+                            <p className="text-sm text-gray-900">
+                              {order.delivery_location}
+                            </p>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
                               <Clock className="w-3 h-3" />
                               Estimated Delivery
                             </p>
-                            <p className="text-sm text-gray-900">{order.estimated_delivery_time}</p>
-                            <p className="text-xs text-gray-400 mt-0.5">(Includes 2 days for packaging & processing)</p>
+                            <p className="text-sm text-gray-900">
+                              {order.estimated_delivery_time}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              (Includes 2 days for packaging & processing)
+                            </p>
                           </div>
                           {order.transaction_uuid && (
-                            <div className="col-span-2">
+                            <div className="col-span-1 sm:col-span-2">
                               <p className="text-xs text-gray-500 font-medium flex items-center gap-1">
                                 <Hash className="w-3 h-3" />
                                 Transaction UUID
                               </p>
-                              <p className="text-sm text-gray-900 font-mono">{order.transaction_uuid}</p>
+                              <p className="text-sm text-gray-900 font-mono break-all">
+                                {order.transaction_uuid}
+                              </p>
                             </div>
                           )}
                         </div>
 
-                        <div className="grid grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Unit Price</p>
-                            <p className="text-sm text-gray-900">Rs. {order.productPrice?.toLocaleString()}</p>
+                            <p className="text-xs text-gray-500 font-medium">
+                              Unit Price
+                            </p>
+                            <p className="text-sm text-gray-900">
+                              Rs. {order.productPrice?.toLocaleString()}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Quantity</p>
-                            <p className="text-sm text-gray-900">{order.quantity}</p>
+                            <p className="text-xs text-gray-500 font-medium">
+                              Quantity
+                            </p>
+                            <p className="text-sm text-gray-900">
+                              {order.quantity}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Delivery Charge</p>
-                            <p className="text-sm text-gray-900">Rs. {order.delivery_charge}</p>
+                            <p className="text-xs text-gray-500 font-medium">
+                              Delivery Charge
+                            </p>
+                            <p className="text-sm text-gray-900">
+                              Rs. {order.delivery_charge}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-medium">Total Amount</p>
-                            <p className="text-lg font-bold text-gray-900">Rs. {order.totalAmount.toLocaleString()}</p>
+                            <p className="text-xs text-gray-500 font-medium">
+                              Total Amount
+                            </p>
+                            <p className="text-lg font-bold text-gray-900">
+                              Rs. {order.totalAmount.toLocaleString()}
+                            </p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100">
-                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
+                        <div className="flex flex-wrap items-center gap-3 mt-4 pt-3 border-t border-gray-100">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
                             {getStatusDisplay(order.status)}
                           </span>
-                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getPaymentStatusColor(order.payment_status)}`}>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getPaymentStatusColor(order.payment_status)}`}>
                             <CreditCard className="w-3 h-3 mr-1" />
                             {order.payment_status}
                           </span>
-                          <div className="text-xs text-gray-500">
-                            {order.payment_method}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Ordered at {order.orderDate}
+                          <div className="flex items-center gap-3 ml-auto sm:ml-0 text-xs text-gray-500">
+                            <span>{order.payment_method}</span>
+                            <span className="hidden sm:inline">•</span>
+                            <span>Ordered at {order.orderDate}</span>
                           </div>
                         </div>
                       </div>

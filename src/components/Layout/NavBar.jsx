@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, ShoppingCart, X, Menu } from "lucide-react";
+import { Search, ShoppingCart, X, Menu, ArrowLeft } from "lucide-react";
 import { SidebarTrigger, useSidebar } from "../../components/ui/sidebar";
 import { useAuth } from "../../context/AuthContext";
 import CultureConnectLogo from "../../assets/logo/cultureconnect__fav.png";
@@ -49,7 +49,7 @@ const Navbar = () => {
   const handleSearchToggle = () => setIsSearchOpen(!isSearchOpen);
 
   useEffect(() => {
-    const handleResize = () => setIsMobileSearch(window.innerWidth < 1024);
+    const handleResize = () => setIsMobileSearch(window.innerWidth < 768); // Align with md breakpoint
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -88,8 +88,8 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-1 md:gap-3 flex-1 justify-end">
-            {/* Desktop Search */}
-            <div className="hidden lg:flex flex-1 max-w-xl">
+            {/* Desktop & Tablet Search */}
+            <div className="hidden md:flex flex-1 max-w-sm lg:max-w-xl">
               <SearchBar
                 variant="navbar"
                 contextType={context.type}
@@ -98,23 +98,25 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Actions */}
-            {isMobileSearch && !isSearchOpen && (
-              <button
-                onClick={handleSearchToggle}
-                className="p-2 hover:bg-gray-100 rounded-full">
-                <Search className="w-5 h-5" />
-              </button>
+            {!isSearchOpen && (
+              <div className="md:hidden">
+                <button
+                  onClick={handleSearchToggle}
+                  className="p-2.5 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-full transition-all active:scale-90">
+                  <Search className="w-5 h-5" />
+                </button>
+              </div>
             )}
 
             {!isSearchOpen && (
               <>
                 <button
-                  className="relative p-2 hover:bg-gray-100 rounded-full"
+                  className="relative p-2 hover:bg-gray-100 rounded-full transition-all active:scale-95"
                   onClick={() => navigate("/cart")}>
                   <ShoppingCart className="w-5 h-5" />
                 </button>
                 <button
-                  className="flex-shrink-0 hover:opacity-80 transition-opacity"
+                  className="flex-shrink-0 hover:opacity-80 transition-opacity active:scale-95"
                   onClick={() => navigate("/settings")}>
                   <img
                     src={user?.avatar || default_logo}
@@ -130,19 +132,33 @@ const Navbar = () => {
 
       {/* Mobile Search Overlay */}
       {isSearchOpen && isMobileSearch && (
-        <div className="fixed inset-0 bg-white z-[100] flex flex-col p-4">
-          <div className="flex items-center gap-3 mb-4">
+        <div className="fixed inset-0 bg-white/95 backdrop-blur-md z-[100] flex flex-col p-4 animate-in fade-in slide-in-from-top duration-300">
+          <div className="flex items-center gap-4 bg-white p-2 rounded-[2rem] shadow-xl border border-gray-100">
             <button
               onClick={handleSearchToggle}
-              className="p-3 hover:bg-gray-100 rounded-full">
-              <X size={28} />
+              className="py-2 pl-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">
+              <ArrowLeft size={24} />
             </button>
             <div className="flex-1">
               <SearchBar
-                variant="hero-marketplace"
+                variant="navbar"
                 contextType={context.type}
                 initialCategory={context.category}
               />
+            </div>
+          </div>
+          <div className="mt-8 px-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">
+              Quick Search
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {["Dances", "Instruments", "Crafts", "Sellers"].map((tag) => (
+                <button
+                  key={tag}
+                  className="px-4 py-2 bg-gray-50 hover:bg-amber-50 hover:text-amber-600 rounded-full text-sm font-medium transition-colors border border-gray-100">
+                  {tag}
+                </button>
+              ))}
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
-import toast from 'react-hot-toast';
+import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+import toast from "react-hot-toast";
 import {
   ShoppingCart,
   Share2,
@@ -45,7 +45,7 @@ const SellerProductDetailPage = () => {
     "specifications",
     ...(product?.careInstructions ? ["care"] : []),
     "reviews",
-    "performance"
+    "performance",
   ];
 
   // Use useCallback to prevent recreation on every render
@@ -54,21 +54,24 @@ const SellerProductDetailPage = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${API.GET_PRODUCT_DETAILS}?product_id=${id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `${API.GET_PRODUCT_DETAILS}?product_id=${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
 
       const data = await response.json();
 
       if (data.success) {
         setProduct(data.product);
       } else {
-        setError(data.error || 'Failed to fetch product details');
+        setError(data.error || "Failed to fetch product details");
       }
     } catch (err) {
-      console.error('Error fetching product:', err);
-      setError('Network error while fetching product');
+      console.error("Error fetching product:", err);
+      setError("Network error while fetching product");
     } finally {
       setLoading(false);
     }
@@ -76,14 +79,14 @@ const SellerProductDetailPage = () => {
 
   useEffect(() => {
     if (user?.seller_id && user.seller_id !== parseInt(sellerId)) {
-      toast.error('Unauthorized access');
+      toast.error("Unauthorized access");
       navigate(`/seller/${user.seller_id}/products`);
       return;
     }
 
     if (!user?.seller_id) {
-      toast.error('No seller account found');
-      navigate('/seller-registration');
+      toast.error("No seller account found");
+      navigate("/seller-registration");
       return;
     }
 
@@ -91,86 +94,97 @@ const SellerProductDetailPage = () => {
   }, [id, sellerId, user, navigate, fetchProductDetails]);
 
   // Use useCallback for handlers
-  const handleSubmitReply = useCallback(async (reviewId, replyText, replyId = null) => {
-    try {
-      const formData = new URLSearchParams();
-      formData.append('review_id', reviewId);
-      formData.append('reply_text', replyText);
-      if (replyId) {
-        formData.append('reply_id', replyId);
-      }
+  const handleSubmitReply = useCallback(
+    async (reviewId, replyText, replyId = null) => {
+      try {
+        const formData = new URLSearchParams();
+        formData.append("review_id", reviewId);
+        formData.append("reply_text", replyText);
+        if (replyId) {
+          formData.append("reply_id", replyId);
+        }
 
-      const response = await fetch(API.SELLER_REPLY_REVIEW, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData.toString(),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success(replyId ? 'Reply updated successfully!' : 'Reply submitted successfully!', {
-          duration: 3000,
-          position: 'top-center',
-          icon: '✅',
+        const response = await fetch(API.SELLER_REPLY_REVIEW, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formData.toString(),
         });
-        // Refresh product details to get updated reviews
-        await fetchProductDetails();
-      } else {
-        toast.error(data.error || 'Failed to submit reply');
+
+        const data = await response.json();
+
+        if (data.success) {
+          toast.success(
+            replyId
+              ? "Reply updated successfully!"
+              : "Reply submitted successfully!",
+            {
+              duration: 3000,
+              position: "top-center",
+              icon: "✅",
+            },
+          );
+          // Refresh product details to get updated reviews
+          await fetchProductDetails();
+        } else {
+          toast.error(data.error || "Failed to submit reply");
+        }
+      } catch (err) {
+        console.error("Error submitting reply:", err);
+        toast.error("Network error while submitting reply");
       }
-    } catch (err) {
-      console.error('Error submitting reply:', err);
-      toast.error('Network error while submitting reply');
-    }
-  }, [fetchProductDetails]);
+    },
+    [fetchProductDetails],
+  );
 
-  const handleDeleteReply = useCallback(async (replyId) => {
-    try {
-      const formData = new URLSearchParams();
-      formData.append('reply_id', replyId);
-      const response = await fetch(API.SELLER_DELETE_REPLY, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData.toString(),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success('Reply deleted successfully!', {
-          duration: 3000,
-          position: 'top-center',
-          icon: '🗑️',
+  const handleDeleteReply = useCallback(
+    async (replyId) => {
+      try {
+        const formData = new URLSearchParams();
+        formData.append("reply_id", replyId);
+        const response = await fetch(API.SELLER_DELETE_REPLY, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formData.toString(),
         });
-        // Refresh product details to get updated reviews
-        await fetchProductDetails();
-      } else {
-        toast.error(data.error || 'Failed to delete reply');
+
+        const data = await response.json();
+
+        if (data.success) {
+          toast.success("Reply deleted successfully!", {
+            duration: 3000,
+            position: "top-center",
+            icon: "🗑️",
+          });
+          // Refresh product details to get updated reviews
+          await fetchProductDetails();
+        } else {
+          toast.error(data.error || "Failed to delete reply");
+        }
+      } catch (err) {
+        console.error("Error deleting reply:", err);
+        toast.error("Network error while deleting reply");
       }
-    } catch (err) {
-      console.error('Error deleting reply:', err);
-      toast.error('Network error while deleting reply');
-    }
-  }, [fetchProductDetails]);
+    },
+    [fetchProductDetails],
+  );
 
   const handlePublish = async () => {
     try {
       const formData = new URLSearchParams();
-      formData.append('product_id', product.id);
-      formData.append('status', 'published');
+      formData.append("product_id", product.id);
+      formData.append("status", "published");
 
       const response = await fetch(API.UPDATE_PRODUCT_STATUS, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: formData.toString(),
       });
@@ -178,33 +192,33 @@ const SellerProductDetailPage = () => {
       const data = await response.json();
 
       if (data.success) {
-        setProduct({ ...product, status: 'Active' });
+        setProduct({ ...product, status: "Active" });
         setShowPublishModal(false);
-        toast.success('Product published successfully!', {
+        toast.success("Product published successfully!", {
           duration: 3000,
-          position: 'top-center',
-          icon: '✅',
+          position: "top-center",
+          icon: "✅",
         });
       } else {
-        toast.error(data.error || 'Failed to publish product');
+        toast.error(data.error || "Failed to publish product");
       }
     } catch (err) {
-      console.error('Error publishing product:', err);
-      toast.error('Network error while publishing product');
+      console.error("Error publishing product:", err);
+      toast.error("Network error while publishing product");
     }
   };
 
   const handleDraft = async () => {
     try {
       const formData = new URLSearchParams();
-      formData.append('product_id', product.id);
-      formData.append('status', 'draft');
+      formData.append("product_id", product.id);
+      formData.append("status", "draft");
 
       const response = await fetch(API.UPDATE_PRODUCT_STATUS, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: formData.toString(),
       });
@@ -212,37 +226,40 @@ const SellerProductDetailPage = () => {
       const data = await response.json();
 
       if (data.success) {
-        setProduct({ ...product, status: 'Draft' });
+        setProduct({ ...product, status: "Draft" });
         setShowDraftModal(false);
-        toast.success('Product moved to drafts!', {
+        toast.success("Product moved to drafts!", {
           duration: 3000,
-          position: 'top-center',
-          icon: '📝',
+          position: "top-center",
+          icon: "📝",
         });
       } else {
-        toast.error(data.error || 'Failed to move product to drafts');
+        toast.error(data.error || "Failed to move product to drafts");
       }
     } catch (err) {
-      console.error('Error moving product to draft:', err);
-      toast.error('Network error while updating product');
+      console.error("Error moving product to draft:", err);
+      toast.error("Network error while updating product");
     }
   };
 
   const handleShareProduct = () => {
     const productUrl = `${window.location.origin}/seller/products/${user?.seller_id}/${product.id}`;
 
-    navigator.clipboard.writeText(productUrl).then(() => {
-      toast.success('Product link copied to clipboard!', {
-        duration: 3000,
-        position: 'top-center',
-        icon: '🔗',
+    navigator.clipboard
+      .writeText(productUrl)
+      .then(() => {
+        toast.success("Product link copied to clipboard!", {
+          duration: 3000,
+          position: "top-center",
+          icon: "🔗",
+        });
+      })
+      .catch(() => {
+        toast.error("Failed to copy link", {
+          duration: 3000,
+          position: "top-center",
+        });
       });
-    }).catch(() => {
-      toast.error('Failed to copy link', {
-        duration: 3000,
-        position: 'top-center',
-      });
-    });
   };
 
   const renderStars = (rating = 0) => {
@@ -256,24 +273,26 @@ const SellerProductDetailPage = () => {
 
   const prevImage = () => {
     if (!product?.images?.length) return;
-    setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length);
+    setSelectedImage(
+      (prev) => (prev - 1 + product.images.length) % product.images.length,
+    );
   };
 
   const getCategoryDisplay = (category) => {
     const categories = {
       "cultural-clothes": "Cultural Clothes",
       "musical-instruments": "Musical Instruments",
-      "handicraft-decors": "Handicraft & Decors"
+      "handicraft-decors": "Handicraft & Decors",
     };
     return categories[category] || category;
   };
 
   const getAudienceDisplay = (audience) => {
     const audiences = {
-      "men": "Men",
-      "women": "Women",
-      "boy": "Boys",
-      "girl": "Girls"
+      men: "Men",
+      women: "Women",
+      boy: "Boys",
+      girl: "Girls",
     };
     return audiences[audience] || audience;
   };
@@ -288,15 +307,14 @@ const SellerProductDetailPage = () => {
         <div className="text-center">
           <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {error ? 'Error Loading Product' : 'Product Not Found'}
+            {error ? "Error Loading Product" : "Product Not Found"}
           </h2>
           <p className="text-gray-600 mb-6">
             {error || "The product you're looking for doesn't exist."}
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-          >
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
             Back to Products
           </button>
         </div>
@@ -316,23 +334,27 @@ const SellerProductDetailPage = () => {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate(-1)}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition group"
-              >
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition group">
                 <ArrowLeft className="w-5 h-5" />
                 <span className="font-medium">Back to Products</span>
               </button>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${product.status === "Active"
-                ? "bg-green-100 text-green-800"
-                : "bg-gray-100 text-gray-800"
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  product.status === "Active"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-gray-100 text-gray-800"
                 }`}>
                 {product.status}
               </span>
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => navigate(`/seller/products/edit/${user?.seller_id}/${product.id}`)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
+                onClick={() =>
+                  navigate(
+                    `/seller/products/edit/${user?.seller_id}/${product.id}`,
+                  )
+                }
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                 <Edit className="w-4 h-4" />
                 <span className="hidden sm:inline">Edit Product</span>
               </button>
@@ -360,7 +382,9 @@ const SellerProductDetailPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Stock Left</p>
-                <p className="text-2xl font-bold text-gray-900">{product.stock}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {product.stock}
+                </p>
               </div>
               <div className="bg-green-100 p-3 rounded-full">
                 <Package className="w-6 h-6 text-green-600" />
@@ -385,8 +409,8 @@ const SellerProductDetailPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
           {/* Images Section */}
           <div className="space-y-4">
             <div className="relative aspect-square bg-white rounded-lg overflow-hidden border shadow-sm">
@@ -399,14 +423,12 @@ const SellerProductDetailPage = () => {
                 <>
                   <button
                     onClick={prevImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow hover:bg-white transition"
-                  >
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow hover:bg-white transition">
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                   <button
                     onClick={nextImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow hover:bg-white transition"
-                  >
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 p-2 rounded-full shadow hover:bg-white transition">
                     <ChevronRight className="w-6 h-6" />
                   </button>
                 </>
@@ -420,9 +442,11 @@ const SellerProductDetailPage = () => {
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
-                    className={`border-2 rounded-lg overflow-hidden w-20 h-20 flex-shrink-0 transition ${selectedImage === idx ? "border-blue-600 shadow-md" : "border-gray-300 hover:border-gray-400"
-                      }`}
-                  >
+                    className={`border-2 rounded-lg overflow-hidden w-20 h-20 flex-shrink-0 transition ${
+                      selectedImage === idx
+                        ? "border-blue-600 shadow-md"
+                        : "border-gray-300 hover:border-gray-400"
+                    }`}>
                     <img
                       src={`${BASE_URL}/uploads/product_images/${img}`}
                       alt={`Thumbnail ${idx + 1}`}
@@ -447,18 +471,24 @@ const SellerProductDetailPage = () => {
                   </span>
                 )}
               </div>
-              <h1 className="text-3xl font-bold text-gray-900">{product.productName}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {product.productName}
+              </h1>
               {product.culture && (
                 <p className="text-sm text-gray-600 mt-2">
-                  Culture: <span className="font-semibold">{product.culture}</span>
+                  Culture:{" "}
+                  <span className="font-semibold">{product.culture}</span>
                 </p>
               )}
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex items-center">{renderStars(product.averageRating)}</div>
+              <div className="flex items-center">
+                {renderStars(product.averageRating)}
+              </div>
               <span className="text-sm text-gray-600">
-                {product.averageRating.toFixed(1)} ({product.totalReviews} reviews)
+                {product.averageRating.toFixed(1)} ({product.totalReviews}{" "}
+                reviews)
               </span>
             </div>
 
@@ -468,13 +498,19 @@ const SellerProductDetailPage = () => {
               </span>
             </div>
 
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${product.stock > 20 ? "bg-green-50 text-green-700" :
-              product.stock > 0 ? "bg-yellow-50 text-yellow-700" :
-                "bg-red-50 text-red-700"
+            <div
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
+                product.stock > 20
+                  ? "bg-green-50 text-green-700"
+                  : product.stock > 0
+                    ? "bg-yellow-50 text-yellow-700"
+                    : "bg-red-50 text-red-700"
               }`}>
               <Package className="w-4 h-4" />
               <span className="font-semibold">
-                {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+                {product.stock > 0
+                  ? `${product.stock} in stock`
+                  : "Out of stock"}
               </span>
             </div>
 
@@ -483,17 +519,22 @@ const SellerProductDetailPage = () => {
               <div className="space-y-3">
                 <div>
                   <label className="font-semibold text-gray-900 mb-2 block">
-                    {product.audience ? `Available Sizes (${getAudienceDisplay(product.audience)}):` : "Available Sizes:"}
+                    {product.audience
+                      ? `Available Sizes (${getAudienceDisplay(product.audience)}):`
+                      : "Available Sizes:"}
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {(product.sizes?.length > 0 ? product.sizes : product.ageGroups)?.map((size) => (
+                    {(product.sizes?.length > 0
+                      ? product.sizes
+                      : product.ageGroups
+                    )?.map((size) => (
                       <span
                         key={size}
-                        className={`px-4 py-2 border-2 rounded-lg font-medium transition ${size
-                          ? "border-blue-600 bg-blue-50 text-blue-700"
-                          : "border-gray-300 hover:border-gray-400 text-gray-700"
-                          }`}
-                      >
+                        className={`px-4 py-2 border-2 rounded-lg font-medium transition ${
+                          size
+                            ? "border-blue-600 bg-blue-50 text-blue-700"
+                            : "border-gray-300 hover:border-gray-400 text-gray-700"
+                        }`}>
                         {size}
                       </span>
                     ))}
@@ -505,9 +546,12 @@ const SellerProductDetailPage = () => {
             {/* Seller Action Buttons */}
             <div className="space-y-3 pt-4">
               <button
-                onClick={() => navigate(`/seller/products/edit/${user?.seller_id}/${product.id}`)}
-                className="w-full bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition flex justify-center items-center gap-2 shadow-md font-semibold text-lg"
-              >
+                onClick={() =>
+                  navigate(
+                    `/seller/products/edit/${user?.seller_id}/${product.id}`,
+                  )
+                }
+                className="w-full bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition flex justify-center items-center gap-2 shadow-md font-semibold text-lg">
                 <Edit className="w-5 h-5" /> Edit Product Details
               </button>
 
@@ -520,18 +564,17 @@ const SellerProductDetailPage = () => {
                       setShowPublishModal(true);
                     }
                   }}
-                  className={`py-3 rounded-lg transition flex justify-center items-center gap-2 font-semibold ${product.status === "Active"
-                    ? "bg-yellow-50 text-yellow-700 border-2 border-yellow-200 hover:bg-yellow-100"
-                    : "bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100"
-                    }`}
-                >
+                  className={`py-3 rounded-lg transition flex justify-center items-center gap-2 font-semibold ${
+                    product.status === "Active"
+                      ? "bg-yellow-50 text-yellow-700 border-2 border-yellow-200 hover:bg-yellow-100"
+                      : "bg-green-50 text-green-700 border-2 border-green-200 hover:bg-green-100"
+                  }`}>
                   {product.status === "Active" ? "Move to Draft" : "Publish"}
                 </button>
 
                 <button
                   onClick={handleShareProduct}
-                  className="border-2 border-gray-300 py-3 rounded-lg flex justify-center items-center gap-2 hover:bg-gray-50 transition font-medium"
-                >
+                  className="border-2 border-gray-300 py-3 rounded-lg flex justify-center items-center gap-2 hover:bg-gray-50 transition font-medium">
                   <Share2 className="w-5 h-5" /> Share
                 </button>
               </div>
@@ -556,10 +599,14 @@ const SellerProductDetailPage = () => {
             </div>
             {product.tags?.length > 0 && (
               <div className="pt-4 border-t">
-                <p className="text-sm font-semibold text-gray-700 mb-2">Tags:</p>
+                <p className="text-sm font-semibold text-gray-700 mb-2">
+                  Tags:
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {product.tags.map((tag, idx) => (
-                    <span key={idx} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                    <span
+                      key={idx}
+                      className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
                       #{tag}
                     </span>
                   ))}
@@ -576,11 +623,11 @@ const SellerProductDetailPage = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`py-4 font-semibold capitalize border-b-2 transition whitespace-nowrap ${activeTab === tab
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-                  }`}
-              >
+                className={`py-4 font-semibold capitalize border-b-2 transition whitespace-nowrap ${
+                  activeTab === tab
+                    ? "border-blue-600 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}>
                 {tab}
               </button>
             ))}
@@ -589,7 +636,9 @@ const SellerProductDetailPage = () => {
           <div className="p-6">
             {activeTab === "description" && (
               <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+                <p className="text-gray-700 leading-relaxed">
+                  {product.description}
+                </p>
               </div>
             )}
 
@@ -597,34 +646,54 @@ const SellerProductDetailPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="border-b py-3">
                   <span className="font-semibold text-gray-900">Category:</span>
-                  <span className="ml-2 text-gray-700">{getCategoryDisplay(product.category)}</span>
+                  <span className="ml-2 text-gray-700">
+                    {getCategoryDisplay(product.category)}
+                  </span>
                 </div>
                 <div className="border-b py-3">
-                  <span className="font-semibold text-gray-900">Product Type:</span>
-                  <span className="ml-2 text-gray-700">{product.productType}</span>
+                  <span className="font-semibold text-gray-900">
+                    Product Type:
+                  </span>
+                  <span className="ml-2 text-gray-700">
+                    {product.productType}
+                  </span>
                 </div>
                 {product.culture && (
                   <div className="border-b py-3">
-                    <span className="font-semibold text-gray-900">Culture:</span>
-                    <span className="ml-2 text-gray-700">{product.culture}</span>
+                    <span className="font-semibold text-gray-900">
+                      Culture:
+                    </span>
+                    <span className="ml-2 text-gray-700">
+                      {product.culture}
+                    </span>
                   </div>
                 )}
                 {product.material && (
                   <div className="border-b py-3">
-                    <span className="font-semibold text-gray-900">Material:</span>
-                    <span className="ml-2 text-gray-700">{product.material}</span>
+                    <span className="font-semibold text-gray-900">
+                      Material:
+                    </span>
+                    <span className="ml-2 text-gray-700">
+                      {product.material}
+                    </span>
                   </div>
                 )}
                 {product.dimensions && (
                   <div className="border-b py-3">
-                    <span className="font-semibold text-gray-900">Dimensions:</span>
-                    <span className="ml-2 text-gray-700">{product.dimensions} cm</span>
+                    <span className="font-semibold text-gray-900">
+                      Dimensions:
+                    </span>
+                    <span className="ml-2 text-gray-700">
+                      {product.dimensions} cm
+                    </span>
                   </div>
                 )}
                 {product.audience && (
                   <div className="border-b py-3">
                     <span className="font-semibold text-gray-900">For:</span>
-                    <span className="ml-2 text-gray-700">{getAudienceDisplay(product.audience)}</span>
+                    <span className="ml-2 text-gray-700">
+                      {getAudienceDisplay(product.audience)}
+                    </span>
                   </div>
                 )}
               </div>
@@ -632,7 +701,9 @@ const SellerProductDetailPage = () => {
 
             {activeTab === "care" && (
               <div className="prose max-w-none break-words">
-                <p className="text-gray-700 leading-relaxed">{product.careInstructions}</p>
+                <p className="text-gray-700 leading-relaxed">
+                  {product.careInstructions}
+                </p>
               </div>
             )}
 
@@ -647,13 +718,17 @@ const SellerProductDetailPage = () => {
             )}
             {activeTab === "performance" && (
               <div className="space-y-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Metrics</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Performance Metrics
+                </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-green-50 rounded-lg p-5 border border-green-100">
                     <div className="flex items-center gap-3 mb-3">
                       <ShoppingCart className="w-6 h-6 text-green-600" />
-                      <h4 className="font-semibold text-gray-900">Sales Performance</h4>
+                      <h4 className="font-semibold text-gray-900">
+                        Sales Performance
+                      </h4>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
@@ -662,7 +737,9 @@ const SellerProductDetailPage = () => {
                       </div>
                       <div className="flex justify-between border-t pt-2 mt-2">
                         <span className="text-gray-600">Total Revenue:</span>
-                        <span className="font-semibold">Rs {totalRevenue.toLocaleString()}</span>
+                        <span className="font-semibold">
+                          Rs {totalRevenue.toLocaleString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -670,7 +747,9 @@ const SellerProductDetailPage = () => {
                   <div className="bg-yellow-50 rounded-lg p-5 border border-yellow-100">
                     <div className="flex items-center gap-3 mb-3">
                       <Package className="w-6 h-6 text-yellow-600" />
-                      <h4 className="font-semibold text-gray-900">Inventory Status</h4>
+                      <h4 className="font-semibold text-gray-900">
+                        Inventory Status
+                      </h4>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
@@ -686,7 +765,9 @@ const SellerProductDetailPage = () => {
                       {product.stock <= 10 && (
                         <div className="flex items-center gap-2 text-red-600 mt-2">
                           <AlertTriangle className="w-4 h-4" />
-                          <span className="text-sm font-medium">Low stock alert!</span>
+                          <span className="text-sm font-medium">
+                            Low stock alert!
+                          </span>
                         </div>
                       )}
                     </div>
@@ -695,7 +776,9 @@ const SellerProductDetailPage = () => {
                   <div className="bg-purple-50 rounded-lg p-5 border border-purple-100">
                     <div className="flex items-center gap-3 mb-3">
                       <TrendingUp className="w-6 h-6 text-purple-600" />
-                      <h4 className="font-semibold text-gray-900">Customer Feedback</h4>
+                      <h4 className="font-semibold text-gray-900">
+                        Customer Feedback
+                      </h4>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
@@ -706,7 +789,9 @@ const SellerProductDetailPage = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Total Reviews:</span>
-                        <span className="font-semibold">{product.totalReviews}</span>
+                        <span className="font-semibold">
+                          {product.totalReviews}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Satisfaction:</span>

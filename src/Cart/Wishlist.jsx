@@ -44,9 +44,9 @@ const Wishlist = ({
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-5">
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center shadow-md">
             <Heart className="w-5 h-5 text-white fill-white" />
@@ -58,7 +58,7 @@ const Wishlist = ({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between sm:justify-end gap-2">
           {wishlistItems.length > 0 && (
             <>
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-pink-50 rounded-full">
@@ -101,7 +101,7 @@ const Wishlist = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
           {sortedWishlist.map((item) => (
             <div
               key={item.id}

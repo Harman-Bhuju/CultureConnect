@@ -118,7 +118,8 @@ const MyCourses = () => {
   // Stats
   const stats = {
     total: courses.length,
-    inProgress: courses.filter((c) => c.progress > 0 && c.progress < 100).length,
+    inProgress: courses.filter((c) => c.progress > 0 && c.progress < 100)
+      .length,
     completed: courses.filter((c) => c.progress === 100).length,
     paid: courses.filter((c) => c.payment_status === "paid").length,
     free: courses.filter((c) => c.payment_status === "free").length,
@@ -131,40 +132,42 @@ const MyCourses = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Title and Tabs Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate(-1)}
                 className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                 <ArrowLeft className="w-5 h-5" />
-                <span className="font-medium">Back</span>
+                <span className="font-medium hidden sm:inline">Back</span>
               </button>
-              <div className="h-6 w-px bg-gray-300"></div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <GraduationCap className="w-7 h-7 text-blue-600" />
+              <div className="h-6 w-px bg-gray-300 hidden sm:block"></div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" />
                 My Learning
               </h1>
             </div>
 
-            <div className="flex bg-gray-100 p-1 rounded-xl w-fit">
+            <div className="flex bg-gray-100 p-1 rounded-xl w-full md:w-fit overflow-x-auto">
               <button
                 onClick={() => setActiveTab("courses")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "courses"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-                  }`}>
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                  activeTab === "courses"
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}>
                 <BookOpen className="w-4 h-4" />
                 My Courses
               </button>
               <button
                 onClick={() => setActiveTab("transactions")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "transactions"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-                  }`}>
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                  activeTab === "transactions"
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}>
                 <History className="w-4 h-4" />
                 Transactions
               </button>
@@ -172,36 +175,48 @@ const MyCourses = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-2">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 sm:p-4 border border-blue-200">
               <div className="flex items-center gap-2 text-blue-700 mb-1">
-                <BookOpen className="w-4 h-4" />
-                <span className="text-xs font-medium uppercase">Total</span>
+                <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="text-[10px] sm:text-xs font-medium uppercase">
+                  Total
+                </span>
               </div>
-              <p className="text-2xl font-bold text-blue-900">{stats.total}</p>
+              <p className="text-xl sm:text-2xl font-bold text-blue-900">
+                {stats.total}
+              </p>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 sm:p-4 border border-green-200">
               <div className="flex items-center gap-2 text-green-700 mb-1">
-                <Receipt className="w-4 h-4" />
-                <span className="text-xs font-medium uppercase">Paid</span>
+                <Receipt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="text-[10px] sm:text-xs font-medium uppercase">
+                  Paid
+                </span>
               </div>
-              <p className="text-2xl font-bold text-green-900">{stats.paid}</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-900">
+                {stats.paid}
+              </p>
             </div>
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-3 sm:p-4 border border-emerald-200">
               <div className="flex items-center gap-2 text-emerald-700 mb-1">
-                <Wallet className="w-4 h-4" />
-                <span className="text-xs font-medium uppercase">Free</span>
+                <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="text-[10px] sm:text-xs font-medium uppercase">
+                  Free
+                </span>
               </div>
-              <p className="text-2xl font-bold text-emerald-900">{stats.free}</p>
+              <p className="text-xl sm:text-2xl font-bold text-emerald-900">
+                {stats.free}
+              </p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-3 sm:p-4 border border-purple-200">
               <div className="flex items-center gap-2 text-purple-700 mb-1">
-                <CheckCircle className="w-4 h-4" />
-                <span className="text-xs font-medium uppercase">
+                <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="text-[10px] sm:text-xs font-medium uppercase">
                   Completed
                 </span>
               </div>
-              <p className="text-2xl font-bold text-purple-900">
+              <p className="text-xl sm:text-2xl font-bold text-purple-900">
                 {stats.completed}
               </p>
             </div>
@@ -210,16 +225,16 @@ const MyCourses = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 mb-8">
-          <div className="flex flex-wrap gap-4 items-center">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 mb-6">
+          <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
             {/* Context-Aware Filters */}
             {activeTab === "courses" ? (
-              <>
+              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm w-full sm:w-48">
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
@@ -230,19 +245,19 @@ const MyCourses = () => {
                 <select
                   value={progressFilter}
                   onChange={(e) => setProgressFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm w-full sm:w-40">
                   {progressFilters.map((f) => (
                     <option key={f.value} value={f.value}>
                       {f.label}
                     </option>
                   ))}
                 </select>
-              </>
+              </div>
             ) : (
               <select
                 value={periodFilter}
                 onChange={(e) => setPeriodFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm w-full sm:w-auto">
                 <option value="Until now">Until now</option>
                 <option value="This month">This month</option>
                 <option value="This year">This year</option>
@@ -250,25 +265,25 @@ const MyCourses = () => {
             )}
 
             {/* View Toggle (Only for courses) */}
-            <div className="flex gap-2 ml-auto">
-              <p className="text-gray-500 py-2">
+            <div className="flex items-center justify-between md:justify-end gap-3 md:ml-auto border-t md:border-t-0 pt-3 md:pt-0 mt-1 md:mt-0">
+              <p className="text-sm text-gray-500">
                 {activeTab === "courses"
                   ? `${filteredCourses.length} courses`
                   : `${transactions.length} transactions`}
               </p>
               {activeTab === "courses" && (
-                <>
+                <div className="flex bg-gray-100 rounded-lg p-1">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded ${viewMode === "grid" ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100"}`}>
-                    <Grid size={20} />
+                    className={`p-1.5 rounded-md transition-all ${viewMode === "grid" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                    <Grid size={18} />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2 rounded ${viewMode === "list" ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100"}`}>
-                    <List size={20} />
+                    className={`p-1.5 rounded-md transition-all ${viewMode === "list" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                    <List size={18} />
                   </button>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -358,12 +373,13 @@ const MyCourses = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${transaction.paymentStatus === "success"
-                          ? "bg-green-100 text-green-700"
-                          : transaction.paymentStatus === "pending"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-red-100 text-red-700"
-                          }`}>
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          transaction.paymentStatus === "success"
+                            ? "bg-green-100 text-green-700"
+                            : transaction.paymentStatus === "pending"
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-red-100 text-red-700"
+                        }`}>
                         {transaction.displayStatus}
                       </span>
                     </div>

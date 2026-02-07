@@ -1,12 +1,17 @@
-import React from 'react';
-import { Edit2, Trash2, AlertTriangle, Upload } from 'lucide-react';
-import Rating from '../../Products/RatingForProduct';
-import { BASE_URL } from '../../../Configs/ApiEndpoints'; // Add this import
+import React from "react";
+import { Edit2, Trash2, AlertTriangle, Upload, Star } from "lucide-react";
+import { BASE_URL } from "../../../Configs/ApiEndpoints";
 
-// Draft Product Card Component with Publish Button
-export default function DraftProductCard({ product, onEdit, onDelete, onView, onPublish }) {
+// Draft Product Card Component - Responsive with Publish Button
+export default function DraftProductCard({
+  product,
+  onEdit,
+  onDelete,
+  onView,
+  onPublish,
+}) {
   const handleCardClick = (e) => {
-    if (e.target.closest('.action-button')) {
+    if (e.target.closest(".action-button")) {
       return;
     }
     onView(product);
@@ -27,136 +32,156 @@ export default function DraftProductCard({ product, onEdit, onDelete, onView, on
     onPublish(product);
   };
 
-  // Calculate precise average rating from reviews (1.0 to 5.0)
+  // Calculate average rating
   const calculateAverageRating = () => {
     if (!product.reviews || product.reviews.length === 0) {
-      return 0;
+      return product.averageRating || 0;
     }
-
-    const totalRating = product.reviews.reduce((sum, review) => sum + review.rating, 0);
-    const average = totalRating / product.reviews.length;
-
-    // Round to 1 decimal place for display (e.g., 4.7, 3.5)
-    return Math.round(average * 10) / 10;
+    const totalRating = product.reviews.reduce(
+      (sum, review) => sum + review.rating,
+      0,
+    );
+    return Math.round((totalRating / product.reviews.length) * 10) / 10;
   };
 
   const avgRating = calculateAverageRating();
-  const reviewCount = product.reviews?.length || 0;
+  const reviewCount = product.reviews?.length || product.totalReviews || 0;
 
-  // Check if stock is low (matches ProductManagement threshold of 10)
-  const isLowStock = product.stock <= 10;
+  // Stock status
+  const isLowStock = product.stock <= 10 && product.stock > 0;
   const isOutOfStock = product.stock === 0;
-  // Get the first image from the images array, or use a placeholder
-  const productImage = product.images?.[0];
 
-  // Construct full image URL
+  // Image
+  const productImage = product.images?.[0];
   const imageUrl = productImage
     ? `${BASE_URL}/uploads/product_images/${productImage}`
-    : '/placeholder-image.png'; // fallback placeholder
+    : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800";
 
-
-  // Get product name (handle both 'name' and 'productName' properties)
-  const productName = product.productName || product.name || 'Unnamed Product';
+  const productName = product.productName || product.name || "Unnamed Product";
 
   return (
     <div
       onClick={handleCardClick}
-      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group relative">
-
-      {/* Status and Low Stock Badges */}
-      <div className="absolute top-3 left-3 z-10 flex gap-2">
+      className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group relative border border-gray-100">
+      {/* Badges */}
+      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10 flex flex-wrap gap-1 sm:gap-2">
         {/* Draft Badge */}
-        <span className="px-2 py-1 text-xs font-medium rounded bg-gray-100 text-gray-700">
+        <span className="px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold rounded bg-gray-200/90 text-gray-700 backdrop-blur-sm shadow-sm">
           Draft
         </span>
 
-        {/* Low Stock Badge */}
+        {/* Stock Badges */}
         {isLowStock && (
-          <span className="px-2 py-1 text-xs font-medium rounded bg-orange-100 text-orange-700 flex items-center gap-1">
-            <AlertTriangle className="w-3 h-3" />
-            Low Stock
+          <span className="px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold rounded bg-orange-100/90 text-orange-700 flex items-center gap-0.5 sm:gap-1 shadow-sm">
+            <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+            <span className="hidden xs:inline">Low</span>
           </span>
         )}
         {isOutOfStock && (
-          <span className="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-700 flex items-center gap-1">
-            <AlertTriangle className="w-3 h-3" />
-            Out of Stock
+          <span className="px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold rounded bg-red-100/90 text-red-700 flex items-center gap-0.5 sm:gap-1 shadow-sm">
+            <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+            <span className="hidden xs:inline">Out</span>
           </span>
         )}
       </div>
 
-      {/* Action Buttons */}
-      <div className="absolute top-3 right-3 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* Action Buttons - Always visible on mobile */}
+      <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10 flex gap-1 sm:gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
         <button
           onClick={handlePublish}
-          className="action-button bg-green-600 p-2 rounded-full shadow-md hover:bg-green-700 transition-colors"
+          className="action-button bg-green-500 p-1.5 sm:p-2 rounded-full shadow-md hover:bg-green-600 transition-colors"
           title="Publish">
-          <Upload className="w-4 h-4 text-white" />
+          <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
         </button>
         <button
           onClick={handleEdit}
-          className="action-button bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition-colors"
+          className="action-button bg-white/90 backdrop-blur-sm p-1.5 sm:p-2 rounded-full shadow-md hover:bg-gray-50 transition-colors border border-gray-100"
           title="Edit">
-          <Edit2 className="w-4 h-4 text-gray-700" />
+          <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-700" />
         </button>
         <button
           onClick={handleDelete}
-          className="action-button bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors"
+          className="action-button bg-white/90 backdrop-blur-sm p-1.5 sm:p-2 rounded-full shadow-md hover:bg-red-50 transition-colors border border-gray-100"
           title="Delete">
-          <Trash2 className="w-4 h-4 text-red-600" />
+          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600" />
         </button>
       </div>
 
       {/* Product Image */}
-      <div className="relative h-48 bg-gray-100 overflow-hidden">
+      <div className="relative aspect-square sm:h-48 bg-gray-100 overflow-hidden">
         <img
           src={imageUrl}
           alt={productName}
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 opacity-75"
+          onError={(e) => {
+            e.target.src =
+              "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800";
+          }}
         />
+        {/* Draft overlay */}
+        <div className="absolute inset-0 bg-gray-900/10 pointer-events-none" />
       </div>
 
       {/* Product Info */}
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         {/* Category */}
-        <div className="text-xs text-gray-500 font-medium mb-1 uppercase">
+        <div className="text-[10px] sm:text-xs text-gray-500 font-medium mb-0.5 sm:mb-1 uppercase truncate">
           {product.category}
         </div>
 
         {/* Product Name */}
-        <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-1">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 sm:mb-2 line-clamp-1">
           {productName}
         </h3>
 
-        {/* Description */}
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+        {/* Description - Hidden on smallest screens */}
+        <p className="hidden xs:block text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-1 sm:line-clamp-2">
           {product.description}
         </p>
 
         {/* Rating - Only show if reviews exist */}
         {reviewCount > 0 && (
-          <div className="mb-3">
-            <Rating rating={avgRating} reviews={reviewCount} />
+          <div className="flex items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3">
+            <div className="flex items-center gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={12}
+                  fill={i < Math.floor(avgRating) ? "#f59e0b" : "none"}
+                  stroke={i < Math.floor(avgRating) ? "#f59e0b" : "#d1d5db"}
+                />
+              ))}
+            </div>
+            <span className="text-[10px] sm:text-xs text-gray-500">
+              ({reviewCount})
+            </span>
           </div>
         )}
 
         {/* Price and Stock */}
-        <div className="flex items-center justify-between mt-auto">
-          <span className="text-xl font-bold text-orange-600">
-            Rs. {typeof product.price === 'number' ? product.price.toLocaleString() : parseFloat(product.price).toLocaleString()}
+        <div className="flex items-center justify-between">
+          <span className="text-base sm:text-lg lg:text-xl font-bold text-orange-600">
+            Rs.{" "}
+            {typeof product.price === "number"
+              ? product.price.toLocaleString()
+              : parseFloat(product.price || 0).toLocaleString()}
           </span>
-          <span className={`text-sm font-medium ${isLowStock
-              ? 'text-orange-600'
-              : 'text-gray-500'
-            }${isOutOfStock ? 'text-red-600' : ''}`}>
+          <span
+            className={`text-[10px] sm:text-sm font-medium ${
+              isOutOfStock
+                ? "text-red-600"
+                : isLowStock
+                  ? "text-orange-600"
+                  : "text-gray-500"
+            }`}>
             {product.stock} in stock
           </span>
         </div>
 
-        {/* Publish Button - Always visible at bottom */}
+        {/* Publish Button - Always visible */}
         <button
           onClick={handlePublish}
-          className="action-button w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+          className="action-button w-full mt-3 sm:mt-4 bg-green-500 hover:bg-green-600 text-white py-2 sm:py-2.5 px-4 rounded-lg sm:rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base shadow-md">
           <Upload className="w-4 h-4" />
           Publish Product
         </button>
